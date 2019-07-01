@@ -1,2 +1,2 @@
 # JohnKeiNPAnalysis
-Neuropixel Analysis code specific to John adn Kei
+Neuropixel Analysis code specific to Kei and John
