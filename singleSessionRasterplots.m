@@ -1,4 +1,4 @@
-function singleSessionRasterplots(data_dir,session_name, trackLength)
+function singleSessionRasterplots(data_dir,session_name, trackLength, plotWidth, plotHeight)
 % plots rasters for all cells in 1 session given data directory and name of
 % mat file that has neuropixel data synched with unity information
 % Requires Access ot the serer
@@ -6,6 +6,8 @@ function singleSessionRasterplots(data_dir,session_name, trackLength)
 %   data_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190625_keicontrasttrack_propofol1_g0';
 %   session_name = 'G4_190625_keicontrasttrack_baseline+cntrlinjx+propofol';
 %   trackLength = 400;
+%   plotWidth = 160
+%   plotHeight = 500
 % Output: 
 %   Rasterplots saved to Oak
 
@@ -25,7 +27,7 @@ function singleSessionRasterplots(data_dir,session_name, trackLength)
 
 
     % load data
-    fprintf('session %d/%d: %s\n','1','1',session_name);
+    fprintf('session: %s\n',session_name);
     load(fullfile(data_dir,strcat(session_name,'.mat')),'lickt','lickx','post','posx','sp','trial'); %presaline 0
 
 
@@ -55,7 +57,7 @@ function singleSessionRasterplots(data_dir,session_name, trackLength)
     cells_to_plot = cells_to_plot(sort_idx);
 
     % make raster plots for all cells
-    h = figure('Position',[100 100 320 80]); hold on; % changed from 160 to 320 for repeating, also from 500 to 166 for 50 trials
+    h = figure('Position',[100 100 plotWidth plotHeight]); hold on; % changed from 160 to 320 for repeating, also from 500 to 166 for 50 trials
 
     for k = 1:numel(cells_to_plot)
         cla;
