@@ -1,19 +1,18 @@
 function firing_rate = calculateSmoothedFiringRate(idx,posx,p)
 % calculates smoothed firing rate on linear track
 % Malcolm Campbell 5/21/15
-% edited johnwen & keimasuda
-
 % modified 6/6/18 MGC
 % all time bins are now equal length
-%
+% edited kei masuda 7/1/19
 % inputs:
-%     idx: spike indices
-%     posx: positions
+%     idx: path to neuropixel .mat file
 %     p: params (spatial bin size, etc)
 % outputs:
 %     firing_rate: smoothed firing rate over position
 
 % divide spike counts by occupancy
+
+
 binedges = p.TrackStart:p.SpatialBin:p.TrackEnd;
 time_per_bin = histcounts(posx, binedges);
 time_per_bin = time_per_bin * p.TimeBin;
