@@ -11,15 +11,10 @@ drug_name = 'G4_190625_keicontrasttrack_propofol1';
 % load data
 fprintf('session: %s\n',session_name);
 load(fullfile(data_dir,strcat(baseline_name,'.mat')),'lickt','lickx','post','posx','sp','trial');%load baseline mat file
-licktCombo = lickt;
-lickxCombo = lickx;
-postCombo = post;
-posxCombo=posx; 
-spCombo = sp;
-trialCombo = trial;
+
 
  
-load(fullfile(data_dir,strcat(controlinjx_name,'.mat')),'lickt','lickx','post','posx','sp','trial');%load controlinjx mat file
+
 concatenateSpStructs
 
 load(fullfile(data_dir,strcat(drug_name,'.mat')),'lickt','lickx','post','posx','sp','trial');%load drug mat file
@@ -33,25 +28,21 @@ end
 
 function comboMatFile = concatenateNPMatFiles(matA, matB)
 % where the data in structA occurs before structB
-
-comboStruct = structA;
-comboStruct.st = horzcat(structA.st, structB.st);
-comboStruct.spikeTemplates = horzcat(structA.spikeTemplates, structB.spikeTemplates);
-comboStruct.clu = horzcat(structA.clu, structB.clu);
-comboStruct.tempScalingAmps = horzcat(structA.tempScalingAmps, structB.tempScalingAmps);
-
-
-end
-
-
-function comboStruct = concatenateSpStructs(structA, structB)
-% where the data in structA occurs before structB
-
-comboStruct = structA;
-comboStruct.st = horzcat(structA.st, structB.st);
-comboStruct.spikeTemplates = horzcat(structA.spikeTemplates, structB.spikeTemplates);
-comboStruct.clu = horzcat(structA.clu, structB.clu);
-comboStruct.tempScalingAmps = horzcat(structA.tempScalingAmps, structB.tempScalingAmps);
-
+load(fullfile(data_dir,strcat(matA,'.mat')),'lickt','lickx','post','posx','sp','trial');
+licktA = lickt;
+lickxA = lickx;
+postA = post;
+posxA=posx; 
+spA = sp;
+trialA = trial;
+load(fullfile(data_dir,strcat(matA,'.mat')),'lickt','lickx','post','posx','sp','trial');
+licktCombo = lilickt;
+lickxCombo = lickx;
+postCombo = post;
+posxCombo=posx; 
+spCombo = sp;
+sp = concatenateSpStructs(spA, spB);
 
 end
+
+
