@@ -17,7 +17,9 @@ sessions = {...
         };
 for n = 1:numel(sessions)
     try
+        singleSessionRasterplots
         drawLicksMultiSessions(sessions{n})
+        
     catch
         warning(sprintf('FAILED: %s\n',sessions{n}))
     end
