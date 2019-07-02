@@ -7,6 +7,7 @@ function firing_rate = calculateSmoothedFiringRatePerTrial(idx, posx, p, TrackEn
 % inputs:
 %     idx: path to neuropixel .mat file
 %     p: params (spatial bin size, etc)
+%     TrackEnd: typically, the length of the track 
 % outputs:
 %     firing_rate: smoothed firing rate over position
 
