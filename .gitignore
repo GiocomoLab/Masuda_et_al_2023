@@ -1,0 +1,8 @@
+*.asv
+*~
+*.mat
+*.jpg
+*.png
+*.ipynb
+*.json
+$*
