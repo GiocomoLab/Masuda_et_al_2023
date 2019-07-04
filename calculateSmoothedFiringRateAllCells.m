@@ -38,7 +38,8 @@ cells_to_plot = sp.cids(sp.cgs==2);
 %% Preallocate and store data for all cell's firing rates
 nCells = size(cells_to_plot, 2);
 spatialBins = trackLength/params.SpatialBin; 
-all_fr = nan(nCells, spatialBins); % preallocate matrix of cells' firing rates across spatial bins
+all_fr = nan(nCells, max(trial),spatialBins);
+all_corrmatrix = nan(nCells, max(trial), max(trial)); % preallocate matrix of cells' firing rates across spatial bins
 fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
 
 %% Calculate firing rates
@@ -69,14 +70,25 @@ for k = 1:nCells
 %   plot(kfr); % plot average firing rate collapsed across all trials
 
     
-    stackedCellVectorTrialsFR = reshape(stackedCellVectorTrialsFR.',1,[]);
-    all_fr(k, :) = singleCellallTrialsFR;
+    corrcoefMatrix = corrcoef(singleCellallTrialsFR');
+    % CODE to plot correlation matrix per trial
+%     figure(1);
+%     imagesc(corrcoefMatrix);
+%     colorbar;
+%     set(gca,'XTick',0:10:400);
+%     xticklabels(xticks-100)
+%     set(gca,'YTick',0:10:400);
+%     yticklabels(yticks-100)
+    all_fr(k, :, :) = singleCellallTrialsFR;
+    all_corrmatrix(k, :, :) = corrcoefMatrix;
     
 end
 
+
+avg_all_corrmatrix = squeeze(mean(all_corrmatrix, 1, 'omitnan'));
+
 figure();
-corrcoefMatrix = corrcoef(singleCellallTrialsFR');
-imagesc(corrcoefMatrix);
+imagesc(avg_all_corrmatrix);
 colorbar;
 set(gca,'XTick',0:10:400);
 xticklabels(xticks-100)
@@ -86,7 +98,6 @@ yticklabels(yticks-100)
 
 first = regexp(matPath, 'g0/') + 3;
 saveName = strcat(matPath(first: end-4), '_firing rates');
-
 save(saveName, 'all_fr');
 
 % save all_fr in same directory as .mat folder
