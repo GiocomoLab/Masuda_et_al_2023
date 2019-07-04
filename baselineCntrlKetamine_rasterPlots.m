@@ -13,11 +13,11 @@ save_figs = true;
 xbincent = params.TrackStart+params.SpatialBin/2:params.SpatialBin:params.TrackEnd-params.SpatialBin/2;
 
 % where to find data and save images
-data_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190625_keicontrasttrack_propofol1_g0';
-session_name = {'G4_190625_keicontrasttrack_baseline+cntrlinjx+propofol'};
-session_name1  = {'G4_190625_keicontrasttrack_baseline1'};
-session_name2 = {'G4_190625_keicontrasttrack_controlinjx1'};
-session_name3 = {'G4_190625_keicontrasttrack_propofol1'};
+data_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCN1/HCN1_190623_keicontrasttrack_ketamine1_g0';
+session_name = {'HCN1_190623_keicontrasttrack_baseline+cntrlinjx+ketamine'};
+session_name1  = {'HCN1_190623_keicontrasttrack_baseline1'};
+session_name2 = {'HCN1_190623_keicontrasttrack_controlinjx1'};
+session_name3 = {'HCN1_190623_keicontrasttrack_ketamine2'};
 % load data
 fprintf('session %d/%d: %s\n','1','1',session_name{1});
 load(fullfile(data_dir,strcat(session_name3{1},'.mat')),'lickt','lickx','post','posx','sp','trial');%ketamine 2

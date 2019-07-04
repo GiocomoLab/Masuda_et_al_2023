@@ -1,12 +1,14 @@
 function all_fr = calculateSmoothedFiringRateAllCells(matPath, trackLength, paramsPath)
 
 % John Wen 7/1/19
+% Kei Masuda 7/3/19
 % Runs Malcolm's firing rate code on all good cells within a .mat file. 
 % Calculate firing rate by dividing spike counts by occupancy
 
 % inputs:
 %     matPath: path to .mat file after running sync_vr_to_np.m. Specify as
 %             string.
+%       e.g. '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190620_keicontrasttrack_ketamine1_g0/G4_190620_keicontrasttrack_baseline+cntrlinjx+ketamine'
 %     trackLength: specify the length of the track
 %     paramsPath: Optional argument. Path to parameters file, which includes 
 %                spatial bin size and smoothing kernel. 
@@ -39,7 +41,7 @@ cells_to_plot = sp.cids(sp.cgs==2);
 nCells = size(cells_to_plot, 2);
 spatialBins = trackLength/params.SpatialBin; 
 all_fr = nan(nCells, spatialBins); % preallocate matrix of cells' firing rates across spatial bins
-
+fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
 
 %% Calculate firing rates
 % specify inputs into the firing rates calculation
@@ -53,11 +55,33 @@ for k = 1:nCells
     spike_t = sp.st(sp.clu==cells_to_plot(k));
     [~,~,spike_idx] = histcounts(spike_t,post);
     
-    kfr = calculateSmoothedFiringRate(spike_idx, posx, p, trackEnd);
+
+    for i = 1:max(trial)
+        itrial_kfr = calculateSmoothedFiringRate(spike_idx(i==trial(spike_idx)), posx, p, trackEnd);
+        singleCellallTrialsFR(i,:) = itrial_kfr;
+%         figure(1)
+%         plot(itrial_kfr); %plot FR for single trial in single cell
+%         figure(2) % plot rasterplot for single trial in single cell
+%         plot(posx(spike_idx(i==trial(spike_idx))),trial(spike_idx(i==trial(spike_idx))),'k.');      
+    end
     
-    all_fr(k, :) = kfr;
+%   kfr = calculateSmoothedFiringRate(spike_idx, posx, p, trackEnd); % get average firing rate collapsed across all trials
+%   plot(kfr); % plot average firing rate collapsed across all trials
+    
+    stackedCellVectorTrialsFR = reshape(stackedCellVectorTrialsFR.',1,[]);
+    all_fr(k, :) = singleCellallTrialsFR;
     
 end
+
+figure();
+corrcoefMatrix = corrcoef(singleCellallTrialsFR');
+imagesc(corrcoefMatrix);
+colorbar;
+set(gca,'XTick',0:10:400);
+xticklabels(xticks-100)
+set(gca,'YTick',0:10:400);
+yticklabels(yticks-100)
+
 
 first = regexp(matPath, 'g0/') + 3;
 saveName = strcat(matPath(first: end-4), '_firing rates');
