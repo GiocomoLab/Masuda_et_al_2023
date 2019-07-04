@@ -20,8 +20,6 @@ function all_fr = calculateSmoothedFiringRateAllCells(matPath, trackLength, para
 
 %% Load .mat and params files
 % load specific components from .mat file
-% NOTE TO SELF: FIGURE OUT WHICH COMPONENTS TO LOAD MAYBE CUT OUT THE LICKT
-% AND LICKX
 load(fullfile(matPath), 'post','posx','sp','trial'); 
 
 % load params file
@@ -51,9 +49,11 @@ p = params;
 for k = 1:nCells
     fprintf('cell %d (%d/%d)\n',cells_to_plot(k),k,numel(cells_to_plot));
 
-    % get spike times and index into post
+    % get spike times and index into post for cell k 
     spike_t = sp.st(sp.clu==cells_to_plot(k));
+    
     [~,~,spike_idx] = histcounts(spike_t,post);
+    [~,~,spikeTrial_idx] = histcounts(spike_t,trial);
     
 
     for i = 1:max(trial)
@@ -67,6 +67,7 @@ for k = 1:nCells
     
 %   kfr = calculateSmoothedFiringRate(spike_idx, posx, p, trackEnd); % get average firing rate collapsed across all trials
 %   plot(kfr); % plot average firing rate collapsed across all trials
+
     
     stackedCellVectorTrialsFR = reshape(stackedCellVectorTrialsFR.',1,[]);
     all_fr(k, :) = singleCellallTrialsFR;
