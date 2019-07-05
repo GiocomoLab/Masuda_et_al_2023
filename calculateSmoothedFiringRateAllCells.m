@@ -89,7 +89,7 @@ plot(mean(avg_all_fr,2));
 
 avg_all_corrmatrix = squeeze(mean(all_corrmatrix, 1, 'omitnan'));
 
-figure();
+figure(1);
 imagesc(avg_all_corrmatrix);
 colorbar;
 set(gca,'XTick',0:10:400);
@@ -99,7 +99,8 @@ yticklabels(yticks-100)
 
 
 first = regexp(matPath, 'g0/') + 3;
-saveName = strcat(matPath(first: end-4), '_firing rates');
+sessionName = fileparts(fullfile(matPath))
+saveName = strcat(fileparts(m, '_FR+corrMatrix');
 save(saveName, 'all_fr');
 
 % save all_fr in same directory as .mat folder

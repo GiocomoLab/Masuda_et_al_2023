@@ -1,4 +1,4 @@
-function singleSessionRasterplots(data_dir,session_name, trackLength, plotWidth, plotHeight)
+function singleSessionRasterplots(data_dir,session_name, trackLength, plotWidth, plotHeight, preDrugTrials)
 % plots rasters for all cells in 1 session given data directory and name of
 % mat file that has neuropixel data synched with unity information
 % Requires Access ot the serer
@@ -8,6 +8,7 @@ function singleSessionRasterplots(data_dir,session_name, trackLength, plotWidth,
 %   trackLength = 400;
 %   plotWidth = 160
 %   plotHeight = 500
+%   drugFlag = 100 (0 for regular plotting; 100 for plotting the drug injx = 0
 % Output: 
 %   Rasterplots saved to Oak
 
@@ -69,10 +70,14 @@ function singleSessionRasterplots(data_dir,session_name, trackLength, plotWidth,
         [~,~,spike_idx] = histcounts(spike_t,post);
 
 
-        plot(posx(spike_idx),trial(spike_idx),'k.');
-
+        if drugFlag ~= 0
+            plot(posx(spike_idx),trial(spike_idx)-preDrugTrials,'k.');
+            ylim([-preDrugTrials max(trial)+1-preDrugTrials]);
+        else
+            plot(posx(spike_idx),trial(spike_idx),'k.');
+            ylim([0 max(trial)+1]);
+        end
         xlim([params.TrackStart trackLength]);
-        ylim([0 max(trial)+1]);
         title(sprintf('c%d, d=%d',cells_to_plot(k),round(spike_depth(k))));
         % xticks(''); yticks('');
 
