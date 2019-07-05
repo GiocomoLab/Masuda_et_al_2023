@@ -84,6 +84,11 @@ for k = 1:nCells
     
 end
 
+avg_all_fr = squeeze(mean(all_fr, 1, 'omitnan'));
+
+
+
+plot(mean(avg_all_fr,2)s);
 
 avg_all_corrmatrix = squeeze(mean(all_corrmatrix, 1, 'omitnan'));
 
