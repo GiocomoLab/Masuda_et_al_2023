@@ -74,7 +74,7 @@ for k = 1:nCells
 %   plot(kfr); % plot average firing rate collapsed across all trials
 
     
-    corrcoefMatrix = corrcoef(singleCellallTrialsFR');
+    corrMatrix = corr(singleCellallTrialsFR');
     % CODE to plot correlation matrix per trial
 %     figure(1);
 %     imagesc(corrcoefMatrix);
@@ -84,19 +84,16 @@ for k = 1:nCells
 %     set(gca,'YTick',0:10:400);
 %     yticklabels(yticks-100)
     all_fr(k, :, :) = singleCellallTrialsFR;
-    all_corrmatrix(k, :, :) = corrcoefMatrix;
+    all_corrmatrix(k, :, :) = corrMatrix;
     
 end
 
 avg_all_fr = squeeze(mean(all_fr, 1, 'omitnan'));
-
-
-
-plot(mean(avg_all_fr,2)s);
+plot(mean(avg_all_fr,2));
 
 avg_all_corrmatrix = squeeze(mean(all_corrmatrix, 1, 'omitnan'));
 
-figure();
+figure(1);
 imagesc(avg_all_corrmatrix);
 colorbar;
 set(gca,'XTick',0:10:400);
@@ -105,9 +102,10 @@ set(gca,'YTick',0:10:400);
 yticklabels(yticks-100)
 
 
-first = regexp(matPath, 'g0/') + 3;
-saveName = strcat(matPath(first: end-4), '_firing rates');
-save(saveName, 'all_fr');
+% first = regexp(matPath, 'g0/') + 3;
+% sessionName = fileparts(fullfile(matPath))
+% saveName = strcat(fileparts(m, '_FR+corrMatrix');
+% save(saveName, 'all_fr');
 
 % save all_fr in same directory as .mat folder
 
