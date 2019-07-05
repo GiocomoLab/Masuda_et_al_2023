@@ -17,7 +17,8 @@ function all_fr = calculateSmoothedFiringRateAllCells(matPath, trackLength, para
 %                 JohnKei_NPH3/UniversalParams'
 
 % outputs:
-%     all_fr: smoothed firing rate over position for each cell
+%     all_fr: smoothed firing rate over position for each cell 
+%             (cells x trials x spatial bins)
 
 %% Load .mat and params files
 % load specific components from .mat file
