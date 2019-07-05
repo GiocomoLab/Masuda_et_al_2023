@@ -98,10 +98,10 @@ set(gca,'YTick',0:10:400);
 yticklabels(yticks-100)
 
 
-first = regexp(matPath, 'g0/') + 3;
-sessionName = fileparts(fullfile(matPath))
-saveName = strcat(fileparts(m, '_FR+corrMatrix');
-save(saveName, 'all_fr');
+% first = regexp(matPath, 'g0/') + 3;
+% sessionName = fileparts(fullfile(matPath))
+% saveName = strcat(fileparts(m, '_FR+corrMatrix');
+% save(saveName, 'all_fr');
 
 % save all_fr in same directory as .mat folder
 

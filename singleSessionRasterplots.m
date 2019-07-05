@@ -11,7 +11,9 @@ function singleSessionRasterplots(data_dir,session_name, trackLength, plotWidth,
 %   drugFlag = 100 (0 for regular plotting; 100 for plotting the drug injx = 0
 % Output: 
 %   Rasterplots saved to Oak
-
+    if ~exist(preDrugTrials,'var')
+        preDrugTrials = 0;
+    end
     % make sure paths are correct
     restoredefaultpath
     addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/MalcolmFxn/'));
