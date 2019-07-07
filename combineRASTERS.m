@@ -48,7 +48,7 @@ end
 
     % fill in final_image with data from png files
     for i = 1:numel(png_files)
-        fprintf('session %d/%d: %s, file %d/%d\n',k,numel(session_name),session_name,i,numel(png_files));
+        fprintf('session %d/%d: %s, file %d/%d\n',1,numel(session_name),session_name,i,numel(png_files));
 
         % read image
         dat = imread(fullfile(image_dir,png_files{i}),'png');
