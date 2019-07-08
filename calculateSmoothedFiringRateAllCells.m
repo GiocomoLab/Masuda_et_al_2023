@@ -99,16 +99,4 @@ avg_all_corrmatrix = squeeze(mean(all_corrmatrix, 1, 'omitnan'));
 % yticklabels(yticks-100)
 
 
-% first = regexp(matPath, 'g0/') + 3;
-% sessionName = fileparts(fullfile(matPath))
-% saveName = strcat(fileparts(m, '_FR+corrMatrix');
-% save(saveName, 'all_fr');
-
-% save all_fr in same directory as .mat folder
-
-% parse out the .mat filename from before and use it to save the new .mat
-% file.
-
-
-
 end
