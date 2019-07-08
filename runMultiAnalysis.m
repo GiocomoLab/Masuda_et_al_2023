@@ -1,48 +1,19 @@
-sessions = {...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G3/G3_190704_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G3/G3_190703_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190619_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190620_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190621_keicontrasttrack_ketamine2_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190623_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190624_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCN1/HCN1_190618_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCN1/HCN1_190619_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCN1/HCN1_190621_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCN1/HCN1_190623_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/B1/B1_190527_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/B1/B1_190529_keicontrasttrack_ketamine1_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/B1/B1_190528_keicontrasttrack_ketamine2_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/B3/B3_0515_contrasttrack_ketamine1', ...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/B3/B3_0516_contrasttrack_ketamine1', ...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/npI1/npI1_190418_keicontrasttrack_ketamine1_g0'...
-
-};
-
-
+sessions = dir('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/*.mat');
 for n = 1:numel(sessions)
     try
-       [~,filename,~] = fileparts(sessions{n});
-        % session_name = 'G4_190620_keicontrasttrack_baseline+cntrlinjx+ketamine';
-        % unitySessions ={'G4_190620_keicontrasttrack_baseline1', 'G4_190620_keicontrasttrack_controlinjx1','G4_190620_keicontrasttrack_ketamine1'};
-        filenameParts= strsplit(filename,'_ketamine');
-        filename = filenameParts{1};
-        session_name = strcat(filename, '_baseline+cntrlinjx+ketamine');
-        %baselineSession = dir(strcat(sessions{n},filesep,filename,'_baseline*.mat'));
-        unitySessions = {strcat(filename,'_baseline1'), strcat(filename,'_controlinjx1'), strcat(filename,'_ketamine1')};
-        stitchSynchedNPdata(sessions{n}, session_name, unitySessions); %unitySessions is a cell array of session names; can be a cell array of one name
+        [~,filename,~] = fileparts(sessions{n});
         
-%         trackLength = 400;
-%         plotWidth = 160;
-%         plotHeight = 500;
-%         preDrugTrials = 100;
-%         singleSessionRasterplots(sessions{n},session_name, trackLength, plotWidth, plotHeight, preDrugTrials)
-%         
-%         size_vert = 1042; % changed from 1042 to 346
-%         size_horiz = 333; % changed from 333 to 667 for repeating tracks
-%         numrow = 6; % number of rows in final image
-%         combineRASTERS(session_name, size_vert, size_horiz, numrow)
-%         
+        [avg_all_fr, avg_all_corrmatrix] = calculateSmoothedFiringRateAllCells(matPath, trackLength);
+        plot(mean(avg_all_fr,2));
+        % figure(1);
+        % imagesc(abs(avg_all_corrmatrix));
+        % colormap('hot');
+        % colorbar;
+        % set(gca,'XTick',0:10:400);
+        % xticklabels(xticks-100)
+        % set(gca,'YTick',0:10:400);
+        % yticklabels(yticks-100)
+        
         % drawLicksMultiSessions(sessions{n})
         fprintf(strcat('Stitched together:', session_name,'\n'));
     catch e
