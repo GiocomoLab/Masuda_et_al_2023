@@ -25,7 +25,7 @@ for n = 1:numel(sessions)
         fprintf(strcat('Analyzed:', sessions(n).name,'\n'));
     catch e
         warning(e.message);
-        warning('FAILED: %s\n',sessions{n});
+        warning('FAILED: %s\n',sessions(n).name);
     end
 end
 
