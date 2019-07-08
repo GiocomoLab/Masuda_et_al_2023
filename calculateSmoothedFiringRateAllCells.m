@@ -1,4 +1,4 @@
-function all_fr = calculateSmoothedFiringRateAllCells(matPath, trackLength, paramsPath)
+function [avg_all_fr, avg_all_corrmatrix] = calculateSmoothedFiringRateAllCells(matPath, trackLength, paramsPath)
 
 % John Wen 7/1/19
 % Kei Masuda 7/3/19
@@ -85,18 +85,18 @@ for k = 1:nCells
 end
 
 avg_all_fr = squeeze(mean(all_fr, 1, 'omitnan'));
-plot(mean(avg_all_fr,2));
+% plot(mean(avg_all_fr,2));
 
 avg_all_corrmatrix = squeeze(mean(all_corrmatrix, 1, 'omitnan'));
 
-figure(1);
-imagesc(abs(avg_all_corrmatrix));
-colormap('hot');
-colorbar;
-set(gca,'XTick',0:10:400);
-xticklabels(xticks-100)
-set(gca,'YTick',0:10:400);
-yticklabels(yticks-100)
+% figure(1);
+% imagesc(abs(avg_all_corrmatrix));
+% colormap('hot');
+% colorbar;
+% set(gca,'XTick',0:10:400);
+% xticklabels(xticks-100)
+% set(gca,'YTick',0:10:400);
+% yticklabels(yticks-100)
 
 
 % first = regexp(matPath, 'g0/') + 3;
