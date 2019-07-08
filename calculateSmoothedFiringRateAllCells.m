@@ -1,4 +1,5 @@
-function [avg_all_fr, avg_all_corrmatrix] = calculateSmoothedFiringRateAllCells(matPath, trackLength, paramsPath)
+function [all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix, all_corrblock, avg_all_corrblock] ...
+    = calculateSmoothedFiringRateAllCells(matPath, trackLength, paramsPath)
 
 % John Wen 7/1/19
 % Kei Masuda 7/3/19
@@ -19,7 +20,14 @@ function [avg_all_fr, avg_all_corrmatrix] = calculateSmoothedFiringRateAllCells(
 % outputs:
 %     all_fr: smoothed firing rate over position for each cell 
 %             (cells x trials x spatial bins)
-
+%     avg_all_fr: smoothed firing rate over position, averaged over cells
+%                 (trials x spatial bins)
+%     all_corrmatrix: trial by trial correlation for all cells (cells x
+%     trial x trial)
+%     avg_all_corrmatrix: mean of all_corrmatrix across cells
+%     all_corrblock: correlation across every block of 50 trials (cells x
+%     trial/50 x trial/50)
+%     avg_all_corrblock: average of all_corrblock across cells
 %% Load .mat and params files
 % load specific components from .mat file
 load(fullfile(matPath), 'post','posx','sp','trial'); 
@@ -41,8 +49,9 @@ cells_to_plot = sp.cids(sp.cgs==2);
 nCells = size(cells_to_plot, 2);
 spatialBins = trackLength/params.SpatialBin; 
 all_fr = nan(nCells, max(trial),spatialBins); % preallocate matrix of cells' firing rates across spatial bins
+trials_per_block = 10;
 all_corrmatrix = nan(nCells, max(trial), max(trial)); % preallocate matrix of cells' correlations between trials
-all_corrblock = nan(nCells, max(trial)/50, max(trial)/50); % preallocate matrix of cells' correlations every 50 trials
+all_corrblock = nan(nCells, max(trial)/trials_per_block, max(trial)/trials_per_block); % preallocate matrix of cells' correlations every 50 trials
 fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
 
 %% Calculate firing rates
@@ -89,25 +98,32 @@ for k = 1:nCells
     % calculate correlations across blocks of trials (every 50 trials)
     
     % create trial-averaged firing rate matrix (average every 50 trials)
-    block_fr = nan(max(trial)/50, spatialBins); % preallocate matrix
+    block_fr = nan(max(trial)/trials_per_block, spatialBins); % preallocate matrix
     
     % fill in preallocated matrix
-    for i = 1:max(trial)/50
+    for i = 1:max(trial)/trials_per_block
         
-        block_fr(i, :) = mean(singleCellallTrialsFR(50*i-49:50*i, :));
+        block_fr(i, :) = mean(singleCellallTrialsFR(trials_per_block*i-(trials_per_block-1):trials_per_block*i, :));
       
     end
     
     % calculate correlations for this block matrix
     
     corrBlock = corr(block_fr');
-
+%     imagesc(corrBlock);
+%     colorbar;
+%     set(gca,'XTick',0:10:400);
+%     xticklabels(xticks-100)
+%     set(gca,'YTick',0:10:400);
+%     yticklabels(yticks-100);
+%     pause(0.5);
+    
     % store one cell's firing rates and trial by trial correlation matrix
     % in a session matrix containing all cells
     all_fr(k, :, :) = singleCellallTrialsFR;
     all_corrmatrix(k, :, :) = corrMatrix;
     all_corrblock(k, :, :) = corrBlock;
-
+    
 end
 
 avg_all_fr = squeeze(mean(all_fr, 1, 'omitnan'));
@@ -115,14 +131,37 @@ avg_all_fr = squeeze(mean(all_fr, 1, 'omitnan'));
 
 avg_all_corrmatrix = squeeze(mean(all_corrmatrix, 1, 'omitnan'));
 
+avg_all_corrblock = squeeze(mean(all_corrblock, 1, 'omitnan'));
+
 % figure(1);
-% imagesc(abs(avg_all_corrmatrix));
-% colormap('hot');
+% imagesc(abs(avg_all_corrblock));
+% colormap('default');
 % colorbar;
 % set(gca,'XTick',0:10:400);
 % xticklabels(xticks-100)
 % set(gca,'YTick',0:10:400);
 % yticklabels(yticks-100)
 
+figure(3);
+rows = ceil(sqrt(nCells));
+%colormap('default');
+%colorbar;
+for i = 1:nCells
+    subplot(rows, rows, i)
+    imagesc(squeeze(all_corrmatrix(i, :, :)));
+    
+    set(gca,'visible','off')
+    set(gca,'XTick',[], 'YTick', [])
+    title('')
+    xlabel('')
+    ylabel('')
+end
+
+figure(2);
+
+for i = 1:nCells
+    hold on
+    plot(squeeze(all_corrblock(i, 1, :)));
+end
 
 end
