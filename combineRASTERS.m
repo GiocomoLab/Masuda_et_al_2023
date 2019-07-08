@@ -1,5 +1,5 @@
 function combineRASTERS(session_name, size_vert, size_horiz, numrow)
-% script to combine rasters into one giant png for each session
+% script to combine rasters into one giant png for one session
 % MGC 3/1/2019
 % functionalized by FKM on 7/1/19
 %% params
@@ -7,7 +7,7 @@ function combineRASTERS(session_name, size_vert, size_horiz, numrow)
 %   % size of images
 %   size_vert = 167; % changed from 1042 to 346
 %   size_horiz = 667; % changed from 333 to 667 for repeating tracks
-%   numrow = 10; % number of rows in final image
+%   numrow = 6; % number of rows in final image
 % 
 %   % session names
 %   session_name = {'F3_190625_johnrepeatingtrack_meth2'}; % new output from singeSessionRasterplots
@@ -19,10 +19,10 @@ image_save_dir = '/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/
 if exist(image_save_dir,'dir')~=7
     mkdir(image_save_dir);
 end
-%% iterate over sessions
-for k = 1:numel(session_name)
+%% Combine images for one session
+
     
-    image_dir = fullfile('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/images/',session_name{k},'/pretty_rasters/');
+    image_dir = fullfile('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/images/',session_name,'/pretty_rasters/');
     % image_dir = fullfile('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1/select_trials_pretty_rasters');
     
     % get png file names
@@ -48,7 +48,7 @@ for k = 1:numel(session_name)
 
     % fill in final_image with data from png files
     for i = 1:numel(png_files)
-        fprintf('session %d/%d: %s, file %d/%d\n',k,numel(session_name),session_name{k},i,numel(png_files));
+        fprintf('session %d/%d: %s, file %d/%d\n',1,numel(session_name),session_name,i,numel(png_files));
 
         % read image
         dat = imread(fullfile(image_dir,png_files{i}),'png');
@@ -65,7 +65,7 @@ for k = 1:numel(session_name)
     final_image = uint8(final_image);
     
     % write to file
-    imwrite(final_image,fullfile(image_save_dir,sprintf('%s_all_rasters_combined.png',session_name{k})));
-end
+    imwrite(final_image,fullfile(image_save_dir,sprintf('%s_all_rasters_combined.png',session_name)));
+
 fprintf('Done Combining');
 end

@@ -14,12 +14,14 @@ for i=1:numel(unitySessions)-1
             fullfile(data_dir,strcat(unitySessions{i+1},'.mat')));
 
         save(fullfile(data_dir,strcat(session_name,'.mat')),'lickt','lickx','post','posx','trial','sp');
+        save(fullfile('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis',strcat(session_name,'.mat')),'lickt','lickx','post','posx','trial','sp');
     else
         [lickt,lickx,post,posx,trial,sp] = ...
             concatenateNPMatFiles(fullfile(data_dir,strcat(session_name,'.mat')),...
             fullfile(data_dir,strcat(unitySessions{i+1},'.mat')));
 
         save(fullfile(data_dir,strcat(session_name,'.mat')),'lickt','lickx','post','posx','trial','sp');
+        save(fullfile('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis',strcat(session_name,'.mat')),'lickt','lickx','post','posx','trial','sp');
     end
 end
 

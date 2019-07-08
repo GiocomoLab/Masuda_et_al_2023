@@ -11,7 +11,7 @@ function singleSessionRasterplots(data_dir,session_name, trackLength, plotWidth,
 %   drugFlag = 100 (0 for regular plotting; 100 for plotting the drug injx = 0
 % Output: 
 %   Rasterplots saved to Oak
-    if ~exist(preDrugTrials,'var')
+    if ~exist('preDrugTrials')
         preDrugTrials = 0;
     end
     % make sure paths are correct
@@ -72,7 +72,7 @@ function singleSessionRasterplots(data_dir,session_name, trackLength, plotWidth,
         [~,~,spike_idx] = histcounts(spike_t,post);
 
 
-        if drugFlag ~= 0
+        if preDrugTrials ~= 0
             plot(posx(spike_idx),trial(spike_idx)-preDrugTrials,'k.');
             ylim([-preDrugTrials max(trial)+1-preDrugTrials]);
         else

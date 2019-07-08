@@ -1,4 +1,4 @@
-function all_fr = calculateSmoothedFiringRateAllCells(matPath, trackLength, paramsPath)
+function [avg_all_fr, avg_all_corrmatrix] = calculateSmoothedFiringRateAllCells(matPath, trackLength, paramsPath)
 
 % John Wen 7/1/19
 % Kei Masuda 7/3/19
@@ -50,6 +50,7 @@ trackEnd = trackLength;
 p = params;
 
 % calculate the firing rate for a single cell across all trials
+
 for k = 1:nCells
     fprintf('cell %d (%d/%d)\n',cells_to_plot(k),k,numel(cells_to_plot));
 
@@ -76,8 +77,8 @@ for k = 1:nCells
     
     corrMatrix = corr(singleCellallTrialsFR');
     % CODE to plot correlation matrix per trial
-%     figure(1);
-%     imagesc(corrcoefMatrix);
+    %figure(1);
+%     imagesc(corrMatrix);
 %     colorbar;
 %     set(gca,'XTick',0:10:400);
 %     xticklabels(xticks-100)
@@ -85,33 +86,22 @@ for k = 1:nCells
 %     yticklabels(yticks-100)
     all_fr(k, :, :) = singleCellallTrialsFR;
     all_corrmatrix(k, :, :) = corrMatrix;
-    
+
 end
 
 avg_all_fr = squeeze(mean(all_fr, 1, 'omitnan'));
-plot(mean(avg_all_fr,2));
+% plot(mean(avg_all_fr,2));
 
 avg_all_corrmatrix = squeeze(mean(all_corrmatrix, 1, 'omitnan'));
 
-figure(1);
-imagesc(avg_all_corrmatrix);
-colorbar;
-set(gca,'XTick',0:10:400);
-xticklabels(xticks-100)
-set(gca,'YTick',0:10:400);
-yticklabels(yticks-100)
-
-
-% first = regexp(matPath, 'g0/') + 3;
-% sessionName = fileparts(fullfile(matPath))
-% saveName = strcat(fileparts(m, '_FR+corrMatrix');
-% save(saveName, 'all_fr');
-
-% save all_fr in same directory as .mat folder
-
-% parse out the .mat filename from before and use it to save the new .mat
-% file.
-
+% figure(1);
+% imagesc(abs(avg_all_corrmatrix));
+% colormap('hot');
+% colorbar;
+% set(gca,'XTick',0:10:400);
+% xticklabels(xticks-100)
+% set(gca,'YTick',0:10:400);
+% yticklabels(yticks-100)
 
 
 end
