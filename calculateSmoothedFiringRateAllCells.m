@@ -46,7 +46,7 @@ fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n'
 % specify inputs into the firing rates calculation
 trackEnd = trackLength;
 p = params;
-
+figure(1)
 for k = 1:nCells
     fprintf('cell %d (%d/%d)\n',cells_to_plot(k),k,numel(cells_to_plot));
 
@@ -72,8 +72,8 @@ for k = 1:nCells
     
     corrMatrix = corr(singleCellallTrialsFR');
     % CODE to plot correlation matrix per trial
-%     figure(1);
-%     imagesc(corrcoefMatrix);
+    %figure(1);
+%     imagesc(corrMatrix);
 %     colorbar;
 %     set(gca,'XTick',0:10:400);
 %     xticklabels(xticks-100)
@@ -81,7 +81,7 @@ for k = 1:nCells
 %     yticklabels(yticks-100)
     all_fr(k, :, :) = singleCellallTrialsFR;
     all_corrmatrix(k, :, :) = corrMatrix;
-    
+
 end
 
 avg_all_fr = squeeze(mean(all_fr, 1, 'omitnan'));
@@ -90,7 +90,8 @@ plot(mean(avg_all_fr,2));
 avg_all_corrmatrix = squeeze(mean(all_corrmatrix, 1, 'omitnan'));
 
 figure(1);
-imagesc(avg_all_corrmatrix);
+imagesc(abs(avg_all_corrmatrix));
+colormap('hot');
 colorbar;
 set(gca,'XTick',0:10:400);
 xticklabels(xticks-100)
