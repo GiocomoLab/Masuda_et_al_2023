@@ -40,8 +40,9 @@ cells_to_plot = sp.cids(sp.cgs==2);
 %% Preallocate and store data for all cell's firing rates
 nCells = size(cells_to_plot, 2);
 spatialBins = trackLength/params.SpatialBin; 
-all_fr = nan(nCells, max(trial),spatialBins);
-all_corrmatrix = nan(nCells, max(trial), max(trial)); % preallocate matrix of cells' firing rates across spatial bins
+all_fr = nan(nCells, max(trial),spatialBins); % preallocate matrix of cells' firing rates across spatial bins
+all_corrmatrix = nan(nCells, max(trial), max(trial)); % preallocate matrix of cells' correlations between trials
+all_corrblock = nan(nCells, max(trial)/50, max(trial)/50); % preallocate matrix of cells' correlations every 50 trials
 fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
 
 %% Calculate firing rates
@@ -74,7 +75,7 @@ for k = 1:nCells
 %   kfr = calculateSmoothedFiringRate(spike_idx, posx, p, trackEnd); % get average firing rate collapsed across all trials
 %   plot(kfr); % plot average firing rate collapsed across all trials
 
-    
+    % calculate trial by trial correlations for one cell 
     corrMatrix = corr(singleCellallTrialsFR');
     % CODE to plot correlation matrix per trial
     %figure(1);
@@ -84,8 +85,28 @@ for k = 1:nCells
 %     xticklabels(xticks-100)
 %     set(gca,'YTick',0:10:400);
 %     yticklabels(yticks-100)
+
+    % calculate correlations across blocks of trials (every 50 trials)
+    
+    % create trial-averaged firing rate matrix (average every 50 trials)
+    block_fr = nan(max(trial)/50, spatialBins); % preallocate matrix
+    
+    % fill in preallocated matrix
+    for i = 1:max(trial)/50
+        
+        block_fr(i, :) = mean(singleCellallTrialsFR(50*i-49:50*i, :));
+      
+    end
+    
+    % calculate correlations for this block matrix
+    
+    corrBlock = corr(block_fr');
+
+    % store one cell's firing rates and trial by trial correlation matrix
+    % in a session matrix containing all cells
     all_fr(k, :, :) = singleCellallTrialsFR;
     all_corrmatrix(k, :, :) = corrMatrix;
+    all_corrblock(k, :, :) = corrBlock;
 
 end
 
