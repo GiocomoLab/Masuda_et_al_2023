@@ -3,7 +3,8 @@ for n = 1:numel(sessions)
     try
         matPath = fullfile(sessions(n).folder, sessions(n).name);
         trackLength = 400;
-        [avg_all_fr, avg_all_corrmatrix] = calculateSmoothedFiringRateAllCells(matPath, trackLength);
+        [all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix, all_corrblock, avg_all_corrblock] = calculateSmoothedFiringRateAllCells(matPath, trackLength);
+        
         figure(1);
         plot(mean(avg_all_fr,2));
         
@@ -19,9 +20,11 @@ for n = 1:numel(sessions)
         %save avg_all_fr and avg_all_corrmatrix to OAK
         saveDir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/fr_corr_matrices';
         saveName = fullfile(saveDir, strcat(sessions(n).name,'_fr+corr.mat'));
-        save(saveName, 'avg_all_fr','avg_all_corrmatrix');
+        save(saveName, 'all_fr', 'avg_all_fr', 'all_corrmatrix', 'avg_all_corrmatrix', 'all_corrblock', 'avg_all_corrblock');
 
-        % drawLicksMultiSessions(sessions{n})
+        % draw licks
+        
+        
         fprintf(strcat('Analyzed:', sessions(n).name,'\n'));
     catch e
         warning(e.message);

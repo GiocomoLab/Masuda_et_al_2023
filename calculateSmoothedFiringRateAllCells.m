@@ -1,5 +1,4 @@
-function [all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix, all_corrblock, avg_all_corrblock] ...
-    = calculateSmoothedFiringRateAllCells(matPath, trackLength, paramsPath)
+function [all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix, all_corrblock, avg_all_corrblock] = calculateSmoothedFiringRateAllCells(matPath, trackLength, paramsPath)
 
 % John Wen 7/1/19
 % Kei Masuda 7/3/19
@@ -9,8 +8,7 @@ function [all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix, all_corrblock,
 % inputs:
 %     matPath: path to .mat file after running sync_vr_to_np.m. Specify as
 %              string.
-%              e.g. '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/ ...
-%              G4_190620_keicontrasttrack_ketamine1_g0/G4_190620_keicontrasttrack_baseline+cntrlinjx+ketamine'
+%              e.g. '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190620_keicontrasttrack_ketamine1_g0/G4_190620_keicontrasttrack_baseline+cntrlinjx+ketamine'
 %     trackLength: specify the length of the track
 %     paramsPath: Optional argument. Path to parameters file, which includes 
 %                 spatial bin size and smoothing kernel. 
@@ -49,7 +47,9 @@ cells_to_plot = sp.cids(sp.cgs==2);
 nCells = size(cells_to_plot, 2);
 spatialBins = trackLength/params.SpatialBin; 
 all_fr = nan(nCells, max(trial),spatialBins); % preallocate matrix of cells' firing rates across spatial bins
-trials_per_block = 10;
+
+trials_per_block = 25;
+
 all_corrmatrix = nan(nCells, max(trial), max(trial)); % preallocate matrix of cells' correlations between trials
 all_corrblock = nan(nCells, max(trial)/trials_per_block, max(trial)/trials_per_block); % preallocate matrix of cells' correlations every 50 trials
 fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
@@ -134,7 +134,7 @@ avg_all_corrmatrix = squeeze(mean(all_corrmatrix, 1, 'omitnan'));
 avg_all_corrblock = squeeze(mean(all_corrblock, 1, 'omitnan'));
 
 % figure(1);
-% imagesc(abs(avg_all_corrblock));
+% imagesc(avg_all_corrblock);
 % colormap('default');
 % colorbar;
 % set(gca,'XTick',0:10:400);
@@ -142,26 +142,24 @@ avg_all_corrblock = squeeze(mean(all_corrblock, 1, 'omitnan'));
 % set(gca,'YTick',0:10:400);
 % yticklabels(yticks-100)
 
-figure(3);
-rows = ceil(sqrt(nCells));
-%colormap('default');
-%colorbar;
-for i = 1:nCells
-    subplot(rows, rows, i)
-    imagesc(squeeze(all_corrmatrix(i, :, :)));
-    
-    set(gca,'visible','off')
-    set(gca,'XTick',[], 'YTick', [])
-    title('')
-    xlabel('')
-    ylabel('')
-end
-
-figure(2);
-
-for i = 1:nCells
-    hold on
-    plot(squeeze(all_corrblock(i, 1, :)));
-end
+% figure(1);
+% rows = ceil(sqrt(nCells));
+% %colormap('default');
+% %colorbar;
+% for i = 1:nCells
+%     subplot(rows, rows, i)
+%     imagesc(squeeze(all_corrblock(i, :, :)));
+%     
+%     set(gca,'visible','off')
+%     set(gca,'XTick',[], 'YTick', [])
+% end
+% % 
+% figure(2);
+% 
+% for i = 1:nCells
+%     hold on
+%     plot(squeeze(all_corrblock(i, 5, :)));
+% end
+% plot(squeeze(avg_all_corrblock(2,:)));
 
 end

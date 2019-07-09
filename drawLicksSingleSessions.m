@@ -1,7 +1,6 @@
 function lickAccuracyByTrial = drawLicksSingleSessions(data_dir)
 
 %% Multiple Session Stitch
-close all;
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 % where to find data and save images
 % data_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190619_keicontrasttrack_ketamine1_g0';
@@ -60,6 +59,7 @@ if exist(image_save_dir,'dir')~=7
     mkdir(image_save_dir);
 end
 saveas(h,fullfile(image_save_dir,session_name{1}),'png');
-fprintf(image_save_dir);
+fprintf(strcat(image_save_dir,'\n'));
+
 
 end

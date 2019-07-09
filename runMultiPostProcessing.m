@@ -19,7 +19,32 @@ sessions = {...
 
 };
 
+sessions = {...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G3/G3_190704_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G3/G3_190703_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190619_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190620_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190621_keicontrasttrack_ketamine2_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190623_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190624_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/B1/B1_190527_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/B1/B1_190529_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/B1/B1_190528_keicontrasttrack_ketamine2_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/B3/B3_0515_contrasttrack_ketamine1', ...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/B3/B3_0516_contrasttrack_ketamine1', ...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/npI1/npI1_190418_keicontrasttrack_ketamine1_g0'...
 
+};
+
+sessions = {...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCN1/HCN1_190618_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCN1/HCN1_190619_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCN1/HCN1_190621_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCN1/HCN1_190623_keicontrasttrack_ketamine1_g0',...
+
+};
+
+lickAccuracyAllSessions = zeros(numel(sessions),300);
 for n = 1:numel(sessions)
     try
        [~,filename,~] = fileparts(sessions{n});
@@ -30,8 +55,8 @@ for n = 1:numel(sessions)
         session_name = strcat(filename, '_baseline+cntrlinjx+ketamine');
         %baselineSession = dir(strcat(sessions{n},filesep,filename,'_baseline*.mat'));
         unitySessions = {strcat(filename,'_baseline1'), strcat(filename,'_controlinjx1'), strcat(filename,'_ketamine1')};
-        stitchSynchedNPdata(sessions{n}, session_name, unitySessions); %unitySessions is a cell array of session names; can be a cell array of one name
-        
+%         stitchSynchedNPdata(sessions{n}, session_name, unitySessions); %unitySessions is a cell array of session names; can be a cell array of one name
+%         fprintf(strcat('\nStitched together:', session_name,'\n'));
 %         trackLength = 400;
 %         plotWidth = 160;
 %         plotHeight = 500;
@@ -43,11 +68,23 @@ for n = 1:numel(sessions)
 %         numrow = 6; % number of rows in final image
 %         combineRASTERS(session_name, size_vert, size_horiz, numrow)
 %         
-        % drawLicksMultiSessions(sessions{n})
-        fprintf(strcat('Stitched together:', session_name,'\n'));
+        lickAccuracyAllSessions(n,:) = drawLicksSingleSessions(sessions{n});
+        
     catch e
         warning(e.message);
         warning('FAILED: %s\n',sessions{n});
     end
 end
+close all
 
+%plot(mean(lickAccuracyAllSessions,1))
+close all;
+clear g;
+x = -99:200;
+y = lickAccuracyAllSessions;
+g(1,1) = gramm('x',x,'y',y);
+g(1,1).stat_summary('type','sem');
+g(1,1).set_title("Ketamine's Effect on Lick Accuracy (HCN1ko)", 'FontSize', 30);
+g(1,1).set_names('x','Trial Number','y','Lick Accuracy');
+g(1,1).set_text_options('base_size',20);
+g.draw()
