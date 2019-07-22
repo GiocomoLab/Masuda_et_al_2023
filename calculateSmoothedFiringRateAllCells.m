@@ -4,7 +4,6 @@ function [all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix, all_corrblock,
 % Kei Masuda 7/3/19
 % Runs Malcolm's firing rate code on all good cells within a .mat file. 
 % Calculate firing rate by dividing spike counts by occupancy
-
 % inputs:
 %     matPath: path to .mat file after running sync_vr_to_np.m. Specify as
 %              string.
@@ -14,7 +13,6 @@ function [all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix, all_corrblock,
 %                 spatial bin size and smoothing kernel. 
 %                 Default = '/Volumes/groups/giocomo/export/data/Projects/ ...
 %                 JohnKei_NPH3/UniversalParams'
-
 % outputs:
 %     all_fr: smoothed firing rate over position for each cell 
 %             (cells x trials x spatial bins)

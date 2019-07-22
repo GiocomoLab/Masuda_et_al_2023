@@ -1,6 +1,8 @@
 function lickAccuracyByTrial = drawLicksSingleSessions(data_dir,session_name)
+% Inputs: data directory and session name
+% Assumes reward is at end of track. 'Accurate' lick = within 50cm of reward zone
+% Image with lick raster plot + associated quantification plots
 
-%% Multiple Session Stitch
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 % where to find data and save images
 % data_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190619_keicontrasttrack_ketamine1_g0';
@@ -18,7 +20,7 @@ load(fullfile(data_dir,strcat(session_name,'.mat')),'lickt','lickx','post','posx
 lickAccuracyByTrial = zeros(1,max(trial));
 for i = 1:max(trial)
     trialLicks = lickx(trial(lick_idx) == i);
-    goodLicks = sum(trialLicks<25) + sum(trialLicks>375);
+    goodLicks = sum(trialLicks<25) + sum(trialLicks>max(posx)-25); 
     if trialLicks ~= 0
         lickAccuracyByTrial(i) = goodLicks/numel(trialLicks);
     else
