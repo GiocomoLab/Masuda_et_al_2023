@@ -1,17 +1,17 @@
-function lickAccuracyByTrial = drawLicksSingleSessions(data_dir)
+function lickAccuracyByTrial = drawLicksSingleSessions(data_dir,session_name)
 
 %% Multiple Session Stitch
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 % where to find data and save images
 % data_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190619_keicontrasttrack_ketamine1_g0';
 [~,name,~] = fileparts(data_dir);
-session_root = strsplit(name,'track');
-session_name = {strcat(session_root{1},'track_baseline+cntrlinjx+ketamine')};
+% session_root = strsplit(name,'track');
+%session_name = {strcat(session_root{1},'track_baseline+cntrlinjx+ketamine')};
 
 
 % load data
-fprintf('session: %s\n',session_name{1});
-load(fullfile(data_dir,strcat(session_name{1},'.mat')),'lickt','lickx','post','posx','sp','trial'); %presaline 0
+fprintf('session: %s\n',session_name);
+load(fullfile(data_dir,strcat(session_name,'.mat')),'lickt','lickx','post','posx','sp','trial'); %presaline 0
 
 [~,~,lick_idx] = histcounts(lickt,post);
 
@@ -58,7 +58,7 @@ image_save_dir = fullfile('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neu
 if exist(image_save_dir,'dir')~=7
     mkdir(image_save_dir);
 end
-saveas(h,fullfile(image_save_dir,session_name{1}),'png');
+saveas(h,fullfile(image_save_dir,session_name),'png');
 fprintf(strcat(image_save_dir,'\n'));
 
 
