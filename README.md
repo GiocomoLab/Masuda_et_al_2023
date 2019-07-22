@@ -11,9 +11,9 @@ calcFRmapCorrMatrixAllCells.m
 
 runMultiAnalysis.m **comment this**
 
-runMultiPostProcessing.m **comment this + FXN + FLAG FOR STITCH + SAVE MI VECTORS**
-	- stitchSynchedNPdata.m
-		- concatenateNPMatFiles.m
+* runMultiPostProcessing.m **comment this + FXN + FLAG FOR STITCH + SAVE MI VECTORS**
+    - stitchSynchedNPdata.m
+	- concatenateNPMatFiles.m
 			- concatenateSpStructs.m
 	- singleSessionRasterplots.m ** add save metadata (depths, waveform, cells to plot)
 	- combineRASTERS.m
@@ -29,9 +29,11 @@ gauss_smoothing.m =  **delete from master**
 plotFiringRate.m **need to transform into a plotAvgFR for all sessions using calcSmoothedFR_Time.m**
 
 singleSessionRasterplotsNaNspikes.m = DELETE 
+
 drawLicksMultiSessions.m = DELETE
 
 baselineCntrlKetamine_rasterPlots.m = indivdual script 
+
 dosageRasters.m = individual script
 
 scratch.m = individual script
