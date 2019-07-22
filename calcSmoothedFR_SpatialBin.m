@@ -1,4 +1,4 @@
-function firing_rate = calculateSmoothedFiringRate(idx, posx, p, TrackEnd)
+function firing_rate = calcSmoothedFR_SpatialBin(idx, posx, p, TrackEnd)
 % calculates smoothed firing rate on linear track
 % Malcolm Campbell 5/21/15
 % modified 6/6/18 MGC

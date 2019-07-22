@@ -1,4 +1,5 @@
-function [all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix, all_corrblock, avg_all_corrblock] = calculateSmoothedFiringRateAllCells(matPath, trackLength, paramsPath)
+function [all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix, all_corrblock, avg_all_corrblock]...
+    = calcFRmapCorrMatrixAllCells(matPath, trackLength, paramsPath)
 
 % John Wen 7/1/19
 % Kei Masuda 7/3/19
@@ -71,7 +72,7 @@ for k = 1:nCells
 
     % for cell k, iteratively calculate the firing rate for each trial
     for i = 1:max(trial)
-        itrial_kfr = calculateSmoothedFiringRate(spike_idx(i==trial(spike_idx)), posx, p, trackEnd);
+        itrial_kfr = calcSmoothedFR_SpatialBin(spike_idx(i==trial(spike_idx)), posx, p, trackEnd);
         singleCellallTrialsFR(i,:) = itrial_kfr;
 %         figure(1)
 %         plot(itrial_kfr); %plot FR for single trial in single cell

@@ -1,4 +1,4 @@
-function firing_rate = calculateSmoothFRbyTime(post, spike_t, ds_factor, smoothSigma)
+function firing_rate = calcSmoothedFR_Time(post, spike_t, ds_factor, smoothSigma)
 
 % Calculate firing rate from spike times for one cell
 % INPUTS

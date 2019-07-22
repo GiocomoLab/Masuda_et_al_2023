@@ -65,7 +65,9 @@ for n = 1:numel(sessions)
         session_name = strcat(filename, '_baseline+cntrlinjx+ketamine');
         %baselineSession = dir(strcat(sessions{n},filesep,filename,'_baseline*.mat'));
         unitySessions = {strcat(filename,'_baseline1'), strcat(filename,'_controlinjx1'), strcat(filename,'_ketamine1')};
+        %Stitch file tother 
         stitchSynchedNPdata(sessions{n}, session_name, unitySessions); %unitySessions is a cell array of session names; can be a cell array of one name
+        
         fprintf(strcat('\nStitched together:', session_name,'\n'));
         trackLength = 400;
         plotWidth = 160;

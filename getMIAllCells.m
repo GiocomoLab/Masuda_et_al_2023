@@ -76,7 +76,7 @@ for i = 1:nCells
 %     posx_sub = posx(trial <= 140); % create new posx within 140 trials
 
     % calculate firing rate
-    fr = calculateSmoothFRbyTime(post, spike_t, ds_factor, smoothSigma); 
+    fr = calcSmoothedFR_Time(post, spike_t, ds_factor, smoothSigma); 
     all_fr(i, :) = fr;
     max_fr = max(fr);
     

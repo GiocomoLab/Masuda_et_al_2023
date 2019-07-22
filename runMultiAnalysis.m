@@ -3,7 +3,8 @@ for n = 1:numel(sessions)
     try
         matPath = fullfile(sessions(n).folder, sessions(n).name);
         trackLength = 400;
-        [all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix, all_corrblock, avg_all_corrblock] = calculateSmoothedFiringRateAllCells(matPath, trackLength);
+        [all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix, all_corrblock, avg_all_corrblock]...
+            = calcFRmapCorrMatrixAllCells(matPath, trackLength);
         
         figure(1);
         plot(mean(avg_all_fr,2));

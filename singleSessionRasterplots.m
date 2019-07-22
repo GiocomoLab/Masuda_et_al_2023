@@ -54,6 +54,9 @@ function singleSessionRasterplots(data_dir,session_name, trackLength, plotWidth,
     for k = 1:numel(cells_to_plot)
         spike_depth(k) = median(spikeDepths(sp.clu==cells_to_plot(k)));
     end
+    
+    % Calculate 
+    % TODO
 
     % sort cells_to_plot by spike_depth (descending)
     [spike_depth,sort_idx] = sort(spike_depth,'descend');
