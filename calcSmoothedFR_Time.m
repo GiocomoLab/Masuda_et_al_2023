@@ -4,7 +4,7 @@ function firing_rate = calcSmoothedFR_Time(post, spike_t, ds_factor, smoothSigma
 % INPUTS
 %   post (n x 1): sampling times. E.g., [0; 0.02; 0.04 ...]
 %   spike_t (m x 1): the l spike times for a cell. E.g., [1.13; 1.16; 1.18]
-%   ds_factor (scalar): indicates how much to downsample post. E.g., 10.
+%   ds_factor (scalar): indicates how much to downsample post. E.g., 20.
 %   smoothSigma (scalar): indicate degree of smoothing. E.g., 2.
 %
 % OUTPUTS
@@ -15,13 +15,14 @@ function firing_rate = calcSmoothedFR_Time(post, spike_t, ds_factor, smoothSigma
 % Last edited by John Wen 190712
 
 %% Downsample post
-post_ds = downsample(post, ds_factor);
+post_ds = downsample(post, ds_factor); % downsample to count spikes in timebin
+timebin = diff(post_ds(1:2)); 
 
-% append inf to catch any spike times that fall outside range after downsampling
-post_ds = [post_ds; inf]; 
+% append timebin to catch any spike times that fall outside range after downsampling
+post_ds = [post_ds; max(post_ds) + timebin]; 
 
 %% Bin spike times into post and calculate smoothed firing rate
-spikes_binned = histcounts(spike_t, post_ds);
+spikes_binned = histcounts(spike_t, post_ds)/timebin; % divide by time to get fr
 
 % gaussian filter for smoothing
 smoothWindow = floor(smoothSigma*5/2)*2+1;
