@@ -1,6 +1,14 @@
 %% Load data, get spikes from good cells
 
-load('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/F3/F3_190620_johncontrasttrack_train1_g0/F3_190620_johncontrasttrack_train1_incl_earlyend.mat');
+addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/MalcolmFxn/'));
+addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
+addpath(genpath('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/UniversalParams'));
+addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/MalcolmFxn/functions'));
+addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/MalcolmFxn/spikes'));
+
+load('/Users/KeiMasuda/Dropbox/3_GiocomoLab/CodeGiocomoLab/githubRepos/JohnKeiNPAnalysis/logisticRegression/G4_190620_keicontrasttrack_baseline+cntrlinjx+ketamine.mat');
+load('/Users/KeiMasuda/Dropbox/3_GiocomoLab/CodeGiocomoLab/githubRepos/JohnKeiNPAnalysis/logisticRegression/HCN1_190619_keicontrasttrack_baseline+cntrlinjx+ketamine.mat');
+load('/Users/KeiMasuda/Dropbox/3_GiocomoLab/CodeGiocomoLab/githubRepos/JohnKeiNPAnalysis/logisticRegression/G3_190708_keicontrasttrack_baseline+cntrlinjx+ketamine.mat');
 cells_to_plot = sp.cids(sp.cgs==2); 
 nCells = size(cells_to_plot, 2);
 
@@ -17,111 +25,112 @@ end
 % sort cells_to_plot by spike_depth (descending)
 [spike_depth,sort_idx] = sort(spike_depth,'descend');
 cells_to_plot = cells_to_plot(sort_idx);
+%%
+% 
+% % get spike times and index into post for cell k 
+% spike_t = sp.st(sp.clu==cells_to_plot(k));
+% 
+% [~,~,spike_idx] = histcounts(spike_t,post);
+% [~,~,spikeTrial_idx] = histcounts(spike_t,trial); % NOT SURE IF WE STILL NEED THIS
+% 
+% all_fr = [];
+% ds_factor = 1;
+% smoothSigma = 10;
+% 
+% % for cell k, iteratively calculate the firing rate for each trial
+% for i = 1:max(trial)
+%     fr = calcSmoothedFR_Time(post, spike_t, ds_factor, smoothSigma); 
+%     itrial_kfr = calcSmoothedFR_SpatialBin(spike_idx(i==trial(spike_idx)), posx, p, trackEnd);
+%     singleCellallTrialsFR(i,:) = itrial_kfr;
+% %         figure(1)
+% %         plot(itrial_kfr); %plot FR for single trial in single cell
+% %         figure(2) % plot rasterplot for single trial in single cell
+% %         plot(posx(spike_idx(i==trial(spike_idx))),trial(spike_idx(i==trial(spike_idx))),'k.');      
+% end
+
+
 
 %% Calculating firing rate
 
 % calculate firing rate by time
 end_recording = max(post);
-pre_earlyend = [-60:0.02:end_recording+60]'; 
 all_fr = [];
-ds_factor = 20;
+ds_factor = 50;
 smoothSigma = 10;
-
+trial_ds = downsample(trial, ds_factor); 
 for i = 1:nCells
    
     % get spike times for cell i
     spike_t = sp.st(sp.clu==cells_to_plot(i));
     
     % calculate firing rate
-    fr = calcSmoothedFR_Time(pre_earlyend, spike_t, ds_factor, smoothSigma); 
+    fr = calcSmoothedFR_Time(post, spike_t, ds_factor, smoothSigma);
+%     fr = calcSmoothedFR_SpatialBin(idx, posx, p, TrackEnd);
     all_fr(i, :) = fr;
         
 end
 
 all_fr = all_fr';
 
-time_pre_VR = 60; % assumes pre and post-VR times are equivalent
+figure(1);
+plot(mean(all_fr,2));
 
-pre_VR_frames = time_pre_VR/(0.02*ds_factor);
-
-VR_fr = all_fr(pre_VR_frames:size(all_fr, 1)-pre_VR_frames, :); % firing rates from times mouse was shown VR
-pre_fr = all_fr(1:pre_VR_frames, :);
+% close all;
+% clear g;
+% h = figure('Position',[100 100 1800 600]);
+% g(1,1) = gramm('x',trial,'y',mean(all_fr,2));
+% g(1,1).geom_line;
+% g(1,1).set_names('x','Lick Position in VR','y','trial number');
+% g.draw
 
 %% PCA 
 
-nComponents = 3;
 
-[eigvecs_all, transformed_all, eigvals_all, ~, ~, mu_all] = pca(all_fr);
-[eigvecs_vr, transformed_vr, eigvals_vr, ~, ~, mu_vr] = pca(VR_fr);
-[eigvecs_pre, transformed_pre, eigvals_pre, ~, ~, mu_pre] = pca(pre_fr);
 
-% Scree plot to visually determine how many principal components are
+%[eigvecs_all, transformed_all, eigvals_all, ~, ~, mu_all] = pca(all_fr);
+
+[coeff, score, latent, tsquared, explained] = pca(all_fr);
+figure(1);
+plot(explained(1:10));
+title('Variance Explained')
+% Screen plot to visually determine how many principal components are
 % needed to capture variance in the data
+for i = 1:8
+   sum(explained(1:i)) 
+end
 
-figure();
-plot(eigvals_all);
-title('Eigenvalues on all data')
-
-figure();
-plot(eigvals_vr);
-title('Eigenvalues on VR data')
-
-figure()
-plot(eigvals_pre);
-title('Eigenvalues on pre-VR data')
+%%
 
 % use the elbow in the plot to determinee how many principal components are
 % needed. 
 
-
+nComponents = 3;
 % Project onto the first three PCA components and plot as an animated
 % line
 
-firstThreeComponentsAll = eigvecs_all(:, [1:3]);
-firstThreeComponentsVR = eigvecs_vr(:, [1:3]);
-firstThreeComponentsPre = eigvecs_pre(:, [1:3]);
+firstThreeComponentsAll = coeff(:, [1:3]);
 
 projectedDataAll = all_fr * firstThreeComponentsAll;
-projectedDataVR = all_fr * firstThreeComponentsVR;
-projectedDataPre = all_fr * firstThreeComponentsPre;
 
 x_all=projectedDataAll(:,1);
 y_all=projectedDataAll(:,2);
 z_all=projectedDataAll(:,3);
+%%
+close all;
+figure(2); 
+plot3(x_all(trial_ds<51),y_all(trial_ds<51),z_all(trial_ds<51),'b.'); hold on;
+plot3(x_all(trial_ds>50 & trial_ds<101),y_all(trial_ds>50 & trial_ds<101),z_all(trial_ds>50 & trial_ds<101),'k.');
+plot3(x_all(trial_ds>100 & trial_ds<151),y_all(trial_ds>100 & trial_ds<151),z_all(trial_ds>100& trial_ds<151),'r.');
+plot3(x_all(trial_ds>150),y_all(trial_ds>150),z_all(trial_ds>150),'g.'); hold on;
+legend('Baseline','ControlInjx','Ketamine:1-50','Ketamine:51-200');
 
-x_vr=projectedDataVR(:,1);
-y_vr=projectedDataVR(:,2);
-z_vr=projectedDataVR(:,3);
 
-x_pre=projectedDataPre(:,1);
-y_pre=projectedDataPre(:,2);
-z_pre=projectedDataPre(:,3);
-
-% Code for plotting animated line
-animatedPCAearly = animatedline('Color', 'red');
-animatedPCAtrials = animatedline('Color', 'blue');
-animatedPCAend = animatedline('Color', 'magenta');
-
-axis([min(x_all) max(x_all) min(y_all) max(y_all) min(z_all) max(z_all)]);
-view(3);
-hold on;
-title('Activity Along Top 3 Principal Components Before, During, and After VR')
-
-for i = 1:pre_VR_frames
-    addpoints(animatedPCAearly, x_all(i), y_all(i), z_all(i));
-    drawnow
-end
-
-for i = pre_VR_frames+pre_VR_frames+1:length(x)-pre_VR_frames-pre_VR_frames
-    addpoints(animatedPCAtrials, x_all(i), y_all(i), z_all(i));
-    drawnow
-end
-
-for i = length(x)-pre_VR_frames-pre_VR_frames:length(x)
-    addpoints(animatedPCAend, x_all(i), y_all(i), z_all(i));
-    drawnow
-end
-
+figure(3); 
+plot(x_all(trial_ds<51),y_all(trial_ds<51),'color','b'); hold on;
+plot(x_all(trial_ds>50 & trial_ds<101),y_all(trial_ds>50 & trial_ds<101),'color','k');
+plot(x_all(trial_ds>100 & trial_ds<151),y_all(trial_ds>100 & trial_ds<151),'color','r');
+plot(x_all(trial_ds>150),y_all(trial_ds>150),'color','g'); hold on;
+legend('Baseline','ControlInjx','Ketamine:1-50','Ketamine:51-200');
 %% Variance explained by PCA on pre-, early, mid, late, and post-VR
 % X*v*v' 
 

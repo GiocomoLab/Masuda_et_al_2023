@@ -43,7 +43,7 @@ function singleSessionRasterplots(data_dir,session_name, trackLength, plotWidth,
     if exist(image_save_dir,'dir')~=7
         mkdir(image_save_dir);
     end
-    %
+    
     % compute some useful information (like spike depths)
     [spikeAmps, spikeDepths, templateYpos, tempAmps, tempsUnW, tempDur, tempPeakWF] = ...
         templatePositionsAmplitudes(sp.temps, sp.winv, sp.ycoords, sp.spikeTemplates, sp.tempScalingAmps);

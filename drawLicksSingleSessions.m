@@ -49,8 +49,8 @@ g(1,3).set_title('Binned Licks by Trial');
 g(1,3).set_names('x','Trial Number','y','Number of Licks per 10 Trials');
 
 g(1,4) = gramm('x',1:max(trial),'y',lickAccuracyByTrial);
-g(1,4).geom_line();
-g(1,4).set_title('Lick Accuracy');
+g(1,4).stat_smooth();
+g(1,4).set_title('Lick Accuracy - Smoothed');
 g(1,4).set_names('x','Trial Number','y','Lick Accuracy (% within 50cm of target)');
 g.draw();
 
