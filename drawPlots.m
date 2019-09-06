@@ -1,24 +1,7 @@
 % sessions = dir('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/fr_corr_matrices/*.mat');
 sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat'); 
 
-filter = 'mec';
-
-if strcmp(filter, 'mec')
-    remove = {'AA','B1','B3','E1','E2','F3','propofol','MK801','190809'}; %check for this in session name and remove
-elseif strcmp(filter, 'WT')
-    % Remove KO + strange sessions
-    remove = {'AA','B1','B3','E1','E2','F3','propofol','MK801','190809','HCNd2','HCNe1','HCN1'};
-elseif strcmp(filter, 'KO')
-    % Remove WT + strange sessions
-    remove = {'AA','B1','B3','E1','E2','F3','propofol','MK801','190809','G1','G2','G3','G4','G5','HCNd1','npI1'}; 
-else
-    fprintf('Bad filter key. Choose: mec, WT, KO');
-end
-
-for z= 1:numel(remove)
-    idx = ~cellfun('isempty',strfind({sessions.name},remove{z}));
-    sessions(idx) = [];
-end
+sessions = filterSessions(sessions, 'mec');
 
 
 %%
@@ -29,17 +12,18 @@ for n = 1:numel(sessions)
         animalName = extractBefore(session_name,'_');
         sessionDate = extractBefore(extractAfter(session_name,'_'),'_');
         trackLength = 400;
-        load(fullfile(matPath), 'all_fr', 'avg_all_fr', 'all_corrmatrix', ...
-            'avg_all_corrmatrix', 'all_waveforms',...
-            'cells_to_plot','spike_depth','all_correlationScore','trial','all_cellCorrScore'...
-            ,'trials_corrTemplate','avg_all_cellCorrScore');
+        load(fullfile(matPath), 'all_fr', 'avg_all_fr', 'all_corrmatrix', 'avg_all_corrmatrix', ...
+             'all_waveforms', 'cells_to_plot','spike_depth','all_drugEffectScores',...
+            'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr');
         
-        imgDir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/img';
+%         imgDir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/img';
+        imgDir = '/Users/KeiMasuda/Desktop/fkm_analysis/img';
         nCells = numel(cells_to_plot);
+
         
         %% Plot Waveforms for Every Cell
         close all
-        figure(5);
+        figure(1);
         set(gcf,'Position',[100 100 4000 1000]); 
         rows = ceil(sqrt(nCells));
         for i = 1:nCells
@@ -52,15 +36,10 @@ for n = 1:numel(sessions)
         saveName = fullfile(imgDir, strcat(sessions(n).name,'_waveforms.jpg'));
         saveas(gcf,saveName, 'jpg');
         
-        
-%         doPCA(matPath);
-%         fprintf(strcat(num2str(n),':',num2str(numel(sessions)),'\n'));
-        
-    
 
         %% PLOT FR for each cell
         close all;
-        figure(6);
+        figure(2);
         set(gcf,'Position',[100 100 1300 1000]); 
         rows = ceil(sqrt(nCells));
         %colormap('default');
@@ -80,7 +59,7 @@ for n = 1:numel(sessions)
 
         %% PLOT AVG FR FOR SESSION
         close all;
-        figure(7); clf;
+        figure(3); clf;
         set(gcf,'Position',[100 100 1300 1000]); 
         
         clear g;
@@ -102,7 +81,7 @@ for n = 1:numel(sessions)
         saveas(gcf,saveName, 'jpg');
         %% PLOT CORRLEATION PLOT FOR SESSION
 
-        figure(8);
+        figure(4);
         hold on;
         p1 = plot((trials_corrTemplate:max(trial)),avg_all_cellCorrScore, 'b', 'LineWidth',0.05);
         p1.Color(4) = 0.15;
@@ -126,9 +105,9 @@ for n = 1:numel(sessions)
     
 
         %% Plot Distribution of Ketamine Correlation Scores
-        figure(9);
+        figure(5);
         hold on;
-        histfit(all_correlationScore(:,1),50, 'kernel')
+        histfit(all_drugEffectScores(:,2),50, 'kernel')
         set(gca,'TickDir','out');
         set(gca,'ticklength',[0.005 0.025]);
         set(gca,'layer','bottom');
@@ -141,12 +120,12 @@ for n = 1:numel(sessions)
         xlabel('Pre vs Post Ketamine Correlation Effect Score')
         ylabel('Number of Cells')
 
-        saveName = fullfile(imgDir, strcat(sessions(n).name,'_cellCorrScore.jpg'));
+        saveName = fullfile(imgDir, strcat(sessions(n).name,'_ketCorrEffectScore.jpg'));
         saveas(gcf,saveName, 'jpg');
         %% PLOT SCATTER of Corr Scorr vs Cell Depth
-        figure(10);
+        figure(6);
         hold on;
-        scatter(all_correlationScore(:,2),all_correlationScore(:,1), 150,'filled','r');
+        scatter(all_drugEffectScores(:,3),all_drugEffectScores(:,2), 150,'filled','r');
         set(gca,'TickDir','out');
         set(gca,'ticklength',[0.005 0.025]);
         set(gca,'layer','bottom');
@@ -158,11 +137,13 @@ for n = 1:numel(sessions)
         title('Ketamine Correlation Effect Score vs Cell Depth')
         xlabel('Distance from Tip of Probe')
         ylabel('Pre vs Post Ketamine Correlation Effect Score')
-
+        
+        saveName = fullfile(imgDir, strcat(sessions(n).name,'_ketCorrEffectVScellDepth.jpg'));
+        saveas(gcf,saveName, 'jpg');
         %% PLOT Scatter of Ketamine Corr Score vs FR
-        figure(12);
+        figure(7);
         hold on;
-        scatter(avg_cell_fr,all_correlationScore(:,1), 150,'filled','r');
+        scatter(avg_cell_fr,all_drugEffectScores(:,2), 150,'filled','r');
         set(gca,'TickDir','out');
         set(gca,'ticklength',[0.005 0.025]);
         set(gca,'layer','bottom');
@@ -174,7 +155,63 @@ for n = 1:numel(sessions)
         title('Ketamine Correlation Effect Score vs Firing Rate')
         xlabel('FR of Cell (Hz)')
         ylabel('Pre vs Post Ketamine Correlation Effect Score')
+        
+        saveName = fullfile(imgDir, strcat(sessions(n).name,'_ketCorrEffectVScellFR.jpg'));
+        saveas(gcf,saveName, 'jpg');
+        
+        %% PLOT SCATTER of FR score vs Cell Depth
+        figure(8);
+        hold on;
+        scatter(all_drugEffectScores(:,3),all_drugEffectScores(:,1), 150,'filled','r');
+        set(gca,'TickDir','out');
+        set(gca,'ticklength',[0.005 0.025]);
+        set(gca,'layer','bottom');
+        box off;
+        axis square;
+        set(gca,'FontSize',30);
+        set(gca,'FontName','Helvetica');
+        set(gcf,'Position',[100 100 1000 1000])
+        title('Ketamine FR Effect Score vs Cell Depth')
+        xlabel('Distance from Tip of Probe')
+        ylabel('Ketamine FR Effect Score(postDrugFR-preDrugFR)')
+        
+        saveName = fullfile(imgDir, strcat(sessions(n).name,'_ketFReffectVScellDepth.jpg'));
+        saveas(gcf,saveName, 'jpg');
+        
+        %% PLOT Scatter of Ketamine Corr Score vs ket effect on FR score
+        figure(9);
+        hold on;
+        scatter(all_drugEffectScores(:,1),all_drugEffectScores(:,2), 150,'filled','r');
+        set(gca,'TickDir','out');
+        set(gca,'ticklength',[0.005 0.025]);
+        set(gca,'layer','bottom');
+        box off;
+        axis square;
+        set(gca,'FontSize',30);
+        set(gca,'FontName','Helvetica');
+        set(gcf,'Position',[100 100 1000 1000])
+        title('Ketamine Correlation Effect Score vs Firing Rate Score')
+        xlabel('FR Score Cell (Hz)')
+        ylabel('Pre vs Post Ketamine Correlation Effect Score')
+        
+        %% PLOT Scatter of Ketamine Corr Score vs ket effect on FR score
+        figure(10);
+        hold on;
+        histfit(all_drugEffectScores(:,1),50, 'kernel')
+        set(gca,'TickDir','out');
+        set(gca,'ticklength',[0.005 0.025]);
+        set(gca,'layer','bottom');
+        box off;
+        axis square;
+        set(gca,'FontSize',30);
+        set(gca,'FontName','Helvetica');
+        set(gcf,'Position',[100 100 1000 1000])
+        title('Distribution of Ketamine FR Effect Scores')
+        xlabel('Pre vs Post Ketamine FR Effect Score')
+        ylabel('Number of Cells')
 
+        saveName = fullfile(imgDir, strcat(sessions(n).name,'_ketFREffectScore.jpg'));
+        saveas(gcf,saveName, 'jpg');
     catch e
         warning(e.message);
         warning('FAILED: %s\n',sessions(n).name);

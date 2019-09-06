@@ -13,12 +13,8 @@ save_figs = true;
 
 sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/*.mat');
 mtrx_sesh = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices/*.mat');
-%% Remove strange sessions
-remove = {'AA','B1','B3','E1','E2','F3'}; %check for this in session name and remove
-for z= 1:numel(remove)
-    idx = ~cellfun('isempty',strfind({sessions.name},remove{z}));
-    sessions(idx) = [];
-end
+%% Get subset of desired sessions
+sessions = filterSessions(sessions, 'WT');
 
 %%
 totalCell = 1;
@@ -45,32 +41,14 @@ for n = 1:numel(sessions)
         % load data
         fprintf('session: %s\n',session_name);
         load(matPath,'lickt','lickx','post','posx','sp','trial'); 
-
-
-        cells_to_plot = sp.cids(sp.cgs==2); % all good cells
-
-%%
+        
         % make image dir if it doesn't exist
         image_save_dir = strcat('/Users/KeiMasuda/Desktop/fkm_analysis/img/pretty_rasters/');
         if exist(image_save_dir,'dir')~=7
             mkdir(image_save_dir);
         end
 
-        % compute some useful information (like spike depths)
-        [spikeAmps, spikeDepths, templateYpos, tempAmps, tempsUnW, tempDur, tempPeakWF] = ...
-            templatePositionsAmplitudes(sp.temps, sp.winv, sp.ycoords, sp.spikeTemplates, sp.tempScalingAmps);
-
-
-        % get spike depths
-        spike_depth = nan(numel(cells_to_plot),1);
-        for k = 1:numel(cells_to_plot)
-            spike_depth(k) = median(spikeDepths(sp.clu==cells_to_plot(k)));
-        end
-
-
-        % sort cells_to_plot by spike_depth (descending)
-        [spike_depth,sort_idx] = sort(spike_depth,'descend');
-        cells_to_plot = cells_to_plot(sort_idx);
+        [cells_to_plot, spike_depth,waveforms] = spPreProcess(sp);
         
         %% Calculate speed and filter out stationary periods (speed<2cm)
         speed = calcSpeed(posx, p);

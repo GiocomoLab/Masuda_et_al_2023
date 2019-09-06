@@ -6,29 +6,14 @@ addpath(genpath('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/Unive
 addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/MalcolmFxn/functions'));
 addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/MalcolmFxn/spikes'));
 %% 
-matPath = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190620_keicontrasttrack_ketamine1_g0/G4_190620_keicontrasttrack_baseline+cntrlinjx+ketamine';
+% matPath = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/G4/G4_190620_keicontrasttrack_ketamine1_g0/G4_190620_keicontrasttrack_baseline+cntrlinjx+ketamine';
 % load('/Users/KeiMasuda/Dropbox/3_GiocomoLab/CodeGiocomoLab/githubRepos/JohnKeiNPAnalysis/logisticRegression/HCN1_190619_keicontrasttrack_baseline+cntrlinjx+ketamine.mat');
 % load('/Users/KeiMasuda/Dropbox/3_GiocomoLab/CodeGiocomoLab/githubRepos/JohnKeiNPAnalysis/logisticRegression/G3_190708_keicontrasttrack_baseline+cntrlinjx+ketamine.mat');
 
 load(matPath);
 %%
-cells_to_plot = sp.cids(sp.cgs==2); 
-nCells = size(cells_to_plot, 2);
-
-% compute some useful information (like spike depths)
-[spikeAmps, spikeDepths, templateYpos, tempAmps, tempsUnW, tempDur, tempPeakWF] = ...
-    templatePositionsAmplitudes(sp.temps, sp.winv, sp.ycoords, sp.spikeTemplates, sp.tempScalingAmps);
-
-% get spike depths
-spike_depth = nan(numel(cells_to_plot),1);
-for k = 1:numel(cells_to_plot)
-    spike_depth(k) = median(spikeDepths(sp.clu==cells_to_plot(k)));
-end
-
-% sort cells_to_plot by spike_depth (descending)
-[spike_depth,sort_idx] = sort(spike_depth,'descend');
-cells_to_plot = cells_to_plot(sort_idx);
-
+[cells_to_plot, ~,~] = spPreProcess(sp);
+nCells =  numel(cells_to_plot);
 %% Calculating firing rate
 
 % calculate firing rate by time
@@ -70,7 +55,7 @@ ylabel('% Variance Explained');
 % line
 firstThreeComponentsAll = coeff(:, [1:3]);
 
-projectedDataAll = all_fr * firstThreeComponentsAll;
+projectedDataAll = zFR * firstThreeComponentsAll;
 
 x_all=projectedDataAll(:,1);
 y_all=projectedDataAll(:,2);
@@ -108,16 +93,23 @@ hold off;
 % hold off;
 
 subplot(2, 2, 4);
-plot(x_all(trial_ds<51),y_all(trial_ds<51),'b-'); hold on;
-plot(x_all(trial_ds>50 & trial_ds<101),y_all(trial_ds>50 & trial_ds<101),'k-');
-plot(x_all(trial_ds>100 & trial_ds<151),y_all(trial_ds>100 & trial_ds<151),'r-');
-plot(x_all(trial_ds>150),y_all(trial_ds>150),'g-'); 
+plot(x_all(trial_ds<51),y_all(trial_ds<51),'b.'); hold on;
+plot(x_all(trial_ds>50 & trial_ds<101),y_all(trial_ds>50 & trial_ds<101),'k.');
+plot(x_all(trial_ds>100 & trial_ds<151),y_all(trial_ds>100 & trial_ds<151),'r.');
+plot(x_all(trial_ds>150),y_all(trial_ds>150),'g.'); 
 lgd = legend('Baseline','ControlInjx','Ketamine:1-50','Ketamine:51-200');
 lgd.FontSize = 18;
+
 ch = findobj(get(lgd,'children'), 'type', 'line'); %// children of legend of type line
 set(ch, 'Markersize', 12); %// set value as desired
 xlabel('PC1'); 
 ylabel('PC2');
+axis('square');
+box('off');
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.005 0.025]);
+set(gca,'layer','bottom');
+
 hold off;
 %%
 saveName = fullfile(imgDir, strcat(filename,'_PCA.jpg'));
