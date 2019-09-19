@@ -9,8 +9,8 @@ addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (comp
 sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat'); 
 imgDir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/img';
 % Remove strange sessions
-filter = 'WT';
-sessions = filterSessions(sessions, filter)
+filter = 'KO';
+sessions = filterSessions(sessions, filter);
 
 %%
 trialNum = 300;
@@ -73,7 +73,7 @@ end
 %% Plot by Mouse
 figure(1);clf;hold on;
 if strcmp(filter, 'WT')
-    mice={'G1','G2','G3','G4','G5','HCNd1'};
+    mice={'G1','G2','G3','G4','G5','HCNd1','HCNe2'};
 elseif strcmp(filter, 'KO')
     mice={'HCN1','HCNd2','HCNe1'};
 else
@@ -86,7 +86,7 @@ for z= 1:numel(mice)
     Y = mean(fr_mean_allCells(idx,1:300));
     interpY = fillmissing(Y,'spline');
     smoothY= sgolayfilt(interpY, 3, 25);
-    mouseLine = plot(linspace(-99,200,300),smoothY,'DisplayName',mice{z},'LineWidth',0.01);
+    mouseLine = plot(linspace(-99,200,300),smoothY,'DisplayName',mice{z},'LineWidth',1);
 end
 
 Y = mean(fr_mean_allCells(:,1:300));

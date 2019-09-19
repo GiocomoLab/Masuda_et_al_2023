@@ -1,4 +1,7 @@
-sessions = dir('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/*.mat');
+% sessions = dir('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/*.mat');
+sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/*.mat');
+filter = 'mec';     
+sessions = filterSessions(sessions, filter);
 %%
 for n = 1:numel(sessions)
     try
@@ -7,7 +10,8 @@ for n = 1:numel(sessions)
         
         [post,posx,sp, all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix,...
             all_waveforms, cells_to_plot,spike_depth,...
-            all_drugEffectScores, trial,all_cellCorrScore,trials_corrTemplate, avg_all_cellCorrScore, avg_cell_fr]...
+            all_drugEffectScores, trial,all_cellCorrScore,trials_corrTemplate, avg_all_cellCorrScore, avg_cell_fr,...
+            trial_ds, all_frTime]...
             = calcFRmapCorrMatrixAllCells(matPath, trackLength);
         
         
@@ -21,7 +25,8 @@ for n = 1:numel(sessions)
         saveName = fullfile(saveDir, strcat(sessionName,'_fr+corr.mat'));
         save(saveName, 'all_fr', 'avg_all_fr', 'all_corrmatrix', 'avg_all_corrmatrix', ...
              'all_waveforms', 'cells_to_plot','spike_depth','all_drugEffectScores',...
-            'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr');     
+            'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr',...
+            'trial_ds', 'all_frTime');     
 
         
         fprintf(strcat('Analyzed:', sessions(n).name,'\n'));

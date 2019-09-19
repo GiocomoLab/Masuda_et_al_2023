@@ -1,31 +1,30 @@
-function rho = trialByTrialStability(testTrials, trial, spike_idx, posx, p, trackEnd)
+function rho = trialByTrialStability(frMap, testTrials, numAvgTrials)
 % calculate stability comparing every two trials and then averaging rho
 % Inputs
-% -testTrials: range of trials e.g. 1:50
+% - frMap - trial x spatialBin firing rate map
+% - testTrials: range of trials e.g. 1:50
 %    * if range is odd, then last trial is correlated to previous trial
-% -trial: vector with trial info by sample
-% -spike_idx: spikes indexed into unity samples
-% -posx: vector of unity positions
-% -p: universal parameters
-% -trackEnd: length of VR track
+% - numAvgTrials - test stability between first and second half of every N contiguous trials must be even e.g. 10
 % Outputs
 %- rho: stability value
     
-    numAvgTrials = 5;
-    allTestRho = nan(numel(min(testTrials):numAvgTrials:max(testTrials)),1);
-    for i = min(testTrials):numAvgTrials*2:max(testTrials)
-        fr1 = calcSmoothedFR_SpatialBin(spike_idx(trial(spike_idx)>=i & trial(spike_idx)<(i+numAvgTrials)), posx(trial>=i & trial<(i+numAvgTrials)),posx, p, trackEnd);
-        j = i+numAvgTrials;
-        if j > max(testTrials)
-            fr2 = calcSmoothedFR_SpatialBin(spike_idx(trial(spike_idx)>=j & trial(spike_idx)<(j-numAvgTrials)), posx(trial>=j & trial<(j-numAvgTrials)),posx, p, trackEnd);
-        else
-            fr2 = calcSmoothedFR_SpatialBin(spike_idx(trial(spike_idx)==i+1), posx(trial==i+1),posx, p, trackEnd);
+    if ~mod(numAvgTrials, 2)
+        allTestRho = nan(numel(min(testTrials):numAvgTrials:max(testTrials)),1);
+        for i = min(testTrials):numAvgTrials:max(testTrials)
+            numHalf = numAvgTrials/2;
+            fr1 = frMap(i:i+(numHalf-1),:); %get first half 
+            fr1 = reshape(fr1.',1,[]); % flatten so trials are concatenated
+            
+            fr2 = frMap(i+numHalf:i+(2*numHalf-1),:);
+            fr2 = reshape(fr2.',1,[]); % flatten so trials are concatenated
+            
+            testRho = corr(fr1',fr2');
+            index = ((i-min(testTrials))/numAvgTrials)+1;
+            allTestRho(index) = testRho;
         end
-
-        testRho = corr(fr1',fr2');
-        allTestRho(floor(i/2)+1) = testRho;
+        rho = nanmean(allTestRho);
+    else
+       fprintf('\nnumAvgTrials must be even');
     end
-    rho = mean(allTestRho);
-    
     
 end

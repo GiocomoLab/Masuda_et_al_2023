@@ -1,6 +1,7 @@
 function [post,posx,sp, all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix,...
     all_waveforms, cells_to_plot,spike_depth,...
-    all_drugEffectScores, trial,all_cellCorrScore,trials_corrTemplate, avg_all_cellCorrScore, avg_cell_fr]...
+    all_drugEffectScores, trial,all_cellCorrScore,trials_corrTemplate, avg_all_cellCorrScore, avg_cell_fr,...
+    trial_ds, all_frTime]...
     = calcFRmapCorrMatrixAllCells(matPath, trackLength, paramsPath)
 
 % John Wen 7/1/19
@@ -63,9 +64,17 @@ trials_corrTemplate = 50;
 all_corrmatrix = nan(nCells, max(trial), max(trial)); % preallocate matrix of cells' correlations between trials
 % all_corrblock = nan(nCells, floor(max(trial)/trials_per_block), floor(max(trial)/trials_per_block)); % preallocate matrix of cells' correlations every 50 trials
 all_waveforms= nan(nCells, size(waveforms,2)); 
-all_cellCorrScore = nan(nCells, numel(trials_corrTemplate:max(trial)));
+all_cellCorrScore = nan(nCells, numel(1:max(trial)));
 all_drugEffectScores = nan(nCells, 3); %FR score, drug correlation effect score, spikeDepth
 fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
+%%
+
+% calculate firing rate by time
+all_frTime = [];
+ds_factor = 50;
+smoothSigma = 10;
+trial_ds = downsample(trial, ds_factor); 
+
 
 %% Calculate firing rates
 % specify inputs into the firing rates calculation
@@ -76,6 +85,11 @@ for k = 1:nCells
     % get spike times and index into post for cell k 
     spike_t = sp.st(sp.clu==cells_to_plot(k));
     
+    % calculate firing rate by time
+    fr = calcSmoothedFR_Time(post, spike_t, ds_factor, smoothSigma);
+    all_frTime(k, :) = fr;
+    
+     % Bin spikes into time associated spatial bins
     [~,~,spike_idx] = histcounts(spike_t,post);
     spike_idx(spike_idx==0) = []; %remove spike indexes that don't exist in post (e.g. spikes that happen while the animal is stationary when post was speed filtered)
     
@@ -86,7 +100,7 @@ for k = 1:nCells
         singleCellallTrialsFR(i,:) = itrial_kfr;
     end
     %% 
-    [drugCorrEffectScore, cellCorrScore, corrTemplate] = calculateCorrScore(singleCellallTrialsFR, trials_corrTemplate, trial);    
+    [drugCorrEffectScore, cellCorrScore, corrTemplate] = calculateCorrScore(singleCellallTrialsFR, trials_corrTemplate);    
     all_cellCorrScore(k,:) = cellCorrScore;
     
     drugFREffectScore = calculateFRScore(singleCellallTrialsFR, 100);

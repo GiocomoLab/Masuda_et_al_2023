@@ -8,146 +8,87 @@ addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/M
 % some params
 params = readtable('UniversalParams.xlsx');
 p = params;
-save_figs = true;
+save_figs = false;
 %%
 
-sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/*.mat');
-mtrx_sesh = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices/*.mat');
-%% Get subset of desired sessions
-sessions = filterSessions(sessions, 'WT');
+% sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/*.mat');
+sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat');
+% Get subset of desired sessions
+sessions = filterSessions(sessions, 'KO');
 
 %%
-totalCell = 1;
+totalCell = 0;
+totalSpatialCell = 0;
 allRho = [];
+allSpatialIndx = {};
 for n = 1:numel(sessions)
     try
+        
         matPath = fullfile(sessions(n).folder, sessions(n).name);
         session_name = sessions(n).name(1:end-4);
-        
         animalName = extractBefore(session_name,'_');
         sessionDate = extractBefore(extractAfter(session_name,'_'),'_');
-        
-        fprintf(strcat('\nProcessing:', session_name,'\n'));
         trackLength = 400;
-        trackEnd = trackLength;
-        plotWidth = 160;
-        plotHeight = 500;
-        preDrugTrials = 100;
-        trials_corrTemplate = 50;
+        load(fullfile(matPath), 'all_fr', 'avg_all_fr', 'all_corrmatrix', 'avg_all_corrmatrix', ...
+             'all_waveforms', 'cells_to_plot','spike_depth','all_drugEffectScores',...
+            'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr');
         
-        xbincent = params.TrackStart+params.SpatialBin/2:params.SpatialBin:params.TrackEnd-params.SpatialBin/2;
-
-
-        % load data
-        fprintf('session: %s\n',session_name);
-        load(matPath,'lickt','lickx','post','posx','sp','trial'); 
-        
-        % make image dir if it doesn't exist
-        image_save_dir = strcat('/Users/KeiMasuda/Desktop/fkm_analysis/img/pretty_rasters/');
-        if exist(image_save_dir,'dir')~=7
-            mkdir(image_save_dir);
-        end
-
-        [cells_to_plot, spike_depth,waveforms] = spPreProcess(sp);
-        
-        %% Calculate speed and filter out stationary periods (speed<2cm)
-        speed = calcSpeed(posx, p);
-        [trial,posx,post] = speedFilterData(trial,posx, post, speed);
-        %% Preallocate and store data for all cell's firing rates
-        nCells = size(cells_to_plot, 2);
-        spatialBins = trackLength/params.SpatialBin; 
-        all_fr = nan(nCells, max(trial),spatialBins); % preallocate matrix of cells' firing rates across spatial bins
-
-        all_corrmatrix = nan(nCells, max(trial), max(trial)); % preallocate matrix of cells' correlations between trials
-        % all_corrblock = nan(nCells, floor(max(trial)/trials_per_block), floor(max(trial)/trials_per_block)); % preallocate matrix of cells' correlations every 50 trials
-%         all_waveforms= nan(nCells, size(waveforms,2)); 
-        all_cellCorrScore = nan(nCells, numel(trials_corrTemplate:max(trial)));
-        all_correlationScore = nan(nCells, 2);
+%         imgDir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/img';
+%         imgDir = '/Users/KeiMasuda/Desktop/fkm_analysis/img/ratemaps';
+        imgDir = '/Users/KeiMasuda/Desktop/fkm_analysis/img/rhoGreater01';
+        nCells = numel(cells_to_plot);
+        totalCell = totalCell + nCells;
         fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
         %%
-%         allRho = nan(numel(cells_to_plot),1);
+        close all;
+        spatialIndx = [];
         l=1;
         plotWidth = 160*l;
         plotHeight = 500*l;
         h = figure('Position',[100 100 plotWidth plotHeight]); hold on; % changed from 160 to 320 for repeating, also from 500 to 166 for 50 trials
         for k = 1:numel(cells_to_plot)
             
-            fprintf('cell %d (%d/%d)\n',cells_to_plot(k),k,numel(cells_to_plot));
-    
-            % get spike times and index into post for cell k 
-            spike_t = sp.st(sp.clu==cells_to_plot(k));
-            [~,~,spike_idx] = histcounts(spike_t,post);
-            spike_idx(spike_idx==0) = []; %remove spike indexes that don't exist in post (e.g. spikes that happen while the animal is stationary when post was speed filtered)
-               
-            singleCellallTrialsFR = nan(max(trial),spatialBins);
-            for i = 1:max(trial)
-                itrial_kfr = calcSmoothedFR_SpatialBin(spike_idx(i==trial(spike_idx)), posx(i==trial),posx, p, trackEnd);
-                singleCellallTrialsFR(i,:) = itrial_kfr;
-            end
             
-            clf;
-            imagesc(singleCellallTrialsFR)
-            set(gca,'YDir','normal')
-            colormap(hot(8))
-            title(sprintf('c%d, d=%d',cells_to_plot(k),round(spike_depth(k))));
-             % save fig
-            if save_figs
-                saveas(h,fullfile(image_save_dir,sprintf('%d.png',k)),'png');
-                saveas(h,fullfile(image_save_dir,sprintf('%d.pdf',k)),'pdf');
-            end
-
-            % Calculate Stability of 2nd 3rd of baseline compared
-            % last 3rd of baseline
-%             fr1 = calcSmoothedFR_SpatialBin(spike_idx(trial(spike_idx)<40 & trial(spike_idx)>30), posx(trial<40 & trial>30),posx, p, trackEnd);
-%             fr2 = calcSmoothedFR_SpatialBin(spike_idx(trial(spike_idx)<50 & trial(spike_idx)>40), posx(trial<50 & trial>40),posx, p, trackEnd);
-
-%             fr1 = calcSmoothedFR_SpatialBin(spike_idx(trial(spike_idx)<preDrugTrials/2), posx(trial<preDrugTrials/2),posx, p, trackEnd);
-%             fr2 = calcSmoothedFR_SpatialBin(spike_idx(trial(spike_idx)>preDrugTrials/2), posx(trial>preDrugTrials/2),posx, p, trackEnd);
-%             rho = corr(fr1',fr2');
-            
+            frMap = squeeze(all_fr(k,:,:));
+            % Calculate Stability of 
             testTrials = 1:50;
-            rho = trialByTrialStability(testTrials, trial, spike_idx, posx, p, trackEnd);
+            numAvgTrials = 10; % compare 1:5 with 6:10 for ever 10 testTrials
+            rho = trialByTrialStability(frMap, testTrials, numAvgTrials);
             allRho(size(allRho,2)+1) = rho;
    
-             %count total num of cells
-            totalCell = totalCell + 1;
+            clf; cla;
+            imagesc(frMap)
+            set(gca,'YDir','normal')
+%             
+            title(sprintf('%s-%s,\nc%d, d=%d \n rho=%.3f',animalName,sessionDate,cells_to_plot(k),round(spike_depth(k)),rho));
             
             % plot raster plot
-            if rho > 0.01
-                cla;
-
-
-                if preDrugTrials ~= 0
-                    if rho > 0.5
-                        plot(posx(spike_idx),trial(spike_idx)-preDrugTrials,'r.');
-                    else
-                        plot(posx(spike_idx),trial(spike_idx)-preDrugTrials,'k.');
-                    end
-                    ylim([-preDrugTrials max(trial)+1-preDrugTrials]);
-                else
-                    plot(posx(spike_idx),trial(spike_idx),'k.');
-                    ylim([0 max(trial)+1]);
-                end
-                
-               
-                xlim([params.TrackStart trackLength]);
-                title(sprintf('c%d, d=%d, rho=%.3f\n %s %s',cells_to_plot(k),round(spike_depth(k)), rho,animalName, sessionDate ));
-%                 xticks(''); yticks('');
-                
-                
+            rhoThresh = 0.1;
+            % rho > rhoThresh
+            if true
+                colormap(hot(10))
+                totalSpatialCell = totalSpatialCell + 1;
+                spatialIndx(size(spatialIndx,2)+1) = cells_to_plot(k);
                 % save fig
                 if save_figs
-                    saveas(h,fullfile(image_save_dir,sprintf('%s_%s_%d.png',animalName,sessionDate,k)),'png');
+                    fprintf('cell %d (%d/%d)\n',cells_to_plot(k),k,numel(cells_to_plot));
+                    saveas(h,fullfile(imgDir,sprintf('%s%s%s%s%d%s.png',animalName,'_',sessionDate,'_',k,'_spatial')),'png');
+                end
+            else
+                colormap('default')
+                if save_figs
+                    fprintf('cell %d (%d/%d)\n',cells_to_plot(k),k,numel(cells_to_plot));
+                    saveas(h,fullfile(imgDir,sprintf('%s%s%s%s%d.png',animalName,'_',sessionDate,'_',k)),'png');
                 end
             end
-
-
+            
         end
-        
+        seshIndx = sprintf('%s_%s',animalName,sessionDate);
+        allSpatialIndx.(seshIndx) = spatialIndx;
 
     catch e
         warning(e.message);
         warning('FAILED: %s\n',sessions(n).name);
     end
 end
-fprintf(strcat('\nTotal Number of Cells: ',num2str(totalCell),'\n'));
+fprintf(strcat('\nTotal Number of Cells: ',num2str(totalCell),'\nNumber of Spatial Cells:',num2str(totalSpatialCell),'\n'));
