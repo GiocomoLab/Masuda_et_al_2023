@@ -67,5 +67,5 @@ end
     % write to file
     imwrite(final_image,fullfile(image_save_dir,sprintf('%s_all_rasters_combined.png',session_name)));
 
-fprintf('Done Combining');
+fprintf('Done Combining\n');
 end

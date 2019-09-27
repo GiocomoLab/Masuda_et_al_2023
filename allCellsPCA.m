@@ -1,5 +1,5 @@
 addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/MalcolmFxn/'));
-sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices/*.mat');
+sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat');
 %%
 allCells_fr = [];
 allCells_trialDS = [];

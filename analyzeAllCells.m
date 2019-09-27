@@ -14,7 +14,7 @@ save_figs = false;
 % sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/*.mat');
 sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat');
 % Get subset of desired sessions
-sessions = filterSessions(sessions, 'KO');
+sessions = filterSessions(sessions, 'WT');
 
 %%
 totalCell = 0;
@@ -65,7 +65,7 @@ for n = 1:numel(sessions)
             % plot raster plot
             rhoThresh = 0.1;
             % rho > rhoThresh
-            if true
+            if rho > rhoThresh
                 colormap(hot(10))
                 totalSpatialCell = totalSpatialCell + 1;
                 spatialIndx(size(spatialIndx,2)+1) = cells_to_plot(k);

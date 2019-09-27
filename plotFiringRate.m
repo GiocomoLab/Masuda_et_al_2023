@@ -9,7 +9,7 @@ addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (comp
 sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat'); 
 imgDir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/img';
 % Remove strange sessions
-filter = 'KO';
+filter = 'WT';
 sessions = filterSessions(sessions, filter);
 
 %%

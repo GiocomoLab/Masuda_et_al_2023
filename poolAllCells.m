@@ -1,6 +1,6 @@
 % sessions = dir('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/fr_corr_matrices/*.mat');
 sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat'); 
-filter = 'KO';     
+filter = 'WT';     
 sessions = filterSessions(sessions, filter);
 load(sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/allSpatialIndx%s_01.mat',filter));
 % load(sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/allIndx%s.mat',filter));
@@ -14,11 +14,24 @@ for k=1:numel(fn)
 end
 
 allCellsFR = nan(count,300,200);
-allCellsDES = nan(count,3);
+allCellsDES = nan(count,5); % [drugFRdiff,cntrlFRdiff, drugFREffectScore, drugCorrEffectScore, spike_depth(k)]
 allCellsCorrMatrix = nan(count,300,300);
-allCellsCorrScoreCurve = nan(count,251);
-z = 0;
+allCellsCorrScoreCurve = nan(count,300);
+%%
+sampleRate = 50; %hz
+min = 15;
+secInMin = 60;
+minBeforeInjx = 5;
+timeFRsamples = min * secInMin * sampleRate;
+pre_timeFRsamples = minBeforeInjx * secInMin * sampleRate;
+post_timeFRsamples = timeFRsamples - pre_timeFRsamples;
 
+allCellsTimeFRcircaControlInjx = nan(count,timeFRsamples);
+allCellsTimeFRcircaKetamineInjx = nan(count,timeFRsamples);
+halfhourSampleNum = 30 * secInMin * sampleRate;
+allCellsTimeFR30minAfterKetamineInjx = nan(count,halfhourSampleNum+1);
+z = 0;
+%
 for n = 1:numel(fn)
     try
         matPath = fullfile(sessions(n).folder, sessions(n).name);
@@ -29,18 +42,25 @@ for n = 1:numel(fn)
         trackLength = 400;
         load(fullfile(matPath), 'all_fr', 'avg_all_fr', 'all_corrmatrix', 'avg_all_corrmatrix', ...
              'all_waveforms', 'cells_to_plot','spike_depth','all_drugEffectScores',...
-            'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr');
+            'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr','trial_ds', 'all_frTime');
 
-       spatialIndx = ismember(cells_to_plot,allSpatialIndx.(seshStr));
+        spatialIndx = ismember(cells_to_plot,allSpatialIndx.(seshStr));
        
        if ~isempty(all_fr)
            all_fr = all_fr(spatialIndx,:,:);
+           all_frTime = all_frTime(spatialIndx,:,:);
            nCells = size(all_fr,1);
            
            allCellsFR(z+1:z+nCells,:,:) = all_fr(1:nCells,1:300,1:200);
-           allCellsDES(z+1:z+nCells,:,:) = all_drugEffectScores(1:nCells,1:3);
+           allCellsDES(z+1:z+nCells,:,:) = all_drugEffectScores(1:nCells,1:5);
            allCellsCorrMatrix(z+1:z+nCells,:,:) = all_corrmatrix(1:nCells,1:300,1:300);
-           allCellsCorrScoreCurve(z+1:z+nCells,:,:) = all_cellCorrScore(1:nCells,1:251);
+           allCellsCorrScoreCurve(z+1:z+nCells,:,:) = all_cellCorrScore(1:nCells,1:300);
+           
+           first50indx = find(trial_ds==50, 1,'first');
+           first100indx = find(trial_ds==100, 1,'first');
+           allCellsTimeFRcircaControlInjx(z+1:z+nCells,:) = all_frTime(1:nCells,first50indx-pre_timeFRsamples+1:first50indx+post_timeFRsamples);
+           allCellsTimeFRcircaKetamineInjx(z+1:z+nCells,:) = all_frTime(1:nCells,first100indx-pre_timeFRsamples+1:first100indx+post_timeFRsamples);
+           allCellsTimeFR30minAfterKetamineInjx(z+1:z+nCells,:) = all_frTime(1:nCells,first100indx:first100indx+halfhourSampleNum);
            
            z = z + nCells;
            fprintf('Session: %d; Adding %d for %d/%d cells\n', n,nCells,z,count)
@@ -53,14 +73,58 @@ for n = 1:numel(fn)
     end
 end
 fprintf('done\n')
-%%
-plot(squeeze(nanmean(squeeze(nanmean(allCellsFR,1)),2)))
 
+%% PLOT Histfitket effect on FR score drug vs control
+figure(3);
+clf; hold on;
+
+threshold = 10;
+
+drugFRdiff = allCellsDES(allCellsDES(:,1) < threshold & allCellsDES(:,1) > -threshold,1);
+cntrlFRdiff = allCellsDES(allCellsDES(:,2) < threshold & allCellsDES(:,2) > -threshold,2);
+
+histogram(abs(cntrlFRdiff),50,'FaceAlpha',1);
+histogram(abs(drugFRdiff),50,'FaceAlpha',.2);
+
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.005 0.025]);
+set(gca,'layer','bottom');
+box off;
+axis square;
+set(gca,'FontSize',30);
+set(gca,'FontName','Helvetica');
+set(gcf,'Position',[100 100 1000 1000])
+title(sprintf('FR score for Control vs Ketamine(%s)',filter))
+xlabel('FR Effect Score:Ratio of FR change between Drug & Control')
+ylabel('Number of Cells')
+vline(0,'r')
+
+
+
+%% PLOT Histfitket effect on FR score
+figure(4);
+clf;
+
+threshold = 15;
+ketFRscore = allCellsDES(allCellsDES(:,3) < threshold & allCellsDES(:,3) > -threshold,3);
+histfit(ketFRscore,120)
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.005 0.025]);
+set(gca,'layer','bottom');
+box off;
+axis square;
+set(gca,'FontSize',30);
+set(gca,'FontName','Helvetica');
+set(gcf,'Position',[100 100 1000 1000])
+title(sprintf('Distribution of Ketamine FR Effect Scores(%s)',filter))
+xlabel('FR Effect Score:Ratio of FR change between Drug & Control')
+ylabel('Number of Cells')
+vline(0,'r')
 
 %% Plot Distribution of Ketamine Correlation Scores
 figure(5);
 hold on;
-histfit(allCellsDES((allCellsDES(:,2) < 2),2))
+histfit(allCellsDES((allCellsDES(:,4) < 2),4))
 %         histfit(allCellsDES(:,2),50, 'kernel')
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.005 0.025]);
@@ -75,40 +139,40 @@ xlabel('Pre vs Post Ketamine Correlation Effect Score')
 ylabel('Number of Cells')
 
 
-%% PLOT SCATTER of Corr Scorr vs Cell Depth
-figure(6);
-hold on;
-%         scatter(allCellsDES(:,3),allCellsDES(:,2), 150,'filled','r');
-scatter(allCellsDES(allCellsDES(:,2) < 2,3),allCellsDES(allCellsDES(:,2) < 2,2), 150,'filled','r');
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
-set(gca,'layer','bottom');
-box off;
-axis square;
-set(gca,'FontSize',30);
-set(gca,'FontName','Helvetica');
-set(gcf,'Position',[100 100 1000 1000])
-title('Ketamine Correlation Effect Score vs Cell Depth')
-xlabel('Distance from Tip of Probe')
-ylabel('Pre vs Post Ketamine Correlation Effect Score')
-
-
-    
-%% PLOT SCATTER of FR score vs Cell Depth
-figure(8);
-hold on;
-scatter(allCellsDES(:,3),allCellsDES(:,1), 150,'filled','r');
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
-set(gca,'layer','bottom');
-box off;
-axis square;
-set(gca,'FontSize',30);
-set(gca,'FontName','Helvetica');
-set(gcf,'Position',[100 100 1000 1000])
-title('Ketamine FR Effect Score vs Cell Depth')
-xlabel('Distance from Tip of Probe')
-ylabel('Ketamine FR Effect Score(postDrugFR-preDrugFR)')
+% %% PLOT SCATTER of Corr Scorr vs Cell Depth
+% figure(6);
+% hold on;
+% %         scatter(allCellsDES(:,3),allCellsDES(:,2), 150,'filled','r');
+% scatter(allCellsDES(allCellsDES(:,2) < 2,3),allCellsDES(allCellsDES(:,2) < 2,2), 150,'filled','r');
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.005 0.025]);
+% set(gca,'layer','bottom');
+% box off;
+% axis square;
+% set(gca,'FontSize',30);
+% set(gca,'FontName','Helvetica');
+% set(gcf,'Position',[100 100 1000 1000])
+% title('Ketamine Correlation Effect Score vs Cell Depth')
+% xlabel('Distance from Tip of Probe')
+% ylabel('Pre vs Post Ketamine Correlation Effect Score')
+% 
+% 
+%     
+% %% PLOT SCATTER of FR score vs Cell Depth
+% figure(8);
+% hold on;
+% scatter(allCellsDES(:,3),allCellsDES(:,1), 150,'filled','r');
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.005 0.025]);
+% set(gca,'layer','bottom');
+% box off;
+% axis square;
+% set(gca,'FontSize',30);
+% set(gca,'FontName','Helvetica');
+% set(gcf,'Position',[100 100 1000 1000])
+% title('Ketamine FR Effect Score vs Cell Depth')
+% xlabel('Distance from Tip of Probe')
+% ylabel('Ketamine FR Effect Score(postDrugFR-preDrugFR)')
 
 
 %% PLOT Scatter of Ketamine Corr Score vs ket effect on FR score
@@ -116,7 +180,7 @@ figure(9);
 clf;
 
 %         scatter(all_drugEffectScores(:,1),all_drugEffectScores(:,2), 150,'filled','r');
-scatter(allCellsDES(allCellsDES(:,2) < 2,1),allCellsDES(allCellsDES(:,2) < 2,2), 150,'filled','r');
+scatter(allCellsDES(abs(allCellsDES(:,3)) < 15,3),allCellsDES(abs(allCellsDES(:,3)) < 15,4), 150,'filled','r');
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
@@ -129,22 +193,6 @@ title(sprintf('Ketamine Correlation Effect Score vs Firing Rate Score(%s)',filte
 xlabel('FR Score Cell (Hz)')
 ylabel('Pre vs Post Ketamine Correlation Effect Score')
 
-%% PLOT Histfitket effect on FR score
-figure(10);
-clf;
-%         boxplot(allCellsDES(:,1))
-histfit(allCellsDES(:,1),50)
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
-set(gca,'layer','bottom');
-box off;
-axis square;
-set(gca,'FontSize',30);
-set(gca,'FontName','Helvetica');
-set(gcf,'Position',[100 100 1000 1000])
-title(sprintf('Distribution of Ketamine FR Effect Scores(%s)',filter))
-xlabel('Pre vs Post Ketamine FR Effect Score')
-ylabel('Number of Cells')
 
 %%
 close all;
@@ -169,7 +217,12 @@ set(gca,'FontSize',30);
 set(gca,'FontName','Helvetica');
 title(sprintf('Avg Cell Trial by Trial Correlation Matrix(%s)',filter))
 
-%% Plot each cell's CorrScore Curve
+
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Average Correleation Score Curve
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plot each cell's CorrScore Curve
 % all_cellCorrScore = nan(nCells, numel(trials_corrTemplate:size(allCellsFR,2)));
 all_cellCorrScore = nan(nCells, numel(1:size(allCellsFR,2)));
 for i = 1:size(allCellsFR,1)
@@ -177,16 +230,17 @@ for i = 1:size(allCellsFR,1)
    trials_corrTemplate = 50;
    [drugCorrEffectScore, cellCorrScore, corrTemplate] = calculateCorrScore(singleCellallTrialsFR, trials_corrTemplate);
    all_cellCorrScore(i,:) = cellCorrScore;
-   plot(cellCorrScore)
+%    plot(cellCorrScore)
 %    fprintf('Cell: %d, DrugCorrEffectScore = %.3f\n',i,drugCorrEffectScore);
 %    
 %    pause
 end
 fprintf('done')
-%
+
+
 close all;
 figure(12);
-plot(mean(all_cellCorrScore,1),'LineWidth',5)
+plot(nanmean(all_cellCorrScore,1),'LineWidth',5)
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
@@ -302,3 +356,77 @@ set(gca,'FontSize',30);
 set(gca,'FontName','Helvetica');
 set(gcf,'Position',[100 100 1000 1000])
 title(sprintf('Avg Cell Trial by Trial Correlation Matrix(%s)',filter))
+
+%%
+smMtx = smooth(allCellsTimeFRcircaControlInjx,sampleRate*10,'moving');
+[~,sortIdx] = sort(allCellsTimeFRcircaKetamineInjx(:,pre_timeFRsamples)); % sort just the first column
+sortedmat = allCellsTimeFRcircaKetamineInjx(sortIdx,:);   
+imagesc(sortedmat,[0,30]); colorbar;
+
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plot Firing Rate over Time 5 min before injection and 10 min after injection
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+figure(1); clf;
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.015 0.025]);
+set(gca,'layer','bottom');
+box off;
+axis square;
+set(gca,'FontSize',30);
+set(gca,'FontName','Helvetica');
+set(gcf,'Position',[100 100 1000 1000])
+hold on;
+% plot(allCellsTimeFRcircaKetamineInjx)
+
+plot(smoothdata(nanmean(allCellsTimeFRcircaControlInjx,1),'gaussian',sampleRate*7),'LineWidth',2,'DisplayName','Control Injection');
+plot(smoothdata(nanmean(allCellsTimeFRcircaKetamineInjx,1),'gaussian',sampleRate*7),'LineWidth',2,'DisplayName','Ketamine Injection');
+% plot(smoothdata(nanmean(allCellsTimeFRcircaKetamineInjx,1),sampleRate*10,'moving'),'LineWidth',2,'DisplayName','Ketamine Injection');
+
+% modify labels for tick marks
+scaling  = sampleRate * secInMin; 
+set(gca,'XLim',[0 15.1*scaling],'XTick',[0:scaling:15*scaling])
+xticks = get(gca,'xtick');
+x = 0:1:15;
+newlabels = arrayfun(@(x) sprintf('%d', (x/scaling)-5), x*scaling, 'un', 0);
+set(gca,'xticklabel',newlabels);
+h = vline(5*scaling,'k','Injection');
+title(sprintf('Control vs Ketamine Injections(%s)',filter))
+xlabel('Minutes since Injection')
+ylabel('Firing Rate (Hz)')
+legend;
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plot Firing Rate over Time 30 min after injection
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+figure(1); clf;
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.015 0.025]);
+set(gca,'layer','bottom');
+box off;
+axis square;
+set(gca,'FontSize',30);
+set(gca,'FontName','Helvetica');
+set(gcf,'Position',[100 100 1000 1000])
+hold on;
+% plot(allCellsTimeFRcircaKetamineInjx)
+
+plot(smoothdata(nanmean(allCellsTimeFR30minAfterKetamineInjx,1),'gaussian',sampleRate*25),'LineWidth',2,'DisplayName','Ketamine Injection');
+% plot(smoothdata(nanmean(allCellsTimeFRcircaKetamineInjx,1),sampleRate*10,'moving'),'LineWidth',2,'DisplayName','Ketamine Injection');
+timeAfterDrug = 30;
+% modify labels for tick marks
+scaling  = sampleRate * secInMin;
+tickSteps = 5;
+set(gca,'XLim',[0 timeAfterDrug*scaling],'XTick',[0:tickSteps*scaling:timeAfterDrug*scaling])
+xticks = get(gca,'xtick');
+x = 0:tickSteps:timeAfterDrug;
+newlabels = arrayfun(@(x) sprintf('%d', x/scaling), x*scaling, 'un', 0);
+set(gca,'xticklabel',newlabels);
+title(sprintf('Ketamine-induced FR over Time(%s)',filter))
+xlabel('Minutes since Injection')
+ylabel('Firing Rate (Hz)')
+
+%%
+fs= 50;
+pwelch(allCellsTimeFR60minAfterKetamineInjx(5,:), 10*fs, [] , [], fs)
+pwelch(allCellsTimeFRcircaKetamineInjx(5,:), 10*fs, [] , [], fs)

@@ -18,16 +18,25 @@ function [post,posx,sp, all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix,.
 %                 Default = '/Volumes/groups/giocomo/export/data/Projects/ ...
 %                 JohnKei_NPH3/UniversalParams'
 % outputs:
-%     all_fr: smoothed firing rate over position for each cell 
+%     post, pox, sp: pass through vars from spikes
+%     all_fr: smoothed firing rate over position tensor 
 %             (cells x trials x spatial bins)
 %     avg_all_fr: smoothed firing rate over position, averaged over cells
 %                 (trials x spatial bins)
 %     all_corrmatrix: trial by trial correlation for all cells (cells x
 %     trial x trial)
 %     avg_all_corrmatrix: mean of all_corrmatrix across cells
-%     all_corrblock: correlation across every block of 50 trials (cells x
-%     trial/50 x trial/50)
-%     avg_all_corrblock: average of all_corrblock across cells
+%     all_waveforms: template of all cell's waveforms
+%     cells_to_plot: indices of good cells to plot
+%     spiked_depth: spike depth of each cell
+%     all_drugEffectScores = [drugFRdiff,cntrlFRdiff, drugFREffectScore, drugCorrEffectScore, spike_depth(k)]; 
+%     trial: trial information about every sp sample
+%     all_cellCorrScore: cellCorrScore curves compared to baseline template
+%     trials_corrTemplate: baseline template for each cell
+%     avg_all_cellCorrScore: avarge cellCorrScores curves for every session
+%     avg_cell_fr: average fr for all cells across spatial bins
+%     trials_ds: downsampled trial vector matching frTime
+%     all_frTime: smooted firing rate over time 
 %%
 addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/MalcolmFxn/'));
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
@@ -65,13 +74,13 @@ all_corrmatrix = nan(nCells, max(trial), max(trial)); % preallocate matrix of ce
 % all_corrblock = nan(nCells, floor(max(trial)/trials_per_block), floor(max(trial)/trials_per_block)); % preallocate matrix of cells' correlations every 50 trials
 all_waveforms= nan(nCells, size(waveforms,2)); 
 all_cellCorrScore = nan(nCells, numel(1:max(trial)));
-all_drugEffectScores = nan(nCells, 3); %FR score, drug correlation effect score, spikeDepth
+all_drugEffectScores = nan(nCells, 5); %FR score, drug correlation effect score, spikeDepth
 fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
 %%
 
 % calculate firing rate by time
 all_frTime = [];
-ds_factor = 50;
+ds_factor = 1;
 smoothSigma = 10;
 trial_ds = downsample(trial, ds_factor); 
 
@@ -103,9 +112,9 @@ for k = 1:nCells
     [drugCorrEffectScore, cellCorrScore, corrTemplate] = calculateCorrScore(singleCellallTrialsFR, trials_corrTemplate);    
     all_cellCorrScore(k,:) = cellCorrScore;
     
-    drugFREffectScore = calculateFRScore(singleCellallTrialsFR, 100);
+    [drugFRdiff,cntrlFRdiff,drugFREffectScore] = calculateFRScore(singleCellallTrialsFR, 100, 50);
     
-    all_drugEffectScores(k,:) = [drugFREffectScore, drugCorrEffectScore, spike_depth(k)];
+    all_drugEffectScores(k,:) = [drugFRdiff,cntrlFRdiff, drugFREffectScore, drugCorrEffectScore, spike_depth(k)];
 
     %% calculate trial by trial correlation matrix for one cell 
     corrMatrix = corr(singleCellallTrialsFR');
@@ -114,7 +123,7 @@ for k = 1:nCells
     
     % create trial-averaged firing rate matrix (average every 50 trials)
     numBlocks = ceil(max(trial)/trials_per_block);
-    block_fr = nan(numBlocks, spatialBins); % preallocate matrix
+    % block_fr = nan(numBlocks, spatialBins); % preallocate matrix
     
     % store one cell's firing rates and trial by trial correlation matrix
     % in a session matrix containing all cells

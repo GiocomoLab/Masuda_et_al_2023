@@ -13,10 +13,8 @@ for n = 1:numel(sessions)
             all_drugEffectScores, trial,all_cellCorrScore,trials_corrTemplate, avg_all_cellCorrScore, avg_cell_fr,...
             trial_ds, all_frTime]...
             = calcFRmapCorrMatrixAllCells(matPath, trackLength);
-        
-        
+                
 %         doPCA(matPath); 
-
 
 %         
         %save avg_all_fr and avg_all_corrmatrix to OAK
