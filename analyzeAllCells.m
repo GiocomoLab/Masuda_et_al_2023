@@ -8,7 +8,7 @@ addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/M
 % some params
 params = readtable('UniversalParams.xlsx');
 p = params;
-save_figs = false;
+save_figs = true;
 %%
 
 % sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/*.mat');
@@ -48,8 +48,9 @@ for n = 1:numel(sessions)
         h = figure('Position',[100 100 plotWidth plotHeight]); hold on; % changed from 160 to 320 for repeating, also from 500 to 166 for 50 trials
         for k = 1:numel(cells_to_plot)
             
-            
+            %%
             frMap = squeeze(all_fr(k,:,:));
+            imagesc(normalize(frMap,1))
             % Calculate Stability of 
             testTrials = 1:50;
             numAvgTrials = 10; % compare 1:5 with 6:10 for ever 10 testTrials
@@ -58,15 +59,17 @@ for n = 1:numel(sessions)
    
             clf; cla;
             imagesc(frMap)
-            set(gca,'YDir','normal')
-%             
-            title(sprintf('%s-%s,\nc%d, d=%d \n rho=%.3f',animalName,sessionDate,cells_to_plot(k),round(spike_depth(k)),rho));
+%             set(gca,'YDir','normal')
+            
+            title(sprintf('%s-%s\nc%d, d=%d \n stability=%.3f',animalName,sessionDate,cells_to_plot(k),round(spike_depth(k)),rho),'FontSize', 15);
+            xticklabels({'100','200','300','400'})
+            xlabel('Virtual cm','FontSize', 15);
             
             % plot raster plot
             rhoThresh = 0.1;
-            % rho > rhoThresh
             if rho > rhoThresh
-                colormap(hot(10))
+%             if true
+                colormap(jet(10))
                 totalSpatialCell = totalSpatialCell + 1;
                 spatialIndx(size(spatialIndx,2)+1) = cells_to_plot(k);
                 % save fig
@@ -75,7 +78,7 @@ for n = 1:numel(sessions)
                     saveas(h,fullfile(imgDir,sprintf('%s%s%s%s%d%s.png',animalName,'_',sessionDate,'_',k,'_spatial')),'png');
                 end
             else
-                colormap('default')
+                colormap(jet(10))
                 if save_figs
                     fprintf('cell %d (%d/%d)\n',cells_to_plot(k),k,numel(cells_to_plot));
                     saveas(h,fullfile(imgDir,sprintf('%s%s%s%s%d.png',animalName,'_',sessionDate,'_',k)),'png');

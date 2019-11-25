@@ -18,6 +18,6 @@ postCntrlFR = nanmean(trialAvgFR(preControlTrials:preDrugTrials));
 drugFRdiff = postDrugFR-preDrugFR;
 cntrlFRdiff = postCntrlFR-preCntrlFR;
 
-drugFREffectScore = drugFRdiff/cntrlFRdiff;
+drugFREffectScore = drugFRdiff/abs(cntrlFRdiff);
 
 end

@@ -74,6 +74,7 @@ all_corrmatrix = nan(nCells, max(trial), max(trial)); % preallocate matrix of ce
 % all_corrblock = nan(nCells, floor(max(trial)/trials_per_block), floor(max(trial)/trials_per_block)); % preallocate matrix of cells' correlations every 50 trials
 all_waveforms= nan(nCells, size(waveforms,2)); 
 all_cellCorrScore = nan(nCells, numel(1:max(trial)));
+all_cellStabilityScore = nan(nCells, numel(1:max(trial)));
 all_drugEffectScores = nan(nCells, 5); %FR score, drug correlation effect score, spikeDepth
 fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
 %%
@@ -111,6 +112,8 @@ for k = 1:nCells
     %% 
     [drugCorrEffectScore, cellCorrScore, corrTemplate] = calculateCorrScore(singleCellallTrialsFR, trials_corrTemplate);    
     all_cellCorrScore(k,:) = cellCorrScore;
+    
+    all_cellStabilityScore(k,:) = cellStabilityScore;
     
     [drugFRdiff,cntrlFRdiff,drugFREffectScore] = calculateFRScore(singleCellallTrialsFR, 100, 50);
     

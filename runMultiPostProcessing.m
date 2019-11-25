@@ -1,34 +1,36 @@
 % run stitch sessions together, plot raster plots, combine rasters, plot
 % lick data for 3 unity sessions
 sessions = {... 
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCNe2/HCNe2_190914_keicontrasttrack_MK8011_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCNe2/HCNe2_190914_keicontrasttrack_MK8011_g0',...
-};
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCNd1/HCNd1_190808_keicontrasttrack_ketamine1_g0',...
+}; 
+
+%'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCNb4/HCNb4_191014_keicontrasttrack_MK8011_g0',...
 
 lickAccuracyAllSessions = zeros(numel(sessions),300);
-for n = 1:numel(sessions)-1
+for n = 1:numel(sessions)
     try
-       drugName = 'MK801';
+       drugName = 'ketamine';
        [~,filename,~] = fileparts(sessions{n});
         % session_name = 'G4_190620_keicontrasttrack_baseline+cntrlinjx+ketamine';
         % unitySessions ={'G4_190620_keicontrasttrack_baseline1', 'G4_190620_keicontrasttrack_controlinjx1','G4_190620_keicontrasttrack_ketamine1'};
         filenameParts= strsplit(filename,strcat('_',drugName));
         filename = filenameParts{1};
-%         session_name = strcat(filename, '_baseline+cntrlinjx+',drugName);
+        session_name = strcat(filename, '_baseline+cntrlinjx+',drugName);
         
-        session_name = strcat(filename, '_baseline+',drugName);
+%         session_name = strcat(filename, '_baseline+',drugName);
         
-        %baselineSession = dir(strcat(sessions{n},filesep,filename,'_baseline*.mat'));
-%         unitySessions = {strcat(filename,'_baseline1'), strcat(filename,'_controlinjx1'), strcat(filename,'_',drugName,'1')};
-        unitySessions = {strcat(filename,'_baseline2'), strcat(filename,'_',drugName,'1')};
+        %baselineSession = dir(str cat(sessions{n},filesep,filename,'_baseline*.mat'));
+        unitySessions = {strcat(filename,'_baseline1'), strcat(filename,'_controlinjx1'), strcat(filename,'_',drugName,'1')};
+%         unitySessions = {strcat(filename,'_baseline1'), strcat(filename,'_',drugName,'1')};
         %Stitch file tother 
         stitchSynchedNPdata(sessions{n}, session_name, unitySessions); %unitySessions is a cell array of session names; can be a cell array of one name
         
         fprintf(strcat('\nStitched together:', session_name,'\n'));
+        
         trackLength = 400;
         plotWidth = 160;
         plotHeight = 500;
-        preDrugTrials = 30; %100
+        preDrugTrials = 100; %100
         singleSessionRasterplots(sessions{n},session_name, trackLength, plotWidth, plotHeight, preDrugTrials)
         
         size_vert = 1042; % changed from 1042 to 346

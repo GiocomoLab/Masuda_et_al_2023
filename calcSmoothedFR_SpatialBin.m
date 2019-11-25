@@ -23,8 +23,14 @@ firing_rate = spikesPerBin./time_per_bin;
 frPerTrial = sum(firing_rate)/sum(time_per_bin);
 % % interpolate missing values
 if sum(isnan(firing_rate))>0
-    %firing_rate(isnan(firing_rate)) = 0; 
-    firing_rate = interp1(find(~isnan(firing_rate)),firing_rate(~isnan(firing_rate)),1:numel(firing_rate));
+    %firing_rate(isnan(firing_rate)) = 0;
+    try
+        firing_rate = interp1(find(~isnan(firing_rate)),firing_rate(~isnan(firing_rate)),1:numel(firing_rate));
+    catch
+        if sum(~isnan(firing_rate)) < 2 % if there aren't at least 2 data points to be able to interpolate then set FR to 0
+            firing_rate(isnan(firing_rate)) = 0;
+        end
+    end
 end
 
 % gaussian filter for smoothing
