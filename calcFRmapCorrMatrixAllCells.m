@@ -1,7 +1,7 @@
-function [post,posx,sp, all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix,...
+function [post,posx,speed, sp, all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix,...
     all_waveforms, cells_to_plot,spike_depth,...
     all_drugEffectScores, trial,all_cellCorrScore,trials_corrTemplate, avg_all_cellCorrScore, avg_cell_fr,...
-    trial_ds, all_frTime]...
+    trial_ds, all_frTime,all_cellStabilityScore]...
     = calcFRmapCorrMatrixAllCells(matPath, trackLength, paramsPath)
 
 % John Wen 7/1/19
@@ -37,6 +37,7 @@ function [post,posx,sp, all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix,.
 %     avg_cell_fr: average fr for all cells across spatial bins
 %     trials_ds: downsampled trial vector matching frTime
 %     all_frTime: smooted firing rate over time 
+%     all_cellStabilityScore: Stability Score with a 3 trial window
 %%
 addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/MalcolmFxn/'));
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
@@ -59,7 +60,7 @@ p = params;
 [cells_to_plot, spike_depth,waveforms] = spPreProcess(sp);
 
 %% Calculate speed and filter out stationary periods (speed<2cm)
-% speed = calcSpeed(posx, p);
+speed = calcSpeed(posx, p);
 % [trial,posx,post] = speedFilterData(trial,posx, post, speed);
 
 %% Preallocate and store data for all cell's firing rates
@@ -113,7 +114,7 @@ for k = 1:nCells
     [drugCorrEffectScore, cellCorrScore, corrTemplate] = calculateCorrScore(singleCellallTrialsFR, trials_corrTemplate);    
     all_cellCorrScore(k,:) = cellCorrScore;
     
-    all_cellStabilityScore(k,:) = cellStabilityScore;
+    all_cellStabilityScore(k,:) = calculateStabilityScore(singleCellallTrialsFR);
     
     [drugFRdiff,cntrlFRdiff,drugFREffectScore] = calculateFRScore(singleCellallTrialsFR, 100, 50);
     

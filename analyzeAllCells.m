@@ -8,7 +8,7 @@ addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/M
 % some params
 params = readtable('UniversalParams.xlsx');
 p = params;
-save_figs = true;
+save_figs = false;
 %%
 
 % sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/*.mat');
@@ -84,7 +84,7 @@ for n = 1:numel(sessions)
                     saveas(h,fullfile(imgDir,sprintf('%s%s%s%s%d.png',animalName,'_',sessionDate,'_',k)),'png');
                 end
             end
-            
+            pause
         end
         seshIndx = sprintf('%s_%s',animalName,sessionDate);
         allSpatialIndx.(seshIndx) = spatialIndx;

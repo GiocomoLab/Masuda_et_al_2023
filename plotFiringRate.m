@@ -9,7 +9,7 @@ addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (comp
 sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat'); 
 imgDir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/img';
 % Remove strange sessions
-filter = 'KO';
+filter = 'WT';
 sessions = filterSessions(sessions, filter);
 
 %%
@@ -73,30 +73,36 @@ end
 %% Plot by Mouse
 figure(1);clf;hold on;
 if strcmp(filter, 'WT')
-    mice={'G1','G2','G3','G4','G5','HCNd1','HCNe2'};
+    mice={'G1','G2','G3','G4','G5','HCNd1','HCNe2','HCNb2'};
 elseif strcmp(filter, 'KO')
-    mice={'HCN1','HCNd2','HCNe1','HCNe3','HCNe4'};
+    mice={'HCN1','HCNd2','HCNe1','HCNe3','HCNe4','HCNb4','HCNf1'};
 else
     fprintf('Bad filter key. Choose: mec, WT, KO');
 end
 
-
+allMouseTrial = nan(numel(mice),300);
+allMouseLabel = nan(numel(mice),300);
+allMouseLine = nan(numel(mice),300);
 for z= 1:numel(mice)
     idx = ~cellfun('isempty',strfind({sessions.name},mice{z}));
     Y = mean(fr_mean_allCells(idx,1:300));
     interpY = fillmissing(Y,'spline');
     smoothY= sgolayfilt(interpY, 3, 25);
-    mouseLine = plot(linspace(-99,200,300),smoothY,'DisplayName',sprintf('Mouse %d',z),'LineWidth',1);
+    mouseLine = plot(1:size(smoothY,2),smoothY,'DisplayName',sprintf('Mouse %d',z),'LineWidth',1);
 %     mouseLine = plot(linspace(-99,200,300),smoothY,'DisplayName',mice{z},'LineWidth',1);
+    allMouseLine(z,:) = smoothY;
+    allMouseLabel(z,:) = repmat(z,[1, 300]);
+    allMouseTrial(z,:) = 1:300;
 end
 
-Y = mean(fr_mean_allCells(:,1:300));
+Y = nanmean(fr_mean_allCells(:,1:300));
 interpY = fillmissing(Y,'spline');
 smoothY= sgolayfilt(interpY, 3, 25);
-plot(linspace(-99,200,300),smoothY,'k','DisplayName','Avg','LineWidth',10);
+plot(1:300,smoothY,'k','DisplayName','Avg','LineWidth',10);
 
 
 legend;
+
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
@@ -108,6 +114,22 @@ set(gcf,'Position',[100 100 1000 1000])
 title('Average Firing Rate by Mouse')
 xlabel('Trial')
 ylabel('Average FR(Hz)')
+%%
+figure()
+x = reshape(allMouseTrial.',1,[]);
+y = reshape(allMouseLine.',1,[]);
+z = reshape(allMouseLabel.',1,[]);
+g(1,1) = gramm('x',x,'y',y,'color',z); 
+g(1,1).stat_summary('type','sem','setylim',true);
+% g(1,1).stat_smooth();
+% g(1,1).geom_line();
+g(1,1).set_title(sprintf('Average Firing Rate by Mouse(%s)',filter), 'FontSize', 40);
+g(1,1).set_names('x','Trial','y','Average Firing Rate (Hz)');
+g(1,1).set_text_options('base_size',20);
+g.draw();
+axis square;
+set(gcf,'Position',[100 100 1000 1000])
+set(gca,'TickDir','out');
 
 
 %%
