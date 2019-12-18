@@ -1,9 +1,10 @@
 % sessions = dir('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/fr_corr_matrices/*.mat');
 sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat'); 
-filter = 'WT';     
+filter = 'mec';     
 sessions = filterSessions(sessions, filter);
 % load(sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/allSpatialIndx%s_01.mat',filter));
 load(sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/allSpatialIndx%s.mat',filter));
+sessionMetaData = readtable('/Users/KeiMasuda/Desktop/fkm_analysis/SessionList.xlsx');
 
 fn = fieldnames(allSpatialIndx);
 count = 0;
@@ -20,11 +21,14 @@ allCellsDES = nan(count,5); % [drugFRdiff,cntrlFRdiff, drugFREffectScore, drugCo
 allCellsCorrMatrix = nan(count,300,300);
 allCellsCorrScoreCurve = nan(count,300);
 allCellsStabilityScoreCurve = nan(count,300);
-allCellsMetaData = cell(count,3);
+allCellsMetaData = cell(count,6);
 allCellsProbeDepth = cell(count,1);
 allCellsFRtime(count) = struct(); 
 allCellsTrial(count) = struct(); 
-%%
+allCellsSpeed(count) = struct(); 
+allCellsLickT(count) = struct(); 
+allCellsLickX(count) = struct(); 
+
 sampleRate = 50; %hz
 min = 15;
 secInMin = 60;
@@ -40,23 +44,29 @@ fortyfiveminSampleNum = 45 * secInMin * sampleRate;
 fiftyMinSampleNum = 50 * secInMin * sampleRate;
 sixtyMinSampleNum = 60 * secInMin * sampleRate;
 sixtyfiveMinSampleNum = 65 * secInMin * sampleRate;
-allCellsTimeFR30minAfterKetamineInjx = nan(count,halfhourSampleNum+1);
-allCellsTimeFR45minAfterKetamineInjx = nan(count,fortyfiveminSampleNum+1);
-allCellsTimeFRneg5to45minAfterKetamineInjx = nan(count,fiftyMinSampleNum);
+% allCellsTimeFR30minAfterKetamineInjx = nan(count,halfhourSampleNum+1);
+% allCellsTimeFR45minAfterKetamineInjx = nan(count,fortyfiveminSampleNum+1);
+% allCellsTimeFRneg5to45minAfterKetamineInjx = nan(count,fiftyMinSampleNum);
 allCellsTimeFRneg5to60minAfterKetamineInjx = nan(count,sixtyfiveMinSampleNum);
 z = 0;
+fprintf('Done with the Pre-Allocation\n');
 %%
 for n = 1:numel(fn)
-    try
+%     try
         matPath = fullfile(sessions(n).folder, sessions(n).name);
         session_name = sessions(n).name(1:end-4);
         animalName = extractBefore(session_name,'_');
         sessionDate = extractBefore(extractAfter(session_name,'_'),'_');
+        genotype = sessionMetaData.Genotype{n};
+        gender = sessionMetaData.Gender{n};
+        ketamine_day = sessionMetaData.Ketamine_day(n);
+        
         seshStr = sprintf('%s_%s',animalName, sessionDate);
         trackLength = 400;
         load(fullfile(matPath), 'all_fr', 'avg_all_fr', 'all_corrmatrix', 'avg_all_corrmatrix', ...
              'all_waveforms', 'cells_to_plot','spike_depth','all_drugEffectScores',...
-            'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr','trial_ds', 'all_frTime', 'all_cellStabilityScore');
+            'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr',...
+            'trial_ds', 'all_frTime', 'all_cellStabilityScore','speed','lickt','lickx');
 
         spatialIndx = ismember(cells_to_plot,allSpatialIndx.(seshStr));
        
@@ -64,13 +74,18 @@ for n = 1:numel(fn)
            all_fr = all_fr(spatialIndx,:,:);
            all_frTime = all_frTime(spatialIndx,:,:);
            nCells = size(all_fr,1);
-           allCellsMetaData(z+1:z+nCells,:,:) = repmat({session_name, animalName, sessionDate},nCells,1);
-           allCellsFR(z+1:z+nCells,:,:) = all_fr(1:nCells,1:300,1:200);
+           allCellsMetaData(z+1:z+nCells,:,:) = repmat({session_name, animalName, sessionDate, genotype, gender, ketamine_day},nCells,1);
+           if max(trial) > 300
+               maxTrial = 300;
+           else
+               maxTrial = max(trial);
+           end
+           allCellsFR(z+1:z+nCells,1:maxTrial,:) = all_fr(1:nCells,1:maxTrial,1:200);
            allCellsDES(z+1:z+nCells,:,:) = all_drugEffectScores(1:nCells,1:5);
-           allCellsCorrMatrix(z+1:z+nCells,:,:) = all_corrmatrix(1:nCells,1:300,1:300);
-           allCellsCorrScoreCurve(z+1:z+nCells,:,:) = all_cellCorrScore(1:nCells,1:300);
-           allCellsStabilityScoreCurve(z+1:z+nCells,:,:) = all_cellStabilityScore(1:nCells,1:300);
-           allCellsMetaData(z+1:z+nCells,:) = repmat({session_name, animalName, sessionDate},nCells,1);
+           allCellsCorrMatrix(z+1:z+nCells,1:maxTrial,1:maxTrial) = all_corrmatrix(1:nCells,1:maxTrial,1:maxTrial);
+           allCellsCorrScoreCurve(z+1:z+nCells,1:maxTrial) = all_cellCorrScore(1:nCells,1:maxTrial);
+           allCellsStabilityScoreCurve(z+1:z+nCells,1:maxTrial) = all_cellStabilityScore(1:nCells,1:maxTrial);
+           allCellsMetaData(z+1:z+nCells,:) = repmat({session_name, animalName, sessionDate, genotype, gender, ketamine_day},nCells,1);
            
            first50indx = find(trial_ds==50, 1,'first');
            first100indx = find(trial_ds==100, 1,'first');
@@ -94,6 +109,9 @@ for n = 1:numel(fn)
            for m = 1:nCells
                allCellsFRtime(z+m).FRtime = all_frTime(m,:); 
                allCellsTrial(z+m).trial = trial(m,:);
+               allCellsSpeed(z+m).speed = speed; 
+               allCellsLickT(z+m).lickt = lickt; 
+               allCellsLickX(z+m).lickx = lickx;
            end
            
            
@@ -109,12 +127,12 @@ for n = 1:numel(fn)
        else
            fprintf('Adding 0 for %d/%d cells\n',z,count)
        end
-    catch e
-        warning(e.message);
-        warning('FAILED: %s\n',sessions(n).name);
-    end
+%     catch e
+%         warning(e.message);
+%         warning('FAILED: %s\n',sessions(n).name);
+%     end
 end
-fprintf('done\n')
+fprintf('Done with allocation\n')
 
 %%
 % SAVE ALLCELLS MAT DATA STRUCTURE
@@ -122,9 +140,14 @@ allCells.metadata = allCellsMetaData;
 allCells.spatialFR = allCellsFR; 
 allCells.stabilityScoreCurve = allCellsStabilityScoreCurve;
 allCells.drugEffectScores = allCellsDES;
-allCells.correlationMatrxi = allCellsCorrMatrix;
+allCells.correlationMatrix = allCellsCorrMatrix;
 allCells.timeFRcircaControlInjx = allCellsTimeFRcircaControlInjx;
 allCells.timeFRcircaKetamineInjx = allCellsTimeFRcircaKetamineInjx;
-allCells.timeFRneg5to60minAfeterKetamineInjx = allCellsTimeFRneg5to60minAfterKetamineInjx;
+allCells.timeFRneg5to60minAfterKetamineInjx = allCellsTimeFRneg5to60minAfterKetamineInjx;
 allCells.FRtime = allCellsFRtime;
 allCells.trial = allCellsTrial;
+allCells.speed = allCellsSpeed;
+allCells.lickT = allCellsLickT;
+allCells.lickX = allCellsLickX;
+%%
+clearvars -except allCells

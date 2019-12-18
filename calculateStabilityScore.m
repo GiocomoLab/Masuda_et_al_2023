@@ -27,7 +27,7 @@ function stabilityScore = calculateStabilityScore(singleCellallTrialsFR)
             fr2 = singleCellallTrialsFR(i+1,:);
             rho1 = corr(fr1',fr2');
             rho2 = corr(fr0',fr1');
-            rho = mean([rho1,rho2]);
+            rho = nanmean([rho1,rho2]);
         end
       
         stabilityScore(i) = rho;

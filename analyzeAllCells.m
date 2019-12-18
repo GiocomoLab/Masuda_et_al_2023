@@ -14,7 +14,8 @@ save_figs = false;
 % sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/*.mat');
 sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat');
 % Get subset of desired sessions
-sessions = filterSessions(sessions, 'WT');
+filter = 'mec';
+sessions = filterSessions(sessions, filter);
 
 %%
 totalCell = 0;
@@ -40,12 +41,14 @@ for n = 1:numel(sessions)
         totalCell = totalCell + nCells;
         fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
         %%
-        close all;
         spatialIndx = [];
-        l=1;
-        plotWidth = 160*l;
-        plotHeight = 500*l;
-        h = figure('Position',[100 100 plotWidth plotHeight]); hold on; % changed from 160 to 320 for repeating, also from 500 to 166 for 50 trials
+        if save_figs
+            close all;
+            l=1;
+            plotWidth = 160*l;
+            plotHeight = 500*l;
+            h = figure('Position',[100 100 plotWidth plotHeight]); hold on; % changed from 160 to 320 for repeating, also from 500 to 166 for 50 trials
+        end
         for k = 1:numel(cells_to_plot)
             
             %%
@@ -56,19 +59,19 @@ for n = 1:numel(sessions)
             numAvgTrials = 10; % compare 1:5 with 6:10 for ever 10 testTrials
             rho = trialByTrialStability(frMap, testTrials, numAvgTrials);
             allRho(size(allRho,2)+1) = rho;
-   
-            clf; cla;
-            imagesc(frMap)
-%             set(gca,'YDir','normal')
-            
-            title(sprintf('%s-%s\nc%d, d=%d \n stability=%.3f',animalName,sessionDate,cells_to_plot(k),round(spike_depth(k)),rho),'FontSize', 15);
-            xticklabels({'100','200','300','400'})
-            xlabel('Virtual cm','FontSize', 15);
-            
+            if save_figs
+                clf; cla;
+                imagesc(frMap)
+                set(gca,'YDir','normal')
+
+                title(sprintf('%s-%s\nc%d, d=%d \n stability=%.3f',animalName,sessionDate,cells_to_plot(k),round(spike_depth(k)),rho),'FontSize', 15);
+                xticklabels({'100','200','300','400'})
+                xlabel('Virtual cm','FontSize', 15);
+            end
             % plot raster plot
             rhoThresh = 0.1;
-            if rho > rhoThresh
-%             if true
+%             if rho > rhoThresh
+            if true
                 colormap(jet(10))
                 totalSpatialCell = totalSpatialCell + 1;
                 spatialIndx(size(spatialIndx,2)+1) = cells_to_plot(k);
@@ -84,7 +87,7 @@ for n = 1:numel(sessions)
                     saveas(h,fullfile(imgDir,sprintf('%s%s%s%s%d.png',animalName,'_',sessionDate,'_',k)),'png');
                 end
             end
-            pause
+            
         end
         seshIndx = sprintf('%s_%s',animalName,sessionDate);
         allSpatialIndx.(seshIndx) = spatialIndx;
@@ -95,3 +98,5 @@ for n = 1:numel(sessions)
     end
 end
 fprintf(strcat('\nTotal Number of Cells: ',num2str(totalCell),'\nNumber of Spatial Cells:',num2str(totalSpatialCell),'\n'));
+%%
+save(sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/allSpatialIndx%s.mat',filter),'allSpatialIndx');

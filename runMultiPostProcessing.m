@@ -1,7 +1,7 @@
 % run stitch sessions together, plot raster plots, combine rasters, plot
 % lick data for 3 unity sessions
 sessions = {... 
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCNd1/HCNd1_190808_keicontrasttrack_ketamine1_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCNg2/HCNg2_191212_keicontrasttrack_MK8011_g0',...
 }; 
 
 %'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCNb4/HCNb4_191014_keicontrasttrack_MK8011_g0',...
@@ -9,7 +9,7 @@ sessions = {...
 lickAccuracyAllSessions = zeros(numel(sessions),300);
 for n = 1:numel(sessions)
     try
-       drugName = 'ketamine';
+       drugName = 'MK801';
        [~,filename,~] = fileparts(sessions{n});
         % session_name = 'G4_190620_keicontrasttrack_baseline+cntrlinjx+ketamine';
         % unitySessions ={'G4_190620_keicontrasttrack_baseline1', 'G4_190620_keicontrasttrack_controlinjx1','G4_190620_keicontrasttrack_ketamine1'};
