@@ -25,7 +25,9 @@ allCellsMetaData = cell(count,6);
 allCellsProbeDepth = cell(count,1);
 allCellsFRtime(count) = struct(); 
 allCellsTrial(count) = struct(); 
-allCellsSpeed(count) = struct(); 
+allCellsSpeed(count) = struct();
+allCellsPosT(count) = struct(); 
+allCellsPosX(count) = struct(); 
 allCellsLickT(count) = struct(); 
 allCellsLickX(count) = struct(); 
 
@@ -66,7 +68,7 @@ for n = 1:numel(fn)
         load(fullfile(matPath), 'all_fr', 'avg_all_fr', 'all_corrmatrix', 'avg_all_corrmatrix', ...
              'all_waveforms', 'cells_to_plot','spike_depth','all_drugEffectScores',...
             'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr',...
-            'trial_ds', 'all_frTime', 'all_cellStabilityScore','speed','lickt','lickx');
+            'trial_ds', 'all_frTime', 'all_cellStabilityScore','post','posx','speed','lickt','lickx');
 
         spatialIndx = ismember(cells_to_plot,allSpatialIndx.(seshStr));
        
@@ -108,8 +110,10 @@ for n = 1:numel(fn)
            % Assign struct shaped data to cells
            for m = 1:nCells
                allCellsFRtime(z+m).FRtime = all_frTime(m,:); 
-               allCellsTrial(z+m).trial = trial(m,:);
-               allCellsSpeed(z+m).speed = speed; 
+               allCellsTrial(z+m).trial = trial;
+               allCellsSpeed(z+m).speed = speed;
+               allCellsPosT(z+m).post = post;
+               allCellsPosX(z+m).posx = posx; 
                allCellsLickT(z+m).lickt = lickt; 
                allCellsLickX(z+m).lickx = lickx;
            end
@@ -147,6 +151,8 @@ allCells.timeFRneg5to60minAfterKetamineInjx = allCellsTimeFRneg5to60minAfterKeta
 allCells.FRtime = allCellsFRtime;
 allCells.trial = allCellsTrial;
 allCells.speed = allCellsSpeed;
+allCells.posT = allCellsPosT;
+allCells.posX = allCellsPosX;
 allCells.lickT = allCellsLickT;
 allCells.lickX = allCellsLickX;
 %%

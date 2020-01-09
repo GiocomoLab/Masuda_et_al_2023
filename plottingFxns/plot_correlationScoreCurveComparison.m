@@ -67,7 +67,7 @@ normCSC_data.z = vertcat(repmat({'WT'},[WT_nCells,1]),repmat({'KO'},[KO_nCells,1
 clf;
 g=gramm('x',normCSC_data.x ,'y',normCSC_data.y, 'color',normCSC_data.z);
 g.stat_summary('type','sem','setylim','true');
-g.set_names('x','Trial','y','Normalized Correlation to Baseline Template (rho)','size',20); 
+g.set_names('x','Trial','y','Normalized Correlation to Baseline Template (rho)','size',20);
 g.set_title(sprintf('Average Correlation Score Curve: %s',title),'FontSize',30);
 g.axe_property('FontSize',25);
 box off;

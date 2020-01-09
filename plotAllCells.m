@@ -6,7 +6,7 @@
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 addpath(genpath('./plottingFxns'))
 
-%% Generate Index 
+%% Generate Indices
 WTcellsIndx = strcmp({allCells.metadata{:,4}}, 'WT')';
 KOcellsIndx = strcmp({allCells.metadata{:,4}}, 'KO')';
 
@@ -19,6 +19,8 @@ KOtotalStabilityIndx = (stabilityTable.totalStability > stabilityThreshold) & KO
 baselineStabilityIndx = stabilityTable.baselineStability > stabilityThreshold;
 WTbaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & WTcellsIndx;
 KObaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & KOcellsIndx;
+
+
 %% Plot Stability Table STats
 plot_stabilityTableStats(allCells, stabilityTable);
 
@@ -36,7 +38,6 @@ plot_HistfitKetCorrEffectScore(allCells, KOcellsIndx,'KO')
 %% Plot Correlation Score Curves
 plot_correlationScoreCurves(allCells, WTcellsIndx,'WT')
 plot_correlationScoreCurves(allCells, KOcellsIndx,'KO')
-plot_correlationScoreCurveComparison(allCells, WTcellsIndx, KOcellsIndx)
 
 %% Plot Correlation Score Curve Comparisions
 plot_correlationScoreCurveComparison(allCells, WTcellsIndx, KOcellsIndx, 'All Cells')
@@ -53,8 +54,6 @@ plot_stabilityScore(allCells, KOcellsIndx,'KO')
 
 %% Plot Correlation Matrix
 plot_correlationMatrix(allCells,WTcellsIndx, 'WT')
-
-
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
