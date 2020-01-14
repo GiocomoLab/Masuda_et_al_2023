@@ -20,12 +20,14 @@ function [I_sec, I_spike] = calculate_1DspatialInformation(singleCellSpatialFR,l
     end
     
     numBins = size(singleCellSpatialFR,2);
+    
     p = linearFractionalOccupancy';
     lambda = nanmean(singleCellSpatialFR,1);
     lambda_total = nanmean(lambda);
     I_sec = 0;
     for i = 1:numBins
         I_sec = I_sec + (p(i) * lambda(i) * log2(lambda(i)/lambda_total));
+        fprintf(num2str(I_sec));
     end
     
     I_spike = I_sec/lambda_total;

@@ -15,7 +15,7 @@ for n = 1:numel(sessions)
             all_waveforms, cells_to_plot,spike_depth,...
             all_drugEffectScores, trial,all_cellCorrScore,...
             trials_corrTemplate, avg_all_cellCorrScore, avg_cell_fr,...
-            trial_ds, all_frTime,all_cellStabilityScore]...
+            trial_ds, all_frTime,all_cellStabilityScore, all_spike_idx]...
             = calcFRmapCorrMatrixAllCells(matPath, trackLength);
                 
 %         doPCA(matPath); 
@@ -23,13 +23,15 @@ for n = 1:numel(sessions)
 %         
         %save avg_all_fr and avg_all_corrmatrix to OAK
 %         saveDir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/fr_corr_matrices_noSpeedFilter';
-        saveDir = '/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter';
+%         saveDir = '/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter';
+        saveDir = '/Users/KeiMasuda/Desktop/fkm_analysis/fr_data_matrices_noSmoothing';
+        
         [~,sessionName,~] = fileparts(matPath);
         saveName = fullfile(saveDir, strcat(sessionName,'_fr+corr.mat'));
         save(saveName, 'all_fr', 'avg_all_fr', 'all_corrmatrix', 'avg_all_corrmatrix', ...
              'all_waveforms', 'cells_to_plot','spike_depth','all_drugEffectScores',...
             'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr',...
-            'trial_ds', 'all_frTime','all_cellStabilityScore','post','posx','speed','lickt','lickx');     
+            'trial_ds', 'all_frTime','all_cellStabilityScore','post','posx','speed','lickt','lickx','all_spike_idx');     
 
         
         fprintf(strcat('Analyzed:', sessions(n).name,'\n'));

@@ -3,7 +3,7 @@ function [lickt,lickx,post,posx,speed, sp, ...
     all_waveforms, cells_to_plot,spike_depth,...
     all_drugEffectScores, trial,all_cellCorrScore,...
     trials_corrTemplate, avg_all_cellCorrScore, avg_cell_fr,...
-    trial_ds, all_frTime,all_cellStabilityScore]...
+    trial_ds, all_frTime,all_cellStabilityScore,all_spike_idx]...
     = calcFRmapCorrMatrixAllCells(matPath, trackLength, paramsPath)
 
 % John Wen 7/1/19
@@ -40,6 +40,7 @@ function [lickt,lickx,post,posx,speed, sp, ...
 %     trials_ds: downsampled trial vector matching frTime
 %     all_frTime: smooted firing rate over time 
 %     all_cellStabilityScore: Stability Score with a 3 trial window
+%     all_spike_idx: All spike indices 
 %%
 addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/MalcolmFxn/'));
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
@@ -79,6 +80,7 @@ all_waveforms= nan(nCells, size(waveforms,2));
 all_cellCorrScore = nan(nCells, numel(1:max(trial)));
 all_cellStabilityScore = nan(nCells, numel(1:max(trial)));
 all_drugEffectScores = nan(nCells, 5); %FR score, drug correlation effect score, spikeDepth
+all_spike_idx = cell(nCells,1);
 fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
 %%
 
@@ -99,17 +101,21 @@ for k = 1:nCells
     spike_t = sp.st(sp.clu==cells_to_plot(k));
     
     % calculate firing rate by time
-    fr = calcSmoothedFR_Time(post, spike_t, ds_factor, smoothSigma);
+    fr = calcFR_Time(post, spike_t, ds_factor);
     all_frTime(k, :) = fr;
     
      % Bin spikes into time associated spatial bins
     [~,~,spike_idx] = histcounts(spike_t,post);
     spike_idx(spike_idx==0) = []; %remove spike indexes that don't exist in post (e.g. spikes that happen while the animal is stationary when post was speed filtered)
+    all_spike_idx(k) = {spike_idx};
+   
+    %%
     
     % for cell k, iteratively calculate the firing rate for each trial
     singleCellallTrialsFR = nan(max(trial),spatialBins);
     for i = 1:max(trial)
-        itrial_kfr = calcSmoothedFR_SpatialBin(spike_idx(i==trial(spike_idx)), posx(i==trial),posx, p, trackEnd);
+%         itrial_kfr = calcSmoothedFR_SpatialBin(spike_idx(i==trial(spike_idx)), posx(i==trial),posx, p, trackEnd);
+        itrial_kfr = calcFR_SpatialBin(spike_idx(i==trial(spike_idx)), posx(i==trial),posx, p, trackEnd);
         singleCellallTrialsFR(i,:) = itrial_kfr;
     end
     %% 
