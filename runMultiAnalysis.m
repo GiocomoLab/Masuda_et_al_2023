@@ -1,3 +1,5 @@
+function runMultiAnalysis(filter)
+
 addpath(genpath('/Users/KeiMasuda/Desktop/MalcolmFxn'));
 % sessions = dir('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/*.mat');
 sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/*.mat');
@@ -15,7 +17,7 @@ for n = 1:numel(sessions)
             all_waveforms, cells_to_plot,spike_depth,...
             all_drugEffectScores, trial,all_cellCorrScore,...
             trials_corrTemplate, avg_all_cellCorrScore, avg_cell_fr,...
-            trial_ds, all_frTime,all_cellStabilityScore, all_spike_idx]...
+            trial_ds, all_frTime,all_cellStabilityScore, all_spike_idx,all_fr10]...
             = calcFRmapCorrMatrixAllCells(matPath, trackLength);
                 
 %         doPCA(matPath); 
@@ -31,7 +33,7 @@ for n = 1:numel(sessions)
         save(saveName, 'all_fr', 'avg_all_fr', 'all_corrmatrix', 'avg_all_corrmatrix', ...
              'all_waveforms', 'cells_to_plot','spike_depth','all_drugEffectScores',...
             'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr',...
-            'trial_ds', 'all_frTime','all_cellStabilityScore','post','posx','speed','lickt','lickx','all_spike_idx');     
+            'trial_ds', 'all_frTime','all_cellStabilityScore','post','posx','speed','lickt','lickx','all_spike_idx','all_fr10');     
 
         
         fprintf(strcat('Analyzed:', sessions(n).name,'\n'));
@@ -39,5 +41,7 @@ for n = 1:numel(sessions)
         warning(e.message);
         warning('FAILED: %s\n',sessions(n).name);
     end
+end
+
 end
 

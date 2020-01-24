@@ -1,9 +1,14 @@
+function allCells = poolAllCells(filter)
+
 % sessions = dir('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/fr_corr_matrices/*.mat');
 % sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat'); 
 sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_data_matrices_noSmoothing/*.mat'); 
 
-filter = 'mec';     
+if isempty(filter)
+    filter = 'mec';   
+end
 sessions = filterSessions(sessions, filter);
+
 % load(sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/allSpatialIndx%s_01.mat',filter));
 load(sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/allSpatialIndx%s.mat',filter));
 sessionMetaData = readtable('/Users/KeiMasuda/Desktop/fkm_analysis/SessionList.xlsx');
@@ -18,7 +23,8 @@ for k=1:numel(fn)
     end
 end
 
-allCellsFR = nan(count,300,200);
+allCellsFR2 = nan(count,300,200);
+allCellsFR10 = nan(count,300,40);
 allCellsDES = nan(count,5); % [drugFRdiff,cntrlFRdiff, drugFREffectScore, drugCorrEffectScore, spike_depth(k)]
 allCellsCorrMatrix = nan(count,300,300);
 allCellsCorrScoreCurve = nan(count,300);
@@ -32,6 +38,7 @@ allCellsPosT(count) = struct();
 allCellsPosX(count) = struct(); 
 allCellsLickT(count) = struct(); 
 allCellsLickX(count) = struct(); 
+allCellsSpikeIdx = cell(count,1);
 
 sampleRate = 50; %hz
 min = 15;
@@ -70,7 +77,8 @@ for n = 1:numel(fn)
         load(fullfile(matPath), 'all_fr', 'avg_all_fr', 'all_corrmatrix', 'avg_all_corrmatrix', ...
              'all_waveforms', 'cells_to_plot','spike_depth','all_drugEffectScores',...
             'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr',...
-            'trial_ds', 'all_frTime', 'all_cellStabilityScore','post','posx','speed','lickt','lickx');
+            'trial_ds', 'all_frTime', 'all_cellStabilityScore','post','posx','speed','lickt','lickx',...
+            'all_spike_idx','all_fr10');
 
         spatialIndx = ismember(cells_to_plot,allSpatialIndx.(seshStr));
        
@@ -84,12 +92,14 @@ for n = 1:numel(fn)
            else
                maxTrial = max(trial);
            end
-           allCellsFR(z+1:z+nCells,1:maxTrial,:) = all_fr(1:nCells,1:maxTrial,1:200);
+           allCellsFR2(z+1:z+nCells,1:maxTrial,:) = all_fr(1:nCells,1:maxTrial,1:200);
+           allCellsFR10(z+1:z+nCells,1:maxTrial,:) = all_fr10(1:nCells,1:maxTrial,1:40);
            allCellsDES(z+1:z+nCells,:,:) = all_drugEffectScores(1:nCells,1:5);
            allCellsCorrMatrix(z+1:z+nCells,1:maxTrial,1:maxTrial) = all_corrmatrix(1:nCells,1:maxTrial,1:maxTrial);
            allCellsCorrScoreCurve(z+1:z+nCells,1:maxTrial) = all_cellCorrScore(1:nCells,1:maxTrial);
            allCellsStabilityScoreCurve(z+1:z+nCells,1:maxTrial) = all_cellStabilityScore(1:nCells,1:maxTrial);
            allCellsMetaData(z+1:z+nCells,:) = repmat({session_name, animalName, sessionDate, genotype, gender, ketamine_day},nCells,1);
+           allCellsSpikeIdx(z+1:z+nCells,:) = all_spike_idx;
            
            first50indx = find(trial_ds==50, 1,'first');
            first100indx = find(trial_ds==100, 1,'first');
@@ -143,7 +153,8 @@ fprintf('Done with allocation\n')
 %%
 % SAVE ALLCELLS MAT DATA STRUCTURE
 allCells.metadata = allCellsMetaData;
-allCells.spatialFR = allCellsFR; 
+allCells.spatialFR2 = allCellsFR2; 
+allCells.spatialFR10 = allCellsFR10;
 allCells.stabilityScoreCurve = allCellsStabilityScoreCurve;
 allCells.drugEffectScores = allCellsDES;
 allCells.correlationMatrix = allCellsCorrMatrix;
@@ -157,5 +168,8 @@ allCells.posT = allCellsPosT;
 allCells.posX = allCellsPosX;
 allCells.lickT = allCellsLickT;
 allCells.lickX = allCellsLickX;
+allCells.spike_idx = allCellsSpikeIdx;
 %%
 clearvars -except allCells
+
+end

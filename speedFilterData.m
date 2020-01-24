@@ -1,16 +1,22 @@
-function [spdFltrTrial,spdFltrPosX,spdFltrPosT] = speedFilterData(trial,posx, post, speed)
-
+function [spdFltrTrial,spdFltrPosX,spdFltrPosT] = speedFilterData(trial,posx, post, speed, n)
 % remove trial, position & time frames that have speed <n cm/s
-n = 2;
+if ~isempty(trial)
+    spdFltrTrial = trial(speed>n);
+else
+    spdFltrTrial = [];
+end
 
-spdFltrTrial = trial;
-spdFltrTrial(speed<n) = [];
+if ~isempty(posx)
+    spdFltrPosX = posx(speed>n);
+else
+    spdFltrPosX = [];
+end
 
-spdFltrPosX = posx;
-spdFltrPosX(speed<n) = [];
-
-spdFltrPosT = post;
-spdFltrPosT(speed<n) = [];
+if ~isempty(post)
+    spdFltrPosT = post(speed>n);
+else
+    spdFltrPosT = [];
+end
 
 
 end

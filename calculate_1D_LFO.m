@@ -1,19 +1,16 @@
-function linearFractionalOccupancy = calculate_1D_LFO(posx,post)
-    if ~exist('paramsPath','var')
-        addpath(genpath('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/UniversalParams'));
-        params = readtable('UniversalParams.xlsx');
-    else
-        params = readtable(paramsPath);
-    end
+function linearFractionalOccupancy = calculate_1D_LFO(posx,post,spatialBin, speed)
 
-    trackLength = floor(max(posx));
+    trackLength = 400;
     trackStart = 0;
     posSamplingRate = mean(diff(post)); % sec per frame
     
-
-    binedges = trackStart:params.SpatialBin:trackLength;
-    time_per_bin = histcounts(posx, binedges);
+    speedThreshold = 2; %2cm/s
+    [~,spdFltrPosX,spdFltrPosT] = speedFilterData([],posx, post, speed,speedThreshold);
+    
+    binedges = trackStart:spatialBin:trackLength;
+    time_per_bin = histcounts(spdFltrPosX, binedges);
     time_per_bin = time_per_bin * posSamplingRate;
-    total_time = max(post);
+    total_time = numel(spdFltrPosT) * posSamplingRate;
     linearFractionalOccupancy = time_per_bin/total_time;
+    
 end
