@@ -6,9 +6,14 @@ addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/M
 addpath(genpath('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/MalcolmFxn/spikes'));
 
 %%
-
+if ~exist('filter','var')
+    filter = 'mec';   
+end
 % sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/*.mat');
-sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat');
+% sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat');
+% sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_data_matrices_noSmoothing/*.mat');
+sessionsPath = '/Users/KeiMasuda/Desktop/fkm_analysis/combinedSesh/fr_data_matrices_noSmoothing/*.mat';
+sessions = dir(sessionsPath);
 % Get subset of desired sessions
 % filter = 'mec';
 sessions = filterSessions(sessions, filter);

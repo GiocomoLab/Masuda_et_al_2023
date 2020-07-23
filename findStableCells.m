@@ -1,7 +1,6 @@
 function stabilityTable = findStableCells(allCells)
 %%
-    allCellsFR = allCells.spatialFR10;
-    nCells = size(allCellsFR,1);
+    nCells = size(allCells.spatialFR2,1);
     stabilityValues = nan(nCells,5);
     for k = 1:nCells
 

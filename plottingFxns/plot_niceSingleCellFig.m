@@ -1,5 +1,6 @@
 function plot_niceSingleCellFig(allCells)
 
+addpath(genpath('./plottingFxns'))
 %%
 i = randi(size(allCells.spatialFR10,1));
 % i = 1148
@@ -8,7 +9,7 @@ i = randi(size(allCells.spatialFR10,1));
 % i = 3484
 % i = 545
 
-%
+%%
 
 singleCellFR10cm = squeeze(allCells.spatialFR10(i,:,:));
 singleCellFR2cm = squeeze(allCells.spatialFR2(i,:,:));
@@ -66,15 +67,9 @@ end
 stabilityScore = calculateStabilityScore(singleCellFR10cm);
 
 % Correlation Matrix 
-testCells = singleCellFR10cm;
-numCells = size(testCells,1);
-trialNum = size(testCells,2);
-spatialBins = size(testCells,3);
-flatFR = reshape(permute(testCells,[3 1 2]), [numCells*spatialBins, trialNum]);
-flatFR = normalize(flatFR,1)';
-
 %P-by-P matrix containing the pairwise linear correlation coefficient between each pair of columns in the N-by-P matrix X.
-corrMatrix = corr(fillmissing(flatFR,'linear')); 
+[corrMatrix,pval] = corr(singleCellFR10cm'); 
+
 
 % Off Diagonal Stability
 offdiag = nan(300,1);
@@ -85,12 +80,18 @@ end
 % Peakiness
 peakiness = peak2rms(singleCellFR10cm');
 
-%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figures
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% close all;
 figure(1);
-row = 5;
-col = 6;
+clf;
 
-subplot(row,col,[1,7,13,19,25])
+row = 5;
+col = 4;
+
+columnSubplot = [1,5,9,13,17];
+subplot(row,col,columnSubplot)
 scatter(posx(spike_idx),trial(spike_idx),'k.');
 colormap('default')
 set(gca, 'YDir','reverse')
@@ -100,96 +101,92 @@ set(gca,'TickDir','out');
 set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
 box off;
-% set(gca,'FontSize',30);
+set(gca,'FontSize',20);
 set(gca,'FontName','Helvetica');
 % set(gcf,'Position',[100 100 1000 1000])
-title(sprintf('Cell %d ? %s,%s',i,name,genotype))
+title(sprintf('Cell %d: %s,%s',i,name,genotype))
 xlabel('VR cm')
 ylabel('Trial Number')
 
-subplot(row,col,[2,8,14,20,26])
+subplot(row,col,columnSubplot+1)
 imagesc(singleCellFR);
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
 box off;
-% set(gca,'FontSize',30);
+axis off;
+set(gca,'FontSize',20);
 set(gca,'FontName','Helvetica');
 % set(gcf,'Position',[100 100 1000 1000])
 title('Firing Rate')
 xlabel('VR cm')
 ylabel('Trial Number')
+%%%%%%%
+smoothFactor = 10;
 
+rowStart = 3;
+rowEnd = 4;
+subplot(row,col,rowStart:rowEnd);
 
-
-% subplot(row,col,3:6)
-% plot(smooth(meanSpeed,'sgolay'));
-% set(gca,'TickDir','out');
-% set(gca,'ticklength',[0.005 0.025]);
-% set(gca,'layer','bottom');
-% box off;
-% % set(gca,'FontSize',20);
-% set(gca,'FontName','Helvetica');
-% % set(gcf,'Position',[100 100 1000 1000])
-% title('Speed')
-% ylabel('cm/s')
-%
-subplot(row,col,3:6)
-plot(smooth(peakiness,'sgolay'));
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
-set(gca,'layer','bottom');
-box off;
-set(gca,'FontName','Helvetica');
-title('Peakiness')
-ylabel('Ratio of largest absolute to RMS')
-
-
-subplot(row,col,9:12); 
-plot(smooth(mean(singleCellFR2cm,2),'sgolay'),'r');
+plot(smooth(mean(singleCellFR2cm,2),smoothFactor),'k');
+% plot(smooth(mean(singleCellFR2cm,2),'sgolay'),'r');
 title('Avg Trial Firing Rate');
 ylabel('Hz');
 set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
+set(gca,'ticklength',[0.015 0.025]);
 set(gca,'layer','bottom');
 box off;
+set(gca,'Xticklabel',[])
+set(gca,'FontSize',15);
 
-subplot(row,col,15:18);
-stabilityScoreCurve = squeeze(allCells.stabilityScoreCurve(i,:));
-% plot(stabilityScore);
-% plot(smooth(stabilityScore,10,'sgolay'));
-plot(smooth(stabilityScoreCurve,10,'sgolay'));
-% plot(offdiag,'m')
+subplot(row,col,rowStart+col:rowEnd+col)
+plot(smooth(peakiness,smoothFactor),'k');
 set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
+set(gca,'ticklength',[0.015 0.025]);
 set(gca,'layer','bottom');
 box off;
-% set(gca,'FontSize',20);
 set(gca,'FontName','Helvetica');
-% set(gcf,'Position',[100 100 1000 1000])
-title('Stability Score')
-ylabel('Stability Score')
+title('Crest Factor')
+ylabel('Peak2RMS Ratio')
+set(gca,'Xticklabel',[])
+set(gca,'FontSize',15);
 
-
-subplot(row,col,21:24);
-plot(smooth(trialBlockSpatialInformation(:,2),'sgolay'),'k')
+rowPlotNum = 2;
+subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
+plot(smooth(trialBlockSpatialInformation(:,2),smoothFactor),'k')
 set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
+set(gca,'ticklength',[0.015 0.025]);
 set(gca,'layer','bottom');
 box off;
 set(gca,'FontName','Helvetica');
 title(sprintf('Spatial Information = Isec:%0.3f; Ispike:%0.3f', I_sec, I_spike))
-% xlabel('Trial Number')
 ylabel('SI Score')
-% legend('I sec', 'I spike');
-%
+set(gca,'Xticklabel',[])
+set(gca,'FontSize',15);
 
-
-subplot(row,col,27:30);
-% bar(lickAccuracyByTrial);
-scatter(trial(lick_idx),posx(lick_idx));
+rowPlotNum = 3;
+subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
+plot(smooth(stabilityScore,smoothFactor),'k');
+% plot(smooth(stabilityScore,10,'sgolay'));
+% plot(stabilityScoreCurve);
+% plot(smooth(stabilityScoreCurve,10,'sgolay'));
+% plot(offdiag,'m')
 set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
+set(gca,'ticklength',[0.015 0.025]);
+set(gca,'layer','bottom');
+box off;
+set(gca,'FontName','Helvetica');
+title('Stability Score')
+ylabel('Stability Score')
+set(gca,'Xticklabel',[])
+set(gca,'FontSize',15);
+
+rowPlotNum = 4;
+subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
+% bar(lickAccuracyByTrial);
+scatter(trial(lick_idx),posx(lick_idx),'k');
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.015 0.025]);
 set(gca,'layer','bottom');
 box off;
 ylim([0 400]);
@@ -197,13 +194,16 @@ set(gca,'FontName','Helvetica');
 title('Licks')
 xlabel('Trial Number')
 ylabel('VR cm')
+set(gca,'FontSize',15);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Spatial Firing Rate Map at 4 timepoints
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%
-figure(2); 
+figure(2); clf; 
 row = 4;
 col = 6;
 subplot(row,col,1:6);
-plot(mean(singleCellFR2cm(1:50,:),1))
+plot_lineWithSEM(smoothdata(singleCellFR2cm(1:50,:),2,'movmean',smoothFactor),[])
 title('Trial 1-50');
 ylabel('Hz')
 set(gca,'TickDir','out');
@@ -211,10 +211,11 @@ set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
 box off;
 set(gca,'FontName','Helvetica');
-set(gca,'FontSize',15);
+set(gca,'FontSize',20);
+set(gca,'xtick',[]);
 
 subplot(row,col,7:12);
-plot(mean(singleCellFR2cm(51:100,:),1))
+plot_lineWithSEM(smoothdata(singleCellFR2cm(51:100,:),2,'movmean',smoothFactor),[])
 title('Trial 51-100');
 ylabel('Hz')
 set(gca,'TickDir','out');
@@ -222,22 +223,25 @@ set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
 box off;
 set(gca,'FontName','Helvetica');
-set(gca,'FontSize',15);
+set(gca,'FontSize',20);
+set(gca,'xtick',[]);
 
 subplot(row,col,13:18);
-plot(mean(singleCellFR2cm(101:125,:),1))
-title('Trial 101-125');
+plot_lineWithSEM(smoothdata(singleCellFR2cm(101:115,:),2,'movmean',smoothFactor),[])
+title('Trial 101-115');
 ylabel('Hz')
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
 box off;
 set(gca,'FontName','Helvetica');
-set(gca,'FontSize',15);
+set(gca,'FontSize',20);
+set(gca,'xtick',[]);
+% ylim([0 20])
 
 subplot(row,col,19:24);
-plot(mean(singleCellFR2cm(126:300,:),1))
-title('Trial 126-300');
+plot_lineWithSEM(smoothdata(singleCellFR2cm(116:300,:),2,'movmean',smoothFactor),[])
+title('Trial 116-300');
 ylabel('Hz')
 xlabel('VR cm')
 set(gca,'TickDir','out');
@@ -245,14 +249,15 @@ set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
 box off;
 set(gca,'FontName','Helvetica');
-set(gca,'FontSize',15);
+set(gca,'FontSize',20);
 
-%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Correlation Matrix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-figure(3)
-subplot(row,col,1:18); 
-imagesc(corrMatrix); colorbar;
+figure(3); clf; 
+% subplot(row,col,1:18); 
+imagesc(fillmissing(corrMatrix,'linear')); colorbar;
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.015 0.025]);
 set(gca,'layer','bottom');
@@ -260,13 +265,16 @@ box on;
 axis square;
 set(gca,'FontSize',30);
 set(gca,'FontName','Helvetica'); 
-set(gcf,'Position',[100 100 1000 1000])
+% set(gcf,'Position',[100 100 1000 1000])
 title(sprintf('Trial by Trial Correlation Matrix'))
-%
-subplot(row,col,19:24);
-plot(smooth(offdiag,'sgolay'))
-title('Off Diagonal Correlation');
+ylabel('Trials')
+xlabel('Trials')
 
+%
+% subplot(row,col,19:24);
+% plot(smooth(offdiag,'sgolay'))
+% title('Off Diagonal Correlation');
 
 end
+
 

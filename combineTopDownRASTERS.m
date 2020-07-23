@@ -13,7 +13,8 @@ function combineTopDownRASTERS(session_name, size_vert, size_horiz, numrow)
 %   session_name = {'F3_190625_johnrepeatingtrack_meth2'}; % new output from singeSessionRasterplots
 
 % where to save images
-image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/topDownRasterplots/pretty_rasters/';
+image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/ratemaps/pretty_rasters/';
+% image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters/pretty_rasters/';
 % image_save_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1';
 
 if exist(image_save_dir,'dir')~=7
@@ -22,8 +23,8 @@ end
 %% Combine images for one session
     animalName = extractBefore(session_name,'_');
     sessionDate = extractBefore(extractAfter(session_name,'_'),'_');
-    
-    image_dir = fullfile('/Users/KeiMasuda/Desktop/fkm_analysis/topDownRasterplots/');
+    image_dir = fullfile('/Users/KeiMasuda/Desktop/fkm_analysis/ratemaps/');
+%     image_dir = fullfile('/Users/KeiMasuda/Desktop/fkm_analysis/rasters/');
     % image_dir = fullfile('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1/select_trials_pretty_rasters');
     
     % get png file names
@@ -37,7 +38,7 @@ end
 
     % fill in final_image with data from png files
     for i = 1:numel(png_files)
-        fprintf('session %d/%d: %s, file %d/%d\n',1,numel(session_name),session_name,i,numel(png_files));
+        fprintf('session %d/%d: %s, file %d/%d\n',i,numel(session_name),session_name,i,numel(png_files));
 
         % read image
         dat = imread(fullfile(image_dir,png_files{i}),'png');

@@ -1,6 +1,6 @@
-function plot_correlationScoreCurves(allCells, cellIndx, filter)
+function plot_correlationScoreCurves(allCells, filter)
 
-allCellsFR = allCells.spatialFR(cellIndx,:,:);
+allCellsFR = allCells.spatialFR2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Average Correleation Score Curve
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,37 +20,38 @@ for i = 1:size(allCellsFR,1)
 end
 fprintf('done')
 
-
-figure(1); hold on;
-plot(nanmean(all_cellCorrScore,1),'LineWidth',5)
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
-set(gca,'layer','bottom');
-box off;
-axis square;
-set(gca,'FontSize',30);
-set(gca,'FontName','Helvetica');
-set(gcf,'Position',[100 100 1000 1000])
-title(sprintf('%d Cell, Average Correlation Score Curve(%s)',size(allCellsFR,1),filter))
-xlabel('Trial')
-ylabel('Corrleation compared to Baseline Template (rho)')
+% 
+% figure(1); hold on;
+% plot_lineWithSEM(all_cellCorrScore,[])
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.005 0.025]);
+% set(gca,'layer','bottom');
+% box off;
+% axis square;
+% set(gca,'FontSize',30);
+% set(gca,'FontName','Helvetica');
+% set(gcf,'Position',[100 100 1000 1000])
+% title(sprintf('%d Cell, Average Correlation Score Curve(%s)',size(allCellsFR,1),filter))
+% xlabel('Trial')
+% ylabel('Corrleation compared to Baseline Template (rho)')
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Normalized  Correleation Score Curve
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-figure(2);  hold on;
-
+figure();  hold on;
+plotTrialRange = 51:290;
 avgControlInjxCorr = nanmean(nanmean(all_cellCorrScore(:,1:50),1));
 normalizedCorrScoreCurves = all_cellCorrScore./avgControlInjxCorr;
-normCSC_data.y = normalizedCorrScoreCurves(:,51:300);
-normCSC_data.x = repmat(51:300,size(normalizedCorrScoreCurves,1),1);
+normCSC_data.y = normalizedCorrScoreCurves(:,plotTrialRange);
+normCSC_data.x = repmat(plotTrialRange,size(normalizedCorrScoreCurves,1),1);
 g=gramm('x',normCSC_data.x ,'y',normCSC_data.y);
 % g.geom_line();
 g.stat_summary('setylim','true');
 g.set_names('x','Trial','y','Correlation compared to Baseline Template (rho)','size',20); 
 g.set_title(sprintf('Average Correlation Score Curve(%s - %d Cells)',filter,size(allCellsFR,1)),'fontSize',30);
 g.axe_property('FontSize',25);
+g.set_color_options('chroma',0,'lightness',30);
 box off;
 axis off;
 axis square;

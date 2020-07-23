@@ -1,17 +1,23 @@
+function plotAllCells(allCells)
 %% Make Plots. Use after running Pool All cells
 % Run all the plotting functions
-% input: allCells struct
+% input: ketamineCells struct
 
 % add plotting functions to path
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 addpath(genpath('./plottingFxns'))
+%% Filter cells to ketamine cells
+seshIndx = ismember(allCells.metadata(:,8),'ketamine');
+ketamineCells = filterAllCellsStruct(allCells,seshIndx);
+fprintf('done filtering ketamineCells\n');
 
 %% Generate Indices
-WTcellsIndx = strcmp({allCells.metadata{:,4}}, 'WT')';
-KOcellsIndx = strcmp({allCells.metadata{:,4}}, 'KO')';
 
-stabilityTable = findStableCells(allCells); % {'totalStability', 'baselineStability', 'acuteDrugStability', 'endingStability', 'gainStability'}
-stabilityThreshold = 0.45;
+WTcellsIndx = strcmp({ketamineCells.metadata{:,4}}, 'WT')';
+KOcellsIndx = strcmp({ketamineCells.metadata{:,4}}, 'KO')';
+
+stabilityTable = findStableCells(ketamineCells); % {'totalStability', 'baselineStability', 'acuteDrugStability', 'endingStability', 'gainStability'}
+stabilityThreshold = 0.2;
 totalStabilityIndx = stabilityTable.totalStability > stabilityThreshold;
 WTtotalStabilityIndx = (stabilityTable.totalStability > stabilityThreshold) & WTcellsIndx;
 KOtotalStabilityIndx = (stabilityTable.totalStability > stabilityThreshold) & KOcellsIndx;
@@ -20,40 +26,260 @@ baselineStabilityIndx = stabilityTable.baselineStability > stabilityThreshold;
 WTbaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & WTcellsIndx;
 KObaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & KOcellsIndx;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% FIGURE 1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% filter for WT mec cells with ketamine
+seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
+fltrCells = filterAllCellsStruct(ketamineCells,seshIndx);
+%% Plot Nice Single Cell Figure
+plot_niceSingleCellFig(fltrCells);
+%% Plot  Peakiness
+plot_peakinessCurves(fltrCells);
 
-%% Plot Stability Table STats
-plot_stabilityTableStats(allCells, stabilityTable);
+%% Sort by peakiness
+% [~,sortIndx] = sortrows(...
+%     nanmean(ketamineCells.peakiness,2)/max(nanmean(ketamineCells.peakiness,2))...
+%     + (nanmean(nanmean(ketamineCells.spatialFR10,2),3))/max(nanmean(nanmean(ketamineCells.spatialFR10,2),3))...
+%     ,'descend');
+[~,sortIndx] = sortrows(nanmean(fltrCells.peakiness,2),'ascend');
+sortedCells = sortAllCellsStruct(fltrCells,sortIndx);
+plotAllSingleCells(sortedCells,false)
+plot_sortedMatrix(fltrCells.peakiness,sortIndx,'ascend')
+%% Sort by Peakiness and Firing Rate - Aggregated
+sortIndx = sortByTwoCols(fltrCells);
+sortedCells = sortAllCellsStruct(fltrCells,sortIndx);
+plotRasterGrid(sortedCells,36)
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% FIGURE 2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Plot Firing Rate over Time 5 min before injection and 10 min after injection
 
-%% PLOT Histfit on FR score
-plot_HistfitFRscore(allCells, WTcellsIndx,'WT');
-plot_HistfitFRscore(allCells, KOcellsIndx,'KO');
+plot_FRoverTime5minBefore10minafter(fltrCells)
+%% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
+plot_STATS_5minBefore5minafter(fltrCells)
 
+%% Plot Firing Rate over Time 5min before and 60 min after injection
+plot_FRneg5to60minAfterKetamineInjx(fltrCells);
 
-plot_HistfitFRscore(allCells, WTtotalStabilityIndx,'WT');
-plot_HistfitFRscore(allCells, KOtotalStabilityIndx,'KO');
-%% Plot Distribution of Ketamine Correlation Scores
-plot_HistfitKetCorrEffectScore(allCells, WTcellsIndx,'WT')
-plot_HistfitKetCorrEffectScore(allCells, KOcellsIndx,'KO')
+%% Plot Firing Rate over Trials by Mouse
+plot_avgFRbyMouse(fltrCells)
 
 %% Plot Correlation Score Curves
-plot_correlationScoreCurves(allCells, WTcellsIndx,'WT')
-plot_correlationScoreCurves(allCells, KOcellsIndx,'KO')
+plot_correlationScoreCurves(fltrCells,'WT')
+% plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
 
-%% Plot Correlation Score Curve Comparisions
-plot_correlationScoreCurveComparison(allCells, WTcellsIndx, KOcellsIndx, 'All Cells')
-plot_correlationScoreCurveComparison(allCells, WTtotalStabilityIndx, KOtotalStabilityIndx, 'Whole Session Stable')
-plot_correlationScoreCurveComparison(allCells, WTbaselineStabilityIndx, KObaselineStabilityIndx, 'Baseline Stable Cells')
+%% Plot Peakiness Curves over Trials
+plot_peakinessCurves(fltrCells)
 
-%% Plot Correlation Score Curves by Animal
-
-%% Plot Stability Score Curve
-plot_stabilityScore(allCells, [], 'all cells')
-plot_stabilityScore(allCells, WTcellsIndx,'WT')
-plot_stabilityScore(allCells, KOcellsIndx,'KO')
+%% PLOT Histfit on Corr score
+plot_HistfitKetCorrEffectScore(fltrCells, 'WT')
 
 
 %% Plot Correlation Matrix
-plot_correlationMatrix(allCells,WTcellsIndx, 'WT')
+plot_correlationMatrix(fltrCells, 'WT');
+
+%% Plot Correlation Matrix by sessions
+seshes = unique(cellfun(@num2str,fltrCells.metadata(:,1),'uni',0));
+
+rows = ceil(sqrt(numel(seshes)));
+cols = rows;
+
+for i = 1:numel(seshes)
+    seshIndx = ismember(fltrCells.metadata(:,1),seshes{i});
+    cells.metadata = fltrCells.metadata(seshIndx,:);
+    cells.correlationMatrix = fltrCells.correlationMatrix(seshIndx,:,:);
+    cells.spatialFR10 = fltrCells.spatialFR10(seshIndx,:,:);
+    plot_correlationMatrix(cells,cells.metadata{1,4})
+    pause
+end
+%% Plot Behavior by Sessions for WT animals
+plot_BehaviorbySesh(fltrCells,true);
+
+%% Plot PCA by session for WT animals
+plot_PCAbySesh(fltrCells,true)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% FIGURE 3
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+seshIndx = ismember(ketamineCells.metadata(:,4),'KO');
+fltrCells = filterAllCellsStruct(ketamineCells,seshIndx);
+seshIndx = mean(fltrCells.bitsPerSecCurve,2)>4;
+fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
+%% Plot Raster Grid
+plotRasterGrid(fltrCells,100)
+% Plot Fr Grid
+plotFRGrid(fltrCells,100)
+ 
+%% Plot Nice Single Cell Figure
+plot_niceSingleCellFig(fltrCells);
+%% Plot Firing Rate over Time 5 min before injection and 10 min after injection
+plot_FRoverTime5minBefore10minafter(fltrCells);
+%% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
+plot_STATS_5minBefore5minafter(fltrCells)
+
+%% Plot Firing Rate over Time 5min before and 60 min after injection
+plot_FRneg5to60minAfterKetamineInjx(fltrCells);
+
+%% Plot Firing Rate over Trials by Mouse
+plot_avgFRbyMouse(fltrCells)
+
+%% Plot Correlation Score Curves
+plot_correlationScoreCurves(fltrCells,'KO')
+% plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
+
+%% Plot Correlation Score Curve Comparisions
+plot_correlationScoreCurveComparison(fltrCells, ko_fltrCells)
+
+
+%% Plot Peakiness Curves over Trials
+plot_peakinessCurves(fltrCells)
+
+%% PLOT Histfit on Corr score
+plot_HistfitKetCorrEffectScore(fltrCells, 'KO')
+
+
+%% Plot Correlation Matrix
+plot_correlationMatrix(fltrCells, 'WT');
+plot_correlationMatrix(ko_fltrCells, 'KO');
+
+%% Plot Behavior by Sessions for KO ketamine animals
+plot_BehaviorbySesh(fltrCells,true);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Plot MK801 WT Cells
+seshIndx = ismember(allCells.metadata(:,8),'MK801');
+fltrCells = filterAllCellsStruct(allCells,seshIndx);
+seshIndx = ismember(fltrCells.metadata(:,4),'WT');
+fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
+seshIndx = mean(fltrCells.bitsPerSecCurve,2)>4;
+fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
+fprintf('Done Filtering For WT MK801 cells\n');
+%% Save raster plots without legends
+plotAllSingleCells(fltrCells,true)
+%% Plot Raster Grid
+plotRasterGrid(fltrCells,100)
+% Plot Fr Grid
+plotFRGrid(fltrCells,100)
+
+%% Plot Nice Single Cell Figure
+plot_niceSingleCellFig(fltrCells);
+
+%% Plot Firing Rate over Time 5min before and 60 min after injection
+plot_FRneg5to60minAfterKetamineInjx(fltrCells);
+
+%% Plot Firing Rate over Trials by Mouse
+plot_avgFRbyMouse(fltrCells)
+
+%% Plot Correlation Score Curves
+plot_correlationScoreCurves(fltrCells,'WT')
+% plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
+
+%% Plot Correlation Score Curve Comparisions
+plot_correlationScoreCurveComparison(fltrCells, ko_fltrCells)
+
+
+%% Plot Peakiness Curves over Trials
+plot_peakinessCurves(fltrCells)
+
+%% PLOT Histfit on Corr score
+plot_HistfitKetCorrEffectScore(fltrCells, 'WT-MK801')
+
+
+%% Plot Correlation Matrix
+plot_correlationMatrix(fltrCells, 'MK801');
+
+%% Plot MK801 KO Cells
+seshIndx = ismember(allCells.metadata(:,8),'MK801');
+fltrCells = filterAllCellsStruct(allCells,seshIndx);
+seshIndx = ismember(fltrCells.metadata(:,4),'KO');
+fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
+seshIndx = mean(fltrCells.bitsPerSecCurve,2)>4;
+fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
+fprintf('Done Filtering For KO MK801 cells\n');
+%% Save raster plots without legends
+plotAllSingleCells(fltrCells,true)
+%% Plot Raster Grid
+plotRasterGrid(fltrCells,100)
+% Plot Fr Grid
+plotFRGrid(fltrCells,100)
+
+%% Plot Nice Single Cell Figure
+plot_niceSingleCellFig(fltrCells);
+
+%% Plot Firing Rate over Time 5min before and 60 min after injection
+plot_FRneg5to60minAfterKetamineInjx(fltrCells);
+
+%% Plot Firing Rate over Trials by Mouse
+plot_avgFRbyMouse(fltrCells)
+
+%% Plot Correlation Score Curves
+plot_correlationScoreCurves(fltrCells,'WT')
+% plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
+
+%% Plot Correlation Score Curve Comparisions
+plot_correlationScoreCurveComparison(fltrCells, ko_fltrCells)
+
+
+%% Plot Peakiness Curves over Trials
+plot_peakinessCurves(fltrCells)
+
+%% PLOT Histfit on Corr score
+plot_HistfitKetCorrEffectScore(fltrCells, 'WT-MK801')
+
+
+%% Plot Correlation Matrix
+plot_correlationMatrix(fltrCells, 'MK801');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MISC7
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Plot Control
+
+%% Filter cells to ketamine cells
+seshIndx = ismember(allCells.metadata(:,8),'control');
+fltrCells = filterAllCellsStruct(allCells,seshIndx);
+fprintf('done filtering ketamineCells\n');
+
+
+%% Plot peakiness sessions
+seshes = unique(cellfun(@num2str,fltrCells.metadata(:,1),'uni',0));
+
+rows = ceil(sqrt(numel(seshes)));
+cols = rows;
+figure(); hold on;
+for i = 1:numel(seshes)
+    
+    seshIndx = ismember(fltrCells.metadata(:,1),seshes{i});
+    seshCells = filterAllCellsStruct(fltrCells,seshIndx);
+    handles.(sprintf('sp%d',i)) = subplot(rows,cols,i);
+    try
+        plot_peakinessSubset(seshCells, handles.(sprintf('sp%d',i)))
+    catch
+        warning('Could not do %d',i);
+        continue
+    end
+end
+
+%% Plot Stability Table STats
+plot_stabilityTableStats(ketamineCells, stabilityTable);
+
+%% PLOT Histfit on FR score
+plot_HistfitFRscore(ketamineCells, WTcellsIndx,'WT');
+plot_HistfitFRscore(ketamineCells, KOcellsIndx,'KO');
+
+plot_HistfitFRscore(ketamineCells, WTtotalStabilityIndx,'WT');
+plot_HistfitFRscore(ketamineCells, KOtotalStabilityIndx,'KO');
+%% Plot Distribution of Ketamine Correlation Scores
+plot_HistfitKetCorrEffectScore(ketamineCells, WTcellsIndx,'WT')
+plot_HistfitKetCorrEffectScore(ketamineCells, KOcellsIndx,'KO')
+
+%% Plot Stability Score Curve
+plot_stabilityScore(ketamineCells, [], 'all cells')
+plot_stabilityScore(ketamineCells, WTcellsIndx,'WT')
+plot_stabilityScore(ketamineCells, KOcellsIndx,'KO')
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,7 +299,7 @@ end
 %%
 for k=1:numel(fn)
     try
-    testCells = allCells.spatialFR(sessionMap == k,:,:);
+    testCells = ketamineCells.spatialFR(sessionMap == k,:,:);
 
     
     numCells = size(testCells,1);
@@ -122,7 +348,7 @@ end
 
 %%
 
-testCells = allCells.spatialFR;
+testCells = ketamineCells.spatialFR10;
 
 
 numCells = size(testCells,1);
@@ -132,7 +358,9 @@ spatialBins = size(testCells,3);
 flatFR2 = reshape(permute(testCells,[3 1 2]), [numCells*spatialBins, trialNum]);
 
 %P-by-P matrix containing the pairwise linear correlation coefficient between each pair of columns in the N-by-P matrix X.
-corrMatrix = corr(fillmissing(flatFR2,'linear')); 
+% corrMatrix = corr(fillmissing(flatFR2,'linear')); 
+corrMatrix = corr(ketamineCells.spatialFR10); 
+
 figure(1); clf;
 imagesc(corrMatrix); colorbar;
 set(gca,'TickDir','out');
@@ -147,7 +375,7 @@ title(sprintf('Trial by Trial Population Activity Correlation Matrix(%s)',filter
 
 
 figure(2); clf;
-imagesc(squeeze(nanmean(allCellsCorrMatrix,1)),[0, 0.2]); colorbar; 
+imagesc(squeeze(nanmean(ketamineCellsCorrMatrix,1)),[0, 0.2]); colorbar; 
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.015 0.025]);
 set(gca,'layer','bottom');
@@ -159,153 +387,5 @@ set(gcf,'Position',[100 100 1000 1000])
 title(sprintf('Avg Cell Trial by Trial Correlation Matrix(%s)',filter))
 
 
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Plot Firing Rate over Time 5 min before injection and 10 min after injection
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% figure(1); clf;
-% set(gca,'TickDir','out');
-% set(gca,'ticklength',[0.015 0.025]);
-% set(gca,'layer','bottom');
-% box off;
-% axis square;
-% set(gca,'FontSize',30);
-% set(gca,'FontName','Helvetica');
-% set(gcf,'Position',[100 100 1000 1000])
-% hold on;
-% % plot(allCellsTimeFRcircaKetamineInjx)
-% 
-% plot(smoothdata(nanmean(allCellsTimeFRcircaControlInjx,1),'gaussian',sampleRate*7),'LineWidth',2,'DisplayName','Control Injection');
-% plot(smoothdata(nanmean(allCellsTimeFRcircaKetamineInjx,1),'gaussian',sampleRate*7),'LineWidth',2,'DisplayName','Ketamine Injection');
-% % plot(smoothdata(nanmean(allCellsTimeFRcircaKetamineInjx,1),sampleRate*10,'moving'),'LineWidth',2,'DisplayName','Ketamine Injection');
-% 
-% % modify labels for tick marks
-% scaling  = sampleRate * secInMin; 
-% set(gca,'XLim',[0 15.1*scaling],'XTick',[0:scaling:15*scaling])
-% xticks = get(gca,'xtick');
-% x = 0:1:15;
-% newlabels = arrayfun(@(x) sprintf('%d', (x/scaling)-5), x*scaling, 'un', 0);
-% set(gca,'xticklabel',newlabels);
-% h = vline(5*scaling,'k','Injection');
-% title(sprintf('Control vs Ketamine Injections(%s)',filter))
-% xlabel('Minutes since Injection')
-% ylabel('Firing Rate (Hz)')
-% legend;
 
-%
-figure(); clf;
-clear g;
-xsize = size(allCellsTimeFRcircaControlInjx,2);
-numCell = size(allCellsTimeFRcircaControlInjx,1);
-dsfactor = 50;
-x = downsample(1:xsize,dsfactor);
-x = x/scaling - 5;
-y = vertcat(allCellsTimeFRcircaControlInjx,allCellsTimeFRcircaKetamineInjx);
-y = downsample(y',dsfactor)';
-% z = vertcat(ones([numCell,1]),zeros(numCell,1)); %control vs ket label
-z = cellstr(vertcat(repmat("Control",[numCell,1]),repmat("Ketamine",[numCell,1])));
-
-
-g(1,1) = gramm('x',x,'y',y,'color',z); 
-g(1,1).stat_summary('type','sem','setylim',true);
-
-g(1,1).set_title(sprintf('Control vs Ketamine Injections(%s)',filter), 'FontSize', 40);
-g(1,1).set_names('x','Minutes since Injection','y','Firing Rate (Hz)');
-g(1,1).set_text_options('base_size',20);
-g.draw()
-axis square;
-set(gcf,'Position',[100 100 1000 1000])
-set(gca,'TickDir','out');
-a
-
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Plot Firing Rate over Time 45 min after injection
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure(); clf;
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.015 0.025]);
-set(gca,'layer','bottom');
-box off;
-axis square;
-set(gca,'FontSize',30);
-set(gca,'FontName','Helvetica');
-set(gcf,'Position',[100 100 1000 1000])
-hold on;
-% plot(allCellsTimeFRcircaKetamineInjx)
-
-plot(smoothdata(nanmean(allCellsTimeFR45minAfterKetamineInjx,1),'gaussian',sampleRate*25),'LineWidth',2,'DisplayName','Ketamine Injection');
-% plot(smoothdata(nanmean(allCellsTimeFRcircaKetamineInjx,1),sampleRate*10,'moving'),'LineWidth',2,'DisplayName','Ketamine Injection');
-timeAfterDrug = 45;
-% modify labels for tick marks
-scaling  = sampleRate * secInMin;
-tickSteps = 5;
-set(gca,'XLim',[0 timeAfterDrug*scaling],'XTick',[0:tickSteps*scaling:timeAfterDrug*scaling])
-xticks = get(gca,'xtick');
-x = 0:tickSteps:timeAfterDrug;
-newlabels = arrayfun(@(x) sprintf('%d', x/scaling), x*scaling, 'un', 0);
-set(gca,'xticklabel',newlabels);
-title(sprintf('Ketamine-induced FR over Time(%s)',filter))
-xlabel('Minutes since Injection')
-ylabel('Firing Rate (Hz)')
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Plot Firing Rate over Time 5min before and 60 min after injection
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure(); clf;
-clear g;
-scaling  = sampleRate * secInMin;
-downsampleFactor = 250;
-timeAfterDrug = 60;
-timeBeforeDrug = -5;
-x = timeBeforeDrug*scaling+1:downsampleFactor:timeAfterDrug*scaling;
-y = downsample(allCells.timeFRneg5to60minAfterKetamineInjx',downsampleFactor)';
-
-x_min = x./scaling;0
-
-g(1,1) = gramm('x',x_min,'y',y); 
-g(1,1).stat_summary('type','sem');
-% g(1,1).stat_smooth();
-
-% g(1,1).geom_line();
-g(1,1).axe_property('YLim',[5 10]);
-g(1,1).set_title(sprintf('Ketamine-induced FR over Time(%s)',filter), 'FontSize', 40);
-g(1,1).set_names('x','Minutes since Injection','y','Firing Rate(Hz)');
-g(1,1).set_text_options('base_size',20);
-g.draw()
-axis square;
-set(gcf,'Position',[100 100 1000 1000])
-
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Plot Firing Rate over Time 45 min after injection with KO
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure(); clf; hold on;
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.015 0.025]);
-set(gca,'layer','bottom');
-box off;
-axis square;
-set(gca,'FontSize',30);
-set(gca,'FontName','Helvetica');
-set(gcf,'Position',[100 100 1000 1000])
-hold on;
-% plot(allCellsTimeFRcircaKetamineInjx)
-
-plot(smoothdata(nanmean(allCellsTimeFR45minAfterKetamineInjx,1),'gaussian',sampleRate*25),'LineWidth',2,'DisplayName','WT');
-plot(smoothdata(nanmean(allCellsTimeFR45minAfterKetamineInjxKO,1),'gaussian',sampleRate*25),'LineWidth',2,'DisplayName','HCN1ko');
-% plot(smoothdata(nanmean(allCellsTimeFRcircaKetamineInjx,1),sampleRate*10,'moving'),'LineWidth',2,'DisplayName','Ketamine Injection');
-timeAfterDrug = 45;
-% modify labels for tick marks
-scaling  = sampleRate * secInMin;
-tickSteps = 5;
-set(gca,'XLim',[0 timeAfterDrug*scaling],'XTick',[0:tickSteps*scaling:timeAfterDrug*scaling])
-xticks = get(gca,'xtick');
-x = 0:tickSteps:timeAfterDrug;
-newlabels = arrayfun(@(x) sprintf('%d', x/scaling), x*scaling, 'un', 0);
-set(gca,'xticklabel',newlabels);
-title(sprintf('Ketamine-induced FR over Time(WT vs HCN1ko)',filter))
-xlabel('Minutes since Injection')
-ylabel('Firing Rate (Hz)')
-legend;
-
+end

@@ -1,8 +1,7 @@
 % run stitch sessions together, plot raster plots, combine rasters, plot
 % lick data for 3 unity sessions
 sessions = {... 
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCNf2/HCNf2_191218_keicontrasttrack_MK8011_g0',...
-'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCNf1/HCNf1_191219_keicontrasttrack_MK8011_g0',...
+'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCNj2/HCNj2_200204_keicontrasttrack_MK8011_g0',...
 }; 
 
 %'/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/HCNb4/HCNb4_191014_keicontrasttrack_MK8011_g0',...
@@ -35,7 +34,7 @@ for n = 1:numel(sessions)
         trackLength = 400;
         plotWidth = 160;
         plotHeight = 500;
-        preDrugTrials = 0; %100
+        preDrugTrials = 100; %100
         singleSessionRasterplots(sessions{n},session_name, trackLength, plotWidth, plotHeight, preDrugTrials)
         
         size_vert = 1042; % changed from 1042 to 346

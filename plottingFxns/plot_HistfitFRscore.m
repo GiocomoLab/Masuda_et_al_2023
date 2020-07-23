@@ -1,14 +1,14 @@
-function plot_HistfitFRscore(allCells, cellIndx, filter)
+function plot_HistfitFRscore(allCells, filter)
 % PLOT Histfit on FR score
 % Input: allCells struct, cell index to filter which cells to plot, name of
 % filter
 
 figure();
-des = allCells.drugEffectScores(cellIndx,:);
+des = allCells.drugEffectScores;
 
 threshold = 15;
 ketFRscore = des(des(:,3) < threshold & des(:,3) > -threshold,3);
-histfit(ketFRscore,50)
+h = histfit(ketFRscore,50);
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
@@ -21,5 +21,7 @@ title(sprintf('Distribution of Ketamine FR Effect Scores(%s)',filter))
 xlabel('FR Effect Score:Ratio of FR change between Drug & Control')
 ylabel('Number of Cells')
 vline(0,'r')
+h(1).FaceColor = [0.6 0.6 0.6];
+h(2).Color = [.1 .1 .1];
 
 end

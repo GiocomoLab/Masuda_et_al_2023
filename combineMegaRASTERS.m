@@ -7,25 +7,25 @@ function combineMegaRASTERS()
     %   % size of images
       size_vert = 1042; % changed from 1042 to 346
       size_horiz = 333; % changed from 333 to 667 for repeating tracks
-      numrow = 20; % number of rows in final image
+      numrow = 67; % number of rows in final image
     % 
     %   % session names
     %   session_name = {'F3_190625_johnrepeatingtrack_meth2'}; % new output from singeSessionRasterplots
 
     % where to save images
-    image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/img/ratemaps/pretty_rasters/';
+    image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters';
     % image_save_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1';
 
     if exist(image_save_dir,'dir')~=7
         mkdir(image_save_dir);
     end
     %% Combine images
-    image_dir = fullfile('/Users/KeiMasuda/Desktop/fkm_analysis/img/rhoGreater01/');
+    image_dir = fullfile('/Users/KeiMasuda/Desktop/fkm_analysis/rasters');
     % image_dir = fullfile('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1/select_trials_pretty_rasters');
     
     % get png file names
-    png_files = dir(sprintf('%s/*_spatial.png',image_dir));
-    png_files = filterSessions(png_files, 'KO');
+    png_files = dir(sprintf('%s/*.png',image_dir));
+%     png_files = filterSessions(png_files, 'KO');
     png_files = {png_files.name};
 
 
@@ -54,7 +54,7 @@ function combineMegaRASTERS()
     final_image = uint8(final_image);
     
     % write to file
-    imwrite(final_image,fullfile(image_save_dir,sprintf('%s_all_FRmaps_combined.png','allSpatialKOCells')));
+    imwrite(final_image,fullfile(image_save_dir,sprintf('All_Ketamine_rasters_combined.png')));
 
     fprintf('Done Combining\n');
 end

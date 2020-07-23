@@ -1,7 +1,7 @@
-function plot_correlationScoreCurveComparison(allCells, WTcellsIndx, KOcellsIndx, title)
+function plot_correlationScoreCurveComparison(cells1,cells2)
 
-WTCellsFR = allCells.spatialFR(WTcellsIndx,:,:);
-KOCellsFR = allCells.spatialFR(KOcellsIndx,:,:);
+WTCellsFR = cells1.spatialFR10;
+KOCellsFR = cells2.spatialFR10;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Average Correleation Score Curve
@@ -14,7 +14,6 @@ WT_nCells = size(WTCellsFR,1);
 WTall_cellCorrScore = nan(WT_nCells, numel(1:size(WTCellsFR,2)));
 for i = 1:size(WTCellsFR,1)
    WTsingleCellallTrialsFR = squeeze(WTCellsFR(i,:,:));
-   trials_corrTemplate = 50;
    [~, WTcellCorrScore, ~] = calculateCorrScore(WTsingleCellallTrialsFR, trials_corrTemplate);
    WTall_cellCorrScore(i,:) = WTcellCorrScore;
 end
@@ -23,7 +22,6 @@ KO_nCells = size(KOCellsFR,1);
 KOall_cellCorrScore = nan(KO_nCells, numel(1:size(KOCellsFR,2)));
 for i = 1:size(KOCellsFR,1)
    KOsingleCellallTrialsFR = squeeze(KOCellsFR(i,:,:));
-
    [~, KOcellCorrScore, ~] = calculateCorrScore(KOsingleCellallTrialsFR, trials_corrTemplate);
    KOall_cellCorrScore(i,:) = KOcellCorrScore;
 end
@@ -56,8 +54,8 @@ KOavgControlInjxCorr = nanmean(nanmean(KOall_cellCorrScore(:,1:50),1));
 avgControlInjxCorr = mean([WTavgControlInjxCorr,KOavgControlInjxCorr]);
 
 
-WTnormalizedCorrScoreCurves = WTall_cellCorrScore/WTavgControlInjxCorr;
-KOnormalizedCorrScoreCurves = KOall_cellCorrScore/KOavgControlInjxCorr;
+WTnormalizedCorrScoreCurves = WTall_cellCorrScore./WTavgControlInjxCorr;
+KOnormalizedCorrScoreCurves = KOall_cellCorrScore./KOavgControlInjxCorr;
 
 plotTrialRange = 51:290;
 normCSC_data.y = vertcat(WTnormalizedCorrScoreCurves(:,plotTrialRange),KOnormalizedCorrScoreCurves(:,plotTrialRange));
@@ -68,7 +66,7 @@ clf;
 g=gramm('x',normCSC_data.x ,'y',normCSC_data.y, 'color',normCSC_data.z);
 g.stat_summary('type','sem','setylim','true');
 g.set_names('x','Trial','y','Normalized Correlation to Baseline Template (rho)','size',20);
-g.set_title(sprintf('Average Correlation Score Curve: %s',title),'FontSize',30);
+g.set_title('Average Correlation Score Curve','FontSize',30);
 g.axe_property('FontSize',25);
 box off;
 axis off;

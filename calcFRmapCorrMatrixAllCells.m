@@ -3,7 +3,8 @@ function [lickt,lickx,post,posx,speed, sp, ...
     all_waveforms, cells_to_plot,spike_depth,...
     all_drugEffectScores, trial,all_cellCorrScore,...
     trials_corrTemplate, avg_all_cellCorrScore, avg_cell_fr,...
-    trial_ds, all_frTime,all_cellStabilityScore,all_spike_idx, all_fr10]...
+    trial_ds, all_frTime,all_cellStabilityScore,all_spike_idx, all_fr10,...
+    all_spatialInfo,all_spatialInfoCurves, all_peakiness]...
     = calcFRmapCorrMatrixAllCells(matPath, trackLength, paramsPath)
 
 % John Wen 7/1/19
@@ -59,7 +60,7 @@ end
 trackEnd = trackLength;
 p = params;
 
-% pull out good cells and sort by spike depths
+% pull out good cells and sort by spike depthsfd                
 [cells_to_plot, spike_depth,waveforms] = spPreProcess(sp);
 
 %% Calculate speed and filter out stationary periods (speed<2cm)
@@ -81,7 +82,7 @@ all_cellStabilityScore = nan(nCells, numel(1:max(trial)));
 all_drugEffectScores = nan(nCells, 5); %FR score, drug correlation effect score, spikeDepth
 all_spike_idx = cell(nCells,1);
 all_spatialInfo = nan(nCells, 2);
-all_spatialInfoCurves = cell(nCells,1);
+all_spatialInfoCurves = nan(nCells, max(trial),2);
 all_peakiness = cell(nCells,1);
 fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
 %%
@@ -154,7 +155,7 @@ for k = 1:nCells
         trial_speed = speed(trial==j);
         linearFractionalOccupancyBlock = calculate_1D_LFO(trial_posx,trial_post,spatialBinSize,trial_speed);
 
-        [I_sec_block, I_spike_block] = calculate_1DspatialInformation(singleCellFR10cm(j,:),linearFractionalOccupancyBlock);
+        [I_sec_block, I_spike_block] = calculate_1DspatialInformation(singleCellFR10(j,:),linearFractionalOccupancyBlock);
         trialBlockSpatialInformation(j,:) = [I_sec_block, I_spike_block];
     end
     %% Peakiness
@@ -168,8 +169,8 @@ for k = 1:nCells
 %     all_corrblock(k, :, :) = corrBlock;
     all_waveforms(k,:) = waveforms(sp.cids==cells_to_plot(k),:);
     all_spatialInfo(k,:) = [I_sec, I_spike];
-    all_spatialInfoCurves(k,:) = trialBlockSpatialInformation;
-    all_peakiness(k,:) = peakiness;
+    all_spatialInfoCurves(k,1:max(trial),:) = trialBlockSpatialInformation(1:max(trial),:);
+    all_peakiness(k,:) = {peakiness};
 end
 %%
 avg_all_fr = squeeze(mean(all_fr, 1, 'omitnan'));

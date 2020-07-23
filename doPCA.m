@@ -31,7 +31,7 @@ for i = 1:nCells
 %     fr = calcSmoothedFR_SpatialBin(idx, posx, p, TrackEnd);
     all_fr(i, :) = fr;
         
-end
+end 
 
 all_fr = all_fr';
 
@@ -107,7 +107,7 @@ ylabel('PC2');
 axis('square');
 box('off');
 set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
+set(gca,'ticklength',[0.005 0.025]);mes
 set(gca,'layer','bottom');
 
 hold off;
