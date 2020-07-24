@@ -1,11 +1,11 @@
-function dchTimeSec = findDecoherencePeriodLength(dch_idx, cells)
+function dchStartDelaySec = findDchPeriodStartDelay(dch_idx, cells)
 % Finds how long in seconds the decoherence period is; assumes the sampling
 % rate is 20 Hz
 % Input:
 % - dch_idx: row vector of trials identified as the decoherence period
 % - cells: standard cells struct
 % Output:
-% - dchTimeSec: double with value of decoherence period in seconds
+% - dchStartDelaySec: double with value of decoherence period in seconds
 
     Fs = 0.05;
     
@@ -13,14 +13,13 @@ function dchTimeSec = findDecoherencePeriodLength(dch_idx, cells)
     post = cells.posT(1).post;
     
     trialStart = min(dch_idx);
-    trialEnd = max(dch_idx);
-    
+    ketamineStart = 101;
     try
         idxTrialStart = find(trials==trialStart,1,'first');
-        idxTrialEnd = find(trials==trialEnd,1,'last');
-        dchTimeSec = (idxTrialEnd-idxTrialStart)*Fs;
+        idxKetamineStart = find(trials==ketamineStart,1,'first');
+        dchStartDelaySec = (idxTrialStart-idxKetamineStart)*Fs;
     catch
-        dchTimeSec = 0;
+        dchStartDelaySec = 0;
     end
     
 end

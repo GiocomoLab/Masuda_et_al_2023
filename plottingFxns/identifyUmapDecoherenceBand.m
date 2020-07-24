@@ -6,7 +6,7 @@ clstBegin = find([true,clusterBoundaries])';  % beginning indices
 clstEnd = find([clusterBoundaries,true])';    % ending indices
 clstLen = 1 + clstEnd - clstBegin;           % cluster length
 
-% Keep only cluster of length 10+
+% Keep only cluster of length 10+trials
 clstIdx = find(clstLen > 10);
 clst = [clstBegin(clstIdx), clstEnd(clstIdx), clstLen(clstIdx)];
 
