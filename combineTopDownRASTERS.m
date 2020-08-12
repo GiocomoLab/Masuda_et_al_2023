@@ -1,4 +1,4 @@
-function combineTopDownRASTERS(session_name, size_vert, size_horiz, numrow)
+function combineTopDownRASTERS(session_name,foldername, size_vert, size_horiz, numrow)
 % script to combine rasters into one giant png for one session
 % MGC 3/1/2019
 % functionalized by FKM on 7/1/19
@@ -13,8 +13,8 @@ function combineTopDownRASTERS(session_name, size_vert, size_horiz, numrow)
 %   session_name = {'F3_190625_johnrepeatingtrack_meth2'}; % new output from singeSessionRasterplots
 
 % where to save images
-image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch/pretty_rasters/';
-image_dir = fullfile('/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch/');
+image_save_dir = sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/%s/pretty_rasters/',foldername);
+image_dir = fullfile(sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/%s/',foldername));
 
 % image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters/pretty_rasters/';
 % image_save_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1';

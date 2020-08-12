@@ -1,7 +1,7 @@
-function plotDchRaster(decoherenceIdx,cells,seshID, save_figs)
+function plotDchRaster_timeBinnedFR(decoherenceIdx,cells,seshID, Fs, save_figs)
 
     addpath(genpath('./plottingFxns'))
-    image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch';
+    image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch_timeBinned';
 
 %%
 	dchRange = decoherenceIdx{seshID};
@@ -11,26 +11,17 @@ function plotDchRaster(decoherenceIdx,cells,seshID, save_figs)
     plotHeight = 500;
     h = figure('Position',[100 100 plotWidth plotHeight]); hold on;
     for i = 1:size(cells.spatialFR10,1)
-        
-        
-        singleCellFR2cm = squeeze(cells.spatialFR2(i,:,:));
 
         name = cells.metadata{i,2};
         genotype = cells.metadata{i,4};
         sessionDate = cells.metadata{i,3};
-        % 
-        ogSpatialBinSize = 2;
-        spatialBinSize = 10;
-        numCol2AvgOver = spatialBinSize/ogSpatialBinSize;
-        singleCellFR = reshape(nanmean(reshape(singleCellFR2cm.',numCol2AvgOver,[])),size(singleCellFR2cm,2)/numCol2AvgOver,[]).';
+        
 
         posx = cells.posX(i).posx;
+        post = cells.posT(i).post;
         spike_idx = cells.spike_idx(i);
         spike_idx = spike_idx{1};
-        % FRtime = allCells.FRtime(i).FRtime';
-
         trial = cells.trial(i).trial;
-
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Figures
@@ -40,13 +31,15 @@ function plotDchRaster(decoherenceIdx,cells,seshID, save_figs)
 
         scatter(posx(spike_idx),trial(spike_idx),'k.'); hold on;
         
-        if ~isempty(dchRange)
-            x = posx(spike_idx);
-            y = trial(spike_idx);
-            x = x(y>min(dchRange) & y<max(dchRange));
-            y = y(y>min(dchRange) & y<max(dchRange));
-            scatter(x,y,'r.');
-        end
+        x = posx(spike_idx);
+        y = trial(spike_idx);
+        z = post(spike_idx);
+        dchStart = min(dchRange);
+        dchEnd = max(dchRange);
+        dchRange_timeInx = z>dchStart & z<dchEnd;
+        x = x(dchRange_timeInx);
+        y = y(dchRange_timeInx);
+        scatter(x,y,'r.');
         colormap('default')
         
         set(gca, 'YDir','reverse')

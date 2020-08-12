@@ -1,4 +1,4 @@
-function combinebySesh(cells)
+function combinebySesh(cells,foldername)
 % Plot rasters from a single session as a combined image
 % Inputs: allCellsStruct with session metadata in the first column
 seshes = unique(cellfun(@num2str,cells.metadata(:,1),'uni',0));
@@ -9,7 +9,7 @@ for i = 1:numel(seshes)
     session_name = seshes{i};
     try
         
-        combineTopDownRASTERS(session_name, size_vert, size_horiz, numrow)
+        combineTopDownRASTERS(session_name,foldername, size_vert, size_horiz, numrow)
 
         fprintf('Finished sesssion: %d/%d\n',i,numel(seshes))
     catch

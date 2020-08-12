@@ -7,17 +7,19 @@ function dchStartDelaySec = findDchPeriodStartDelay(dch_idx, cells)
 % Output:
 % - dchStartDelaySec: double with value of decoherence period in seconds
 
-    Fs = 0.05;
+    
     
     trials = cells.trial(1).trial;
     post = cells.posT(1).post;
+    
+    Fs = 1/(post(2)-post(1)); %sampling rate is 50hz
     
     trialStart = min(dch_idx);
     ketamineStart = 101;
     try
         idxTrialStart = find(trials==trialStart,1,'first');
         idxKetamineStart = find(trials==ketamineStart,1,'first');
-        dchStartDelaySec = (idxTrialStart-idxKetamineStart)*Fs;
+        dchStartDelaySec = (idxTrialStart-idxKetamineStart)/Fs;
     catch
         dchStartDelaySec = 0;
     end
