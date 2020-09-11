@@ -1,11 +1,11 @@
+% Point this at a folder with individual sessions and it will combine it
+% based on the available sessionMetaData file
 
-
-indvSeshDirPath = '/Users/KeiMasuda/Desktop/indvSesh';
+indvSeshDirPath = '/Users/KeiMasuda/Desktop/fkm_analysis/indvSesh';
 indvSeshes =  dir(fullfile(indvSeshDirPath,'*.mat'));
 sessionMetaData = readtable('/Users/KeiMasuda/Desktop/fkm_analysis/SessionList.xlsx');
 
-n = 50;
-n = 69;
+
 for n = 1:size(sessionMetaData,1)
     checkName = string(sessionMetaData{n,1});
     idx = contains({indvSeshes.name},checkName);

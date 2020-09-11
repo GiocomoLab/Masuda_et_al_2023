@@ -5,3 +5,4 @@ box off;
 axis square;
 set(gca,'FontSize',30);
 set(gca,'FontName','Helvetica');
+set(gcf,'Position',[100 100 700 700])

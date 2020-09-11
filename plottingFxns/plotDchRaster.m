@@ -1,4 +1,4 @@
-function plotDchRaster(decoherenceIdx,cells,seshID, save_figs)
+function plotDchRaster(decoherenceIdx,cells,seshID, save_figs,image_save_dir)
 
     addpath(genpath('./plottingFxns'))
     image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch';
@@ -68,6 +68,7 @@ function plotDchRaster(decoherenceIdx,cells,seshID, save_figs)
             saveas(h,fullfile(image_save_dir,sprintf('%s%s%s%s%d.png',name,'_',sessionDate,'_',i)),'png');
         else
             pause
+            
         end
 
     end

@@ -1,4 +1,4 @@
-function allCells = poolAllCells(filter)
+function allCells = poolAllCells(filter, sessionMetaDataPath)
 
 % sessions = dir('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/fr_corr_matrices/*.mat');
 % sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat'); 
@@ -9,11 +9,14 @@ spatialIndexPath = '/Users/KeiMasuda/Desktop/fkm_analysis/allSpatialIndx%s.mat';
 if ~exist('filter','var')
     filter = 'mec';   
 end
-sessions = filterSessions(sessions, filter);
+
 
 % load(sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/allSpatialIndx%s_01.mat',filter));
 load(sprintf(spatialIndexPath,filter));
-sessionMetaData = readtable('/Users/KeiMasuda/Desktop/fkm_analysis/SessionList.xlsx');
+sessionMetaData = readtable(sessionMetaDataPath);
+
+
+[sessions,sessionMetaData] = filterSessions(sessions,sessionMetaData, filter);
 
 fn = fieldnames(allSpatialIndx);
 count = 0;
@@ -90,8 +93,12 @@ for n = 1:numel(fn)
             'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr',...
             'trial_ds', 'all_frTime', 'all_cellStabilityScore','post','posx','speed','lickt','lickx',...
             'all_spike_idx','all_fr10','all_spatialInfo','all_spatialInfoCurves', 'all_peakiness');
-
-        spatialIndx = ismember(cells_to_plot,allSpatialIndx.(seshStr));
+        try
+            spatialIndx = ismember(cells_to_plot,allSpatialIndx.(seshStr));
+        catch
+            fprintf('Cannot find session in allSpatialIndx /n')
+            break
+        end
        
        if ~isempty(all_fr)
            all_fr = all_fr(spatialIndx,:,:);

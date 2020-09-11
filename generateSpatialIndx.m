@@ -16,7 +16,7 @@ sessionsPath = '/Users/KeiMasuda/Desktop/fkm_analysis/combinedSesh/fr_data_matri
 sessions = dir(sessionsPath);
 % Get subset of desired sessions
 % filter = 'mec';
-sessions = filterSessions(sessions, filter);
+sessions = filterSessions(sessions, [],filter);
 
 %%
 totalCell = 0;
