@@ -1,10 +1,11 @@
-function [dch_idx, time_idx, dchTimeSec,dchStartDelaySec, smth_clusterIdentifiers,Fs, trialClust] = identifyUmapDecoherenceTimeBand(clusterIdentifiers, cells, ds_factor)
+function [dch_idx, time_idx, dchTimeSec,dchStartDelaySec, smth_clusterIdentifiers_all,Fs, trialClust]...
+    = identifyUmapDecoherenceTimeBand(clusterIdentifiers, cells, ds_factor)
 % Threshold Variables
 % return cluster of dchTime is longer than 1 min and 
 % if it starts within 10 min of the ketamine injection
-dchTimeThreshold_min = 5; % min length of decoherence period
-dchStartDelay_min = 10  ; % maximum start delay of decoherence period
-clusterSmoothingConstant = 60;
+dchTimeThreshold_min = 5;% min length of decoherence period
+dchLengthThreshold_min = 60; %max length of decoherence period 
+dchStartDelay_min = 15 ; % maximum start delay of decoherence period
 
 %% IDs the decoherence band from the results of UMAP being run on a
 % time-binned FR across all cells
@@ -20,12 +21,13 @@ postKetClusterIdentifiers = clusterIdentifiers(1,postKetTrialsIdx:end);
 % Pull out trial indices after ketamine injection
 postKetTrials = trials(postKetTrialsIdx:end);
 
-% smooth clusterIdentifiers with a moving median(window of 1sec/10samples)
+%% smooth clusterIdentifiers with a moving median(window is the downsampleing factor)
+clusterSmoothingConstant = ds_factor;
 smth_clusterIdentifiers = round(smoothdata(postKetClusterIdentifiers,'movmedian',clusterSmoothingConstant));
-
-%%
-% figure(2)
-% scatter(postKetTrials,postKetClusterIdentifiers,100,smth_clusterIdentifiers)
+smth_clusterIdentifiers_all = round(smoothdata(clusterIdentifiers,'movmedian',clusterSmoothingConstant));
+%
+% figure()
+% scatter(postKetTrials,smth_clusterIdentifiers,100,postKetClusterIdentifiers)
 % colormap('jet');
 % goodFigPrefs();
 % title('Smoothed IDed Clusters after trial 100');
@@ -68,15 +70,18 @@ try
        dchStartDelaySec_temp = (idxTrialStart-idxKetamineStart)/Fs;
 %        dchStartDelayMin = dchStartDelaySec_temp/60;
        
-       % return cluster of dchTime is longer than 1 min and 
-       % if it starts within 10 min of the ketamine injection
+       % return first cluster of dchTime that is longer than 5 min and 
+       % if it starts within 15 min of the ketamine injection
        if dchTimeSec_temp>dchTimeThreshold_min*60 && dchStartDelaySec_temp<dchStartDelay_min*60
-           fprintf('Found dch period of %.2f min\n',dchTimeSec_temp/60);
-           dch_idx = min(postKetTrials(dch_idx_temp)):max(postKetTrials(dch_idx_temp));
-           time_idx = dch_idx_temp./Fs;
-           dchTimeSec=dchTimeSec_temp;
-           dchStartDelaySec=dchStartDelaySec_temp;
-           break
+           % make sure cluster is less than 1 hour
+           if dchTimeSec_temp<dchLengthThreshold_min*60
+               fprintf('Found dch period of %.2f min\n',dchTimeSec_temp/60);
+               dch_idx = min(postKetTrials(dch_idx_temp)):max(postKetTrials(dch_idx_temp));
+               time_idx = dch_idx_temp./Fs;
+               dchTimeSec=dchTimeSec_temp;
+               dchStartDelaySec=dchStartDelaySec_temp;
+               break
+           end
        end
        fprintf('Band %i does not qualify as a decoherence band\n',j)
    end

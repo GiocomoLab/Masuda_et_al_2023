@@ -13,9 +13,9 @@ function combineTopDownRASTERS(session_name,foldername, size_vert, size_horiz, n
 %   session_name = {'F3_190625_johnrepeatingtrack_meth2'}; % new output from singeSessionRasterplots
 
 % where to save images
-image_save_dir = sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/%s/pretty_rasters/',foldername);
-image_dir = fullfile(sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/%s/',foldername));
-
+image_save_dir = sprintf('%s/pretty_rasters/',foldername);
+% image_dir = fullfile(sprintf('/Users/KeiMasuda/Desktop/fkm_analysis/%s/',foldername));
+image_dir = fullfile(sprintf(foldername));
 % image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters/pretty_rasters/';
 % image_save_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1';
 
@@ -30,7 +30,7 @@ sessionDate = extractBefore(extractAfter(session_name,'_'),'_');
 % image_dir = fullfile('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1/select_trials_pretty_rasters');
 
 % get png file names
-png_files = dir(sprintf('%s%s_%s_*.png',image_dir,animalName,sessionDate));
+png_files = dir(sprintf('%s/%s_%s_*.png',image_dir,animalName,sessionDate));
 png_files = {png_files.name};
 
 
