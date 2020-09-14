@@ -13,14 +13,14 @@ function combineMegaRASTERS()
     %   session_name = {'F3_190625_johnrepeatingtrack_meth2'}; % new output from singeSessionRasterplots
 
     % where to save images
-    image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters';
+    image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch';
     % image_save_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1';
 
     if exist(image_save_dir,'dir')~=7
         mkdir(image_save_dir);
     end
     %% Combine images
-    image_dir = fullfile('/Users/KeiMasuda/Desktop/fkm_analysis/rasters');
+    image_dir = fullfile('/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch');
     % image_dir = fullfile('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1/select_trials_pretty_rasters');
     
     % get png file names

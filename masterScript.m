@@ -16,6 +16,7 @@ runMultiAnalysis(filter,combinedSessionsPath);
 %%
 spatialIndx = generateSpatialIndx(filter);
 %%
+tic
 sessionMetaDataPath = '/Users/KeiMasuda/Desktop/fkm_analysis/SessionList.xlsx';
 allCells = poolAllCells(filter,sessionMetaDataPath);
 
@@ -27,6 +28,7 @@ fprintf('done filtering ketamineCells\n');
 seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
 fltrCells = filterAllCellsStruct(ketamineCells,seshIndx);
 fprintf('done filtering for WT cells\n');
+toc
 %%
 clear allCells
 clear ketamineCells
