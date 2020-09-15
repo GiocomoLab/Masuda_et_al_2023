@@ -25,9 +25,11 @@ postKetTrials = trials(postKetTrialsIdx:end);
 clusterSmoothingConstant = ds_factor;
 smth_clusterIdentifiers = round(smoothdata(postKetClusterIdentifiers,'movmedian',clusterSmoothingConstant));
 smth_clusterIdentifiers_all = round(smoothdata(clusterIdentifiers,'movmedian',clusterSmoothingConstant));
-%
+
+%%
 % figure()
 % scatter(postKetTrials,smth_clusterIdentifiers,100,postKetClusterIdentifiers)
+% % scatter(trials,smth_clusterIdentifiers_all,100)
 % colormap('jet');
 % goodFigPrefs();
 % title('Smoothed IDed Clusters after trial 100');
@@ -38,11 +40,11 @@ smth_clusterIdentifiers_all = round(smoothdata(clusterIdentifiers,'movmedian',cl
 
 % Create a vector of postKet trial length and assigns a cluster value to each trial based
 % on the median cluster value for the trial duration
-minTrial = min(postKetTrials);
+minTrial = min(trials);
 maxTrial = max(trials);
 trialClust = nan(maxTrial-minTrial,1);
 for k = minTrial:maxTrial
-    trialClust(k) = median(smth_clusterIdentifiers(postKetTrials==k));
+    trialClust(k) = median(smth_clusterIdentifiers_all(trials==k));
 end
 
 %%
@@ -64,20 +66,24 @@ try
        dchTimeSec_temp = numel(dch_idx_temp)/Fs;
 %        dchTimeMin = dchTimeSec_temp/60
         
-       % Find Start Delay
+       % Find Start Delay - this is the time the cluster started;
+       % this works when the clusters being passed into this already had
+       % the first 100 pre-ketamine trials removed
        idxTrialStart = row(1);
-       idxKetamineStart = postKetTrialsIdx;
-       dchStartDelaySec_temp = (idxTrialStart-idxKetamineStart)/Fs;
+       dchStartDelaySec_temp = (idxTrialStart)/Fs;
 %        dchStartDelayMin = dchStartDelaySec_temp/60;
        
        % return first cluster of dchTime that is longer than 5 min and 
        % if it starts within 15 min of the ketamine injection
        if dchTimeSec_temp>dchTimeThreshold_min*60 && dchStartDelaySec_temp<dchStartDelay_min*60
-           % make sure cluster is less than 1 hour
+           % make sure decoherence period is less than 1 hour
            if dchTimeSec_temp<dchLengthThreshold_min*60
                fprintf('Found dch period of %.2f min\n',dchTimeSec_temp/60);
                dch_idx = min(postKetTrials(dch_idx_temp)):max(postKetTrials(dch_idx_temp));
-               time_idx = dch_idx_temp./Fs;
+               
+               dch_idx_plus_preKetamineIdx = dch_idx_temp + postKetTrialsIdx;
+               %convert dechorence index values into seconds
+               time_idx = dch_idx_plus_preKetamineIdx./Fs;
                dchTimeSec=dchTimeSec_temp;
                dchStartDelaySec=dchStartDelaySec_temp;
                break
@@ -91,64 +97,64 @@ catch
 end
 
 %% plot 1 example raster
-close all;
-dchRange = dch_idx;
-plotWidth = 160;
-plotHeight = 500;
-
-h = figure('Position',[100 100 plotWidth plotHeight]); hold on;
-i = randi(size(cells.spatialFR10,1),1);
-
-
-singleCellFR2cm = squeeze(cells.spatialFR2(i,:,:));
-
-name = cells.metadata{i,2};
-genotype = cells.metadata{i,4};
-sessionDate = cells.metadata{i,3};
+% close all;
+% dchRange = dch_idx;
+% plotWidth = 160;
+% plotHeight = 500;
 % 
-ogSpatialBinSize = 2;
-spatialBinSize = 10;
-numCol2AvgOver = spatialBinSize/ogSpatialBinSize;
-singleCellFR = reshape(nanmean(reshape(singleCellFR2cm.',numCol2AvgOver,[])),size(singleCellFR2cm,2)/numCol2AvgOver,[]).';
-
-posx = cells.posX(i).posx;
-spike_idx = cells.spike_idx(i);
-spike_idx = spike_idx{1};
-% FRtime = allCells.FRtime(i).FRtime';
-
-trial = cells.trial(i).trial;
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Figures
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-clf;
-
-scatter(posx(spike_idx),trial(spike_idx),1,'k.'); hold on;
-
-if ~isempty(dchRange)
-    x = posx(spike_idx);
-    y = trial(spike_idx);
-    x = x(y>min(dchRange) & y<max(dchRange));
-    y = y(y>min(dchRange) & y<max(dchRange));
-    scatter(x,y,1,'r.');
-end
-colormap('default')
-
-set(gca, 'YDir','reverse')
-ylim([0 max(trial)+1]);
-xlim([0 400]);
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.01 0.025]);   
-set(gca,'layer','bottom');
-
-set(gca,'FontName','Helvetica');
-box off;
-
-set(gca,'FontName','Helvetica');
-% set(gcf,'Position',[100 100 1000 1000])
-title(sprintf('Cell %d: %s,%s',i,name,genotype))
+% h = figure('Position',[100 100 plotWidth plotHeight]); hold on;
+% i = randi(size(cells.spatialFR10,1),1);
+% 
+% 
+% singleCellFR2cm = squeeze(cells.spatialFR2(i,:,:));
+% 
+% name = cells.metadata{i,2};
+% genotype = cells.metadata{i,4};
+% sessionDate = cells.metadata{i,3};
+% % 
+% ogSpatialBinSize = 2;
+% spatialBinSize = 10;
+% numCol2AvgOver = spatialBinSize/ogSpatialBinSize;
+% singleCellFR = reshape(nanmean(reshape(singleCellFR2cm.',numCol2AvgOver,[])),size(singleCellFR2cm,2)/numCol2AvgOver,[]).';
+% 
+% posx = cells.posX(i).posx;
+% spike_idx = cells.spike_idx(i);
+% spike_idx = spike_idx{1};
+% % FRtime = allCells.FRtime(i).FRtime';
+% 
+% trial = cells.trial(i).trial;
+% 
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % Figures
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% clf;
+% 
+% scatter(posx(spike_idx),trial(spike_idx),1,'k.'); hold on;
+% 
+% if ~isempty(dchRange)
+%     x = posx(spike_idx);
+%     y = trial(spike_idx);
+%     x = x(y>min(dchRange) & y<max(dchRange));
+%     y = y(y>min(dchRange) & y<max(dchRange));
+%     scatter(x,y,1,'r.');
+% end
+% colormap('default')
+% 
+% set(gca, 'YDir','reverse')
+% ylim([0 max(trial)+1]);
+% xlim([0 400]);
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.01 0.025]);   
+% set(gca,'layer','bottom');
+% 
+% set(gca,'FontName','Helvetica');
+% box off;
+% 
+% set(gca,'FontName','Helvetica');
+% % set(gcf,'Position',[100 100 1000 1000])
+% title(sprintf('Cell %d: %s,%s',i,name,genotype))
 
 
 end

@@ -15,7 +15,7 @@ decoherenceStartDelay = cell(numel(seshes),1);
 Fs = [];
 
 for i = 1:numel(seshes)
-    fprintf('%i\n',i);
+    fprintf('Clustering session %i/%i\n',i,numel(seshes));
     seshIndx = ismember(fltrCells.metadata(:,1),seshes{i});
     seshCells = filterAllCellsStruct(fltrCells,seshIndx);
     cells = seshCells;
@@ -26,7 +26,7 @@ for i = 1:numel(seshes)
 
     ds_sm_cellFR = downsample(smoothedCellFR, ds_factor);
     % umap with no output
-    [reduction, umap, clusterIdentifiers, extras]=run_umap(ds_sm_cellFR, 'verbose','none','cluster_detail','adaptive');
+    [reduction, umap, clusterIdentifiers, extras] = run_umap(ds_sm_cellFR, 'verbose','none','cluster_detail','adaptive');
    %% umap with graphic output
 %     [reduction, umap, clusterIdentifiers, extras]=run_umap(ds_sm_cellFR, 'cluster_output','graphic','n_components',2,'cluster_detail','adaptive');
     %%
@@ -55,6 +55,7 @@ dch.seshes = seshes;
 dch.decoherenceTime = decoherenceTime;
 dch.decoherenceStartDelay = decoherenceStartDelay;
 dch.decoherenceTimeIdx = decoherenceTimeIdx;
+dch.Fs = Fs;
 
 end
 

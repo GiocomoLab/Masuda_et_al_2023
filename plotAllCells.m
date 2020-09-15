@@ -7,9 +7,9 @@ function plotAllCells(allCells)
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 addpath(genpath('./plottingFxns'))
 %% Filter cells to ketamine cells
-seshIndx = ismember(allCells.metadata(:,8),'ketamine');
-ketamineCells = filterAllCellsStruct(allCells,seshIndx);
-fprintf('done filtering ketamineCells\n');
+% seshIndx = ismember(allCells.metadata(:,8),'ketamine');
+% ketamineCells = filterAllCellsStruct(allCells,seshIndx);
+% fprintf('done filtering ketamineCells\n');
 
 %% Generate Indices
 

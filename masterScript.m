@@ -33,11 +33,11 @@ toc
 %% Calculate a decoherence band for each session in given cells
 
 dch = calcDecoherenceBandForSessions(fltrCells);
-
+save('/Users/keimasuda/Desktop/fkm_analysis/dch.mat','dch')
 %%
 plotDecoherenceBandStats(dch)
 
- %% Plot Single Cell Raster plots with Decoherence Period Highlighted with Trial-based Dch Index
+%% Plot Single Cell Raster plots with Decoherence Period Highlighted with Trial-based Dch Index
 save_figs = true;
 image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch';
 for i = 1:numel(seshes)
@@ -47,7 +47,7 @@ for i = 1:numel(seshes)
     
     plotDchRaster(decoherenceIdx,seshCells,i, save_figs,image_save_dir)
 end
-%% Combine single cell rasters into large session pngs 
+% Combine single cell rasters into large session pngs 
 combinebySesh(fltrCells,image_save_dir)
 %%  Plot Single Cell Raster plots with Decoherence Period Highlighted with Spatially-binned Dch Index
 % save_figs = false;
@@ -58,4 +58,4 @@ combinebySesh(fltrCells,image_save_dir)
 % end
 
 %%
-plotAllCells(allCells);
+plotAllCells(fltrCells);
