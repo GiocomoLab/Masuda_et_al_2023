@@ -1,10 +1,8 @@
-function plotDchRaster(decoherenceIdx,cells,seshID, save_figs,image_save_dir)
+function plotDchRaster(dchRange,cells, save_figs,image_save_dir)
 
     addpath(genpath('./plottingFxns'))
     image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch';
 
-%%
-	dchRange = decoherenceIdx{seshID};
     
 %%
     plotWidth = 160;

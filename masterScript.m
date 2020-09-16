@@ -37,11 +37,14 @@ save(dchFilePath,'dch');
 %%
 load(dchFilePath);
 add_Dch_to_allCells(allCells,dch);
-%% Plot Single Cell Raster plots with Decoherence Period Highlighted with
-% Trial-based Dch Index and then combine them into combined session rasters
+
+% Plot decoherence bands stats
+plotDecoherenceBandStats(dch)
+%% Plot Single Cell Raster plots with Decoherence Period Highlighted
+% by trials and then combine them into combined session rasters
 save_figs = true;
 image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch';
 plotSaveCombine_SingleCellRastersPlotsWithDecoherence(allCells,image_save_dir,save_figs)
 
 %%
-plotAllCells(allCells);
+plotAllCells(allCells,dch);

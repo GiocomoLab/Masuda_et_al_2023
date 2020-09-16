@@ -38,8 +38,7 @@ KObaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold
 % FIGURE 0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Plot decoherence bands stats
-plotDecoherenceBandStats(dch)
+
 
 % plots alls cells
 image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters';
