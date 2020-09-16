@@ -3,6 +3,8 @@ function plotSaveCombine_SingleCellRastersPlotsWithDecoherence(cells,dch,image_s
 % Highlighted with trial-based Dch Index
 % Input: allCells struct, dch struct
 
+% Find unique sessions in cells struct
+seshes = unique(cellfun(@num2str,cells.metadata(:,1),'uni',0));
 for i = 1:numel(seshes)
     close all;
     seshIndx = ismember(cells.metadata(:,1),seshes{i});

@@ -1,4 +1,4 @@
-function plotAllCells(allCells)
+function plotAllCells(allCells,dch)
 %% Make Plots. Use after running Pool All cells
 % Run all the plotting functions
 % input: ketamineCells struct
@@ -6,11 +6,18 @@ function plotAllCells(allCells)
 % add plotting functions to path
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 addpath(genpath('./plottingFxns'))
-%% Filter cells to ketamine cells
+
+%% Filter cells
+
+% Filter for cells in session where only ketamine was delivered
 seshIndx = ismember(allCells.metadata(:,8),'ketamine');
 ketamineCells = filterAllCellsStruct(allCells,seshIndx);
 fprintf('done filtering ketamineCells\n');
 
+% filter for WT mec cells with ketamine
+seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
+fltrCells = filterAllCellsStruct(ketamineCells,seshIndx);
+fprintf('done filtering for WT cells\n');
 %% Generate Indices
 
 WTcellsIndx = strcmp({ketamineCells.metadata{:,4}}, 'WT')';
@@ -26,14 +33,25 @@ baselineStabilityIndx = stabilityTable.baselineStability > stabilityThreshold;
 WTbaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & WTcellsIndx;
 KObaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & KOcellsIndx;
 
+%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% FIGURE 1
+% FIGURE 0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% filter for WT mec cells with ketamine
-seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
-fltrCells = filterAllCellsStruct(ketamineCells,seshIndx);
-%% Plot Nice Single Cell Figure
-plot_niceSingleCellFig(fltrCells);
+
+% Plot decoherence bands stats
+plotDecoherenceBandStats(dch)
+
+% plots alls cells
+image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters';
+plotAllSingleCells(allCells,image_save_dir,false)
+
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FIGURE 1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Plot Nice Single Cell Figure
+plot_niceSingleCellFig(fltrCells,dch);
 %% Plot  Peakiness
 plot_peakinessCurves(fltrCells);
 
@@ -44,7 +62,10 @@ plot_peakinessCurves(fltrCells);
 %     ,'descend');
 [~,sortIndx] = sortrows(nanmean(fltrCells.peakiness,2),'ascend');
 sortedCells = sortAllCellsStruct(fltrCells,sortIndx);
-plotAllSingleCells(sortedCells,false)
+%% Plots single cells sorted by peakiness
+image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters';
+plotAllSingleCells(sortedCells,image_save_dir,false)
+%%
 plot_sortedMatrix(fltrCells.peakiness,sortIndx,'ascend')
 %% Sort by Peakiness and Firing Rate - Aggregated
 sortIndx = sortByTwoCols(fltrCells);
