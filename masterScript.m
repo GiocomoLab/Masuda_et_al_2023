@@ -32,15 +32,16 @@ allCells = poolAllCells(filter,sessionMetaDataPath);
 
 %% Calculate a decoherence band for each session in given cells
 dch = calcDecoherenceBandForSessions(allCells);
-save('/Users/keimasuda/Desktop/fkm_analysis/dch.mat','dch')
+dchFilePath = '/Users/keimasuda/Desktop/fkm_analysis/dch.mat';
+save(dchFilePath,'dch');
 %%
-load('/Users/keimasuda/Desktop/fkm_analysis/dch.mat')
-
+load(dchFilePath);
+add_Dch_to_allCells(allCells,dch);
 %% Plot Single Cell Raster plots with Decoherence Period Highlighted with
 % Trial-based Dch Index and then combine them into combined session rasters
 save_figs = true;
 image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch';
-plotSaveCombine_SingleCellRastersPlotsWithDecoherence(cells,dch,image_save_dir,save_figs)
+plotSaveCombine_SingleCellRastersPlotsWithDecoherence(allCells,image_save_dir,save_figs)
 
 %%
-plotAllCells(allCells,dch);
+plotAllCells(allCells);

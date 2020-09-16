@@ -1,4 +1,4 @@
-function plotAllCells(allCells,dch)
+function plotAllCells(allCells)
 %% Make Plots. Use after running Pool All cells
 % Run all the plotting functions
 % input: ketamineCells struct
