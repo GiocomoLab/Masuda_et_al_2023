@@ -3,13 +3,16 @@ function plot_niceSingleCellFig(allCells)
 addpath(genpath('./plottingFxns'))
 %%
 i = randi(size(allCells.spatialFR10,1));
-% i = 1148
-% i = 300
-% i = 3213
-% i = 3484
-% i = 545
-
-%%
+% i = 1148 G4, WT
+% i = 300  G2, WT
+% i = 3213 HCNd1, WT
+% i = 3484 HCNd2, KO
+% i = 545 G3, WT
+% i = 285 G2, WT
+% i = 297 G2, WT
+% i = 302 G2, WT
+% i = 481 G3, WT
+%
 
 singleCellFR10cm = squeeze(allCells.spatialFR10(i,:,:));
 singleCellFR2cm = squeeze(allCells.spatialFR2(i,:,:));
@@ -33,6 +36,7 @@ spike_idx = spike_idx{1};
 speed = allCells.speed(i).speed;
 trial = allCells.trial(i).trial;
 
+dch = allCells.dch(i).dch;
 
 meanSpeed = nan(max(trial),1);
 lickAccuracyByTrial = zeros(1,max(trial));
@@ -88,9 +92,9 @@ figure(1);
 clf;
 
 row = 5;
-col = 4;
+col = 5;
 
-columnSubplot = [1,5,9,13,17];
+columnSubplot = [1,6,11,16,21];
 subplot(row,col,columnSubplot)
 scatter(posx(spike_idx),trial(spike_idx),'k.');
 colormap('default')
@@ -121,11 +125,30 @@ set(gca,'FontName','Helvetica');
 title('Firing Rate')
 xlabel('VR cm')
 ylabel('Trial Number')
+
+subplot(row,col,columnSubplot+2)
+imagesc(dch.idxCellArray);
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.005 0.025]);
+set(gca,'layer','bottom');
+box off;
+axis off;
+set(gca,'FontSize',20);
+set(gca,'FontName','Helvetica');
+% set(gcf,'Position',[100 100 1000 1000])
+title('UMAP clusters')
+ylabel('Trial Number')
+[unq, ~, iunq] = unique(dch.idxCellArray);
+ncol = max(dch.idxCellArray);
+cb = colorbar;
+set(gca, 'clim', [0.5 ncol+0.5]);
+set(cb, 'ticks', 1:1:ncol, 'ticklabels', cellstr(num2str(unq)));
+set(gca,'TickDir','out');
 %%%%%%%
 smoothFactor = 10;
 
-rowStart = 3;
-rowEnd = 4;
+rowStart = 4;
+rowEnd = 5;
 subplot(row,col,rowStart:rowEnd);
 
 plot(smooth(mean(singleCellFR2cm,2),smoothFactor),'k');
@@ -195,6 +218,8 @@ title('Licks')
 xlabel('Trial Number')
 ylabel('VR cm')
 set(gca,'FontSize',15);
+
+%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Spatial Firing Rate Map at 4 timepoints
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

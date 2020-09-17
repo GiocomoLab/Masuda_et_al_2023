@@ -51,7 +51,7 @@ function plotAllSingleCells(allCells, image_save_dir, save_figs)
         set(gca,'FontSize',20);
         set(gca,'FontName','Helvetica');
         % set(gcf,'Position',[100 100 1000 1000])
-        title(sprintf('Cell %d: %s,%s',i,name,genotype))
+        title(sprintf('Cell %d: %s,%s,%s',i,name,genotype,sessionDate))
         xlabel('VR cm')
         ylabel('Trial Number')
 
@@ -62,6 +62,7 @@ function plotAllSingleCells(allCells, image_save_dir, save_figs)
         set(gca,'layer','bottom');
         box off;
         set(gca,'Xticklabel',[], 'Yticklabel', [])
+        colorbar;
 %         set(gca,'FontSize',20);
 %         set(gca,'FontName','Helvetica');
 %         % set(gcf,'Position',[100 100 1000 1000])
