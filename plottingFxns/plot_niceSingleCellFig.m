@@ -2,7 +2,7 @@ function plot_niceSingleCellFig(allCells)
 
 addpath(genpath('./plottingFxns'))
 %%
-i = randi(size(allCells.spatialFR4,1));
+% i = randi(size(allCells.spatialFR4,1));
 % i = 1148 %  G4, WT
 % i = 300 %  G2, WT
 % i = 3213%  HCNd1, WT
@@ -15,7 +15,7 @@ i = randi(size(allCells.spatialFR4,1));
 % i = 258 %G2, WT
 % i = 297 % G2,WT
 % i = 689
-% i = 566 %G3, WT
+i = 566; %G3, WT
 %%
 
 singleCellFR4cm = squeeze(allCells.spatialFR4(i,:,:));
@@ -90,19 +90,19 @@ end
 peakiness = peak2rms(singleCellFR4cm');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Figures
+%% Figures
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% close all;
+close all;
 plotWidth = 1500;
 plotHeight = 600;
 titleFontSize = 15;
 figure('Position',[200 200 plotWidth plotHeight]);
 clf;
 
-row = 3;
-col = 8;
+row = 6;
+col = 7;
 
-columnSubplot = [1,col+1,2*col+1];
+columnSubplot = [1,col+1,2*col+1,3*col+1,4*col+1,5*col+1];
 subplot(row,col,columnSubplot)
 scatter(posx(spike_idx),trial(spike_idx),'k.');
 colormap('default')
@@ -168,15 +168,112 @@ ylabel('')
 % xlabel('VR cm')
 % set(gca,'FontSize',10);
 
-
-%%%%%%%
-smoothFactor = 10;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Spatial Firing Rate Map at 4 timepoints
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 rowStart = 6;
-rowEnd = 8;
-subplot(row,col,rowStart:rowEnd);
+rowEnd = 7;
+ylim_range = [0 18];
 
-plot(smooth(mean(singleCellFR2cm,2),smoothFactor),'k');
+subplot(row,col,rowStart:rowEnd);
+plot_lineWithSEM(smoothdata(singleCellFR2cm(1:50,:),2,'movmean',smoothFactor),[])
+title('Trial 1-50');
+ylabel('Hz')
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.005 0.025]);
+set(gca,'layer','bottom');
+box off;
+set(gca,'FontName','Helvetica');
+set(gca,'FontSize',titleFontSize);
+set(gca,'xtick',[]);
+ylim(ylim_range);
+
+subplot(row,col,rowStart+col:rowEnd+col)
+plot_lineWithSEM(smoothdata(singleCellFR2cm(51:100,:),2,'movmean',smoothFactor),[])
+title('Trial 51-100');
+ylabel('Hz')
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.005 0.025]);
+set(gca,'layer','bottom');
+box off;
+set(gca,'FontName','Helvetica');
+set(gca,'FontSize',titleFontSize);
+set(gca,'xtick',[]);
+ylim(ylim_range);
+
+rowPlotNum = 2;
+subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
+plot_lineWithSEM(smoothdata(singleCellFR2cm(101:150,:),2,'movmean',smoothFactor),[])
+title('Trial 101-150');
+ylabel('Hz')
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.005 0.025]);
+set(gca,'layer','bottom');
+box off;
+set(gca,'FontName','Helvetica');
+set(gca,'FontSize',titleFontSize);
+set(gca,'xtick',[]);
+ylim(ylim_range);
+
+rowPlotNum = 3;
+subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
+plot_lineWithSEM(smoothdata(singleCellFR2cm(151:200,:),2,'movmean',smoothFactor),[])
+title('Trial 151-200');
+ylabel('Hz')
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.005 0.025]);
+set(gca,'layer','bottom');
+box off;
+set(gca,'FontName','Helvetica');
+set(gca,'FontSize',titleFontSize);
+set(gca,'xtick',[]);
+ylim(ylim_range);
+
+rowPlotNum = 4;
+subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
+plot_lineWithSEM(smoothdata(singleCellFR2cm(201:250,:),2,'movmean',smoothFactor),[])
+title('Trial 201-250');
+ylabel('Hz')
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.005 0.025]);
+set(gca,'layer','bottom');
+box off;
+set(gca,'FontName','Helvetica');
+set(gca,'FontSize',titleFontSize);
+set(gca,'xtick',[]);
+ylim(ylim_range);
+
+rowPlotNum = 5;
+subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
+plot_lineWithSEM(smoothdata(singleCellFR2cm(251:300,:),2,'movmean',smoothFactor),[])
+title('Trial 251-300');
+ylabel('Hz')
+xlabel('VR cm')
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.005 0.025]);
+set(gca,'layer','bottom');
+box off;
+set(gca,'FontName','Helvetica');
+set(gca,'FontSize',titleFontSize);
+x_tick_label = get(gca,'xticklabels');
+new_x_tick_label = cellfun(@(x) str2num(x)*2,x_tick_label);
+xticklabels(new_x_tick_label)
+ylim(ylim_range);
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Firing Rate, Crest Factor, Spatial Info, Stability
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+smoothFactor = 5;
+linewidth = 1;
+plotWidth = 600;
+plotHeight = 600;
+
+figure('Position',[200 200 plotWidth plotHeight]);
+t = tiledlayout(4,1);
+
+nexttile(t)
+plot(smooth(mean(singleCellFR2cm,2),smoothFactor),'k','LineWidth',linewidth);
 % plot(smooth(mean(singleCellFR2cm,2),'sgolay'),'r');
 title('Avg Trial Firing Rate');
 ylabel('Hz');
@@ -187,8 +284,9 @@ box off;
 set(gca,'Xticklabel',[])
 set(gca,'FontSize',12);
 
-subplot(row,col,rowStart+col:rowEnd+col)
-plot(smooth(peakiness,smoothFactor),'k');
+% subplot(row,col,rowStart+col:rowEnd+col)
+nexttile(t)
+plot(smooth(peakiness,smoothFactor),'k','LineWidth',linewidth);
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.015 0.025]);
 set(gca,'layer','bottom');
@@ -199,38 +297,42 @@ ylabel('Peak2RMS Ratio')
 set(gca,'Xticklabel',[])
 set(gca,'FontSize',12);
 
-rowPlotNum = 2;
-subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
-plot(smooth(trialBlockSpatialInformation(:,2),smoothFactor),'k')
+% rowPlotNum = 2;
+% subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
+nexttile(t)
+% plot(trialBlockSpatialInformation(:,1),'k')
+plot(smooth(trialBlockSpatialInformation(:,1),smoothFactor),'k','LineWidth',linewidth)
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.015 0.025]);
 set(gca,'layer','bottom');
 box off;
 set(gca,'FontName','Helvetica');
-title(sprintf('Spatial Information = Isec:%0.3f; Ispike:%0.3f', I_sec, I_spike))
+title('Spatial Information')
 ylabel('SI Score')
-% set(gca,'Xticklabel',[])
+set(gca,'Xticklabel',[])
 set(gca,'FontSize',12);
 
 % rowPlotNum = 3;
 % subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
-% plot(smooth(stabilityScore,smoothFactor),'k');
-% % plot(smooth(stabilityScore,10,'sgolay'));
-% % plot(stabilityScoreCurve);
-% % plot(smooth(stabilityScoreCurve,10,'sgolay'));
-% % plot(offdiag,'m')
+nexttile(t)
+% plot(stabilityScore,'k');
+plot(smooth(stabilityScore,smoothFactor),'k','LineWidth',linewidth);
+% plot(smooth(stabilityScore,10,'sgolay'));
+% plot(stabilityScoreCurve);
+% plot(smooth(stabilityScoreCurve,10,'sgolay'));
+% plot(offdiag,'m')
 % set(gca,'TickDir','out');
 % set(gca,'ticklength',[0.015 0.025]);
 % set(gca,'layer','bottom');
 % box off;
 % ylim([0 400]);
 % set(gca,'FontName','Helvetica');
-% title('Stability Score')
-% ylabel('Stability Score')
+title('Stability Score')
+ylabel('Stability Score')
 % set(gca,'Xticklabel',[])
-% set(gca,'FontSize',10);
+set(gca,'FontSize',12);
 xlabel('Trial Number')
-% ylabel('VR cm')
+
 
 
 
@@ -253,59 +355,65 @@ xlabel('Trial Number')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Spatial Firing Rate Map at 4 timepoints
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-plotWidth = 400;
-figure('Position',[200 200 plotWidth plotHeight]);; clf; 
-row = 4;
-col = 6;
-subplot(row,col,1:6);
-plot_lineWithSEM(smoothdata(singleCellFR2cm(1:50,:),2,'movmean',smoothFactor),[])
-title('Trial 1-50');
-ylabel('Hz')
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
-set(gca,'layer','bottom');
-box off;
-set(gca,'FontName','Helvetica');
-set(gca,'FontSize',titleFontSize);
-set(gca,'xtick',[]);
-
-subplot(row,col,7:12);
-plot_lineWithSEM(smoothdata(singleCellFR2cm(51:100,:),2,'movmean',smoothFactor),[])
-title('Trial 51-100');
-ylabel('Hz')
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
-set(gca,'layer','bottom');
-box off;
-set(gca,'FontName','Helvetica');
-set(gca,'FontSize',titleFontSize);
-set(gca,'xtick',[]);
-
-subplot(row,col,13:18);
-plot_lineWithSEM(smoothdata(singleCellFR2cm(101:115,:),2,'movmean',smoothFactor),[])
-title('Trial 101-115');
-ylabel('Hz')
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
-set(gca,'layer','bottom');
-box off;
-set(gca,'FontName','Helvetica');
-set(gca,'FontSize',titleFontSize);
-set(gca,'xtick',[]);
-% ylim([0 20])
-
-subplot(row,col,19:24);
-plot_lineWithSEM(smoothdata(singleCellFR2cm(116:300,:),2,'movmean',smoothFactor),[])
-title('Trial 116-300');
-ylabel('Hz')
-xlabel('VR cm')
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
-set(gca,'layer','bottom');
-box off;
-set(gca,'FontName','Helvetica');
-set(gca,'FontSize',titleFontSize);
-set(gca,'xtick',[]);
+% plotWidth = 400;
+% 
+% figure('Position',[200 200 plotWidth plotHeight]); clf; 
+% t = tiledlayout(4,1);
+% % row = 4;
+% % col = 6;
+% % subplot(row,col,1:6);
+% nexttile(t)
+% plot_lineWithSEM(smoothdata(singleCellFR2cm(1:50,:),2,'movmean',smoothFactor),[])
+% title('Trial 1-50');
+% ylabel('Hz')
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.005 0.025]);
+% set(gca,'layer','bottom');
+% box off;
+% set(gca,'FontName','Helvetica');
+% set(gca,'FontSize',titleFontSize);
+% set(gca,'xtick',[]);
+% % 
+% % subplot(row,col,7:12);
+% nexttile(t)
+% plot_lineWithSEM(smoothdata(singleCellFR2cm(51:100,:),2,'movmean',smoothFactor),[])
+% title('Trial 51-100');
+% ylabel('Hz')
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.005 0.025]);
+% set(gca,'layer','bottom');
+% box off;
+% set(gca,'FontName','Helvetica');
+% set(gca,'FontSize',titleFontSize);
+% set(gca,'xtick',[]);
+% 
+% % subplot(row,col,13:18);
+% nexttile(t)
+% plot_lineWithSEM(smoothdata(singleCellFR2cm(101:115,:),2,'movmean',smoothFactor),[])
+% title('Trial 101-115');
+% ylabel('Hz')
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.005 0.025]);
+% set(gca,'layer','bottom');
+% box off;
+% set(gca,'FontName','Helvetica');
+% set(gca,'FontSize',titleFontSize);
+% set(gca,'xtick',[]);
+% % ylim([0 20])
+% 
+% % subplot(row,col,19:24);
+% nexttile(t)
+% plot_lineWithSEM(smoothdata(singleCellFR2cm(116:300,:),2,'movmean',smoothFactor),[])
+% title('Trial 116-300');
+% ylabel('Hz')
+% xlabel('VR cm')
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.005 0.025]);
+% set(gca,'layer','bottom');
+% box off;
+% set(gca,'FontName','Helvetica');
+% set(gca,'FontSize',titleFontSize);
+% set(gca,'xtick',[]);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Correlation Matrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -33,16 +33,9 @@ baselineStabilityIndx = stabilityTable.baselineStability > stabilityThreshold;
 WTbaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & WTcellsIndx;
 KObaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & KOcellsIndx;
 
-
-%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% FIGURE 1
+% FIGURE 0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Plot Nice Single Cell Figure
-plot_niceSingleCellFig(fltrCells);
-%% Plot  Peakiness
-plot_peakinessCurves(fltrCells);
 
 %% Sort by peakiness
 % [~,sortIndx] = sortrows(...
@@ -60,10 +53,24 @@ plot_sortedMatrix(fltrCells.peakiness,sortIndx,'ascend')
 sortIndx = sortByTwoCols(fltrCells);
 sortedCells = sortAllCellsStruct(fltrCells,sortIndx);
 plotRasterGrid(sortedCells,36)
+
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FIGURE 1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% Plot  Peakiness
+plot_peakinessCurves(fltrCells);
+
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIGURE 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plot Nice Single Cell Figure
+plot_niceSingleCellFig(fltrCells);
+
+
 %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
 
 plot_FRoverTime5minBefore10minafter(fltrCells)
