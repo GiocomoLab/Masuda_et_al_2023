@@ -8,7 +8,7 @@ function plotDchRaster(dchRange,cells, save_figs,image_save_dir)
     plotWidth = 160;
     plotHeight = 500;
     h = figure('Position',[100 100 plotWidth plotHeight]); hold on;
-    for i = 1:size(cells.spatialFR10,1)
+    for i = 1:size(cells.spatialFR2,1)
         
         
         singleCellFR2cm = squeeze(cells.spatialFR2(i,:,:));

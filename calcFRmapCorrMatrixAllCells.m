@@ -3,8 +3,8 @@ function [lickt,lickx,post,posx,speed, sp, ...
     all_waveforms, cells_to_plot,spike_depth,...
     all_drugEffectScores, trial,all_cellCorrScore,...
     trials_corrTemplate, avg_all_cellCorrScore, avg_cell_fr,...
-    trial_ds, all_frTime,all_cellStabilityScore,all_spike_idx, all_fr10,...
-    all_spatialInfo,all_spatialInfoCurves, all_peakiness]...
+    trial_ds, all_frTime,all_cellStabilityScore,all_spike_idx, all_fr4,...
+    all_spatialInfo,all_spatialInfoCurves, all_peakiness, all_fr_smoothed]...
     = calcFRmapCorrMatrixAllCells(matPath, trackLength, paramsPath)
 
 % John Wen 7/1/19
@@ -58,21 +58,21 @@ else
 end
 
 trackEnd = trackLength;
-p = params;
 
 % pull out good cells and sort by spike depthsfd                
 [cells_to_plot, spike_depth,waveforms] = spPreProcess(sp);
 
 %% Calculate speed and filter out stationary periods (speed<2cm)
-speed = calcSpeed(posx, p);
+speed = calcSpeed(posx, params);
 % [trial,posx,post] = speedFilterData(trial,posx, post, speed);
 
 %% Preallocate and store data for all cell's firing rates
 nCells = size(cells_to_plot, 2);
 spatialBins = trackLength/params.SpatialBin; 
 all_fr = nan(nCells, max(trial),spatialBins); % preallocate matrix of cells' firing rates across spatial bins
-all_fr10 = nan(nCells, max(trial),40);
-trials_corrTemplate = 50;
+all_fr_smoothed = nan(nCells, max(trial),spatialBins);
+all_fr4 = nan(nCells, max(trial),params.TrackEnd/params.LargerSpatialBin);
+trials_corrTemplate = params.trials_corrTemplate;
 
 all_corrmatrix = nan(nCells, max(trial), max(trial)); % preallocate matrix of cells' correlations between trials
 % all_corrblock = nan(nCells, floor(max(trial)/trials_per_block), floor(max(trial)/trials_per_block)); % preallocate matrix of cells' correlations every 50 trials
@@ -86,11 +86,12 @@ all_spatialInfoCurves = nan(nCells, max(trial),2);
 all_peakiness = cell(nCells,1);
 fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
 %%
+ds_factor = params.ds_factor; %currently 1 aka don't downsample
 
-% calculate firing rate by time
-all_frTime = [];
-ds_factor = 1;
-smoothSigma = 10;
+% calculate 1 fr to preallocate fr space
+spike_t = sp.st(sp.clu==cells_to_plot(1));
+tempToFigureOutSize = calcFR_Time(post, spike_t, ds_factor);
+all_frTime = nan(nCells,numel(tempToFigureOutSize));
 trial_ds = downsample(trial, ds_factor); 
 
 
@@ -113,40 +114,40 @@ for k = 1:nCells
     all_spike_idx(k) = {spike_idx};
    
     %%
-    
     % for cell k, iteratively calculate the firing rate for each trial
     singleCellallTrialsFR = nan(max(trial),spatialBins);
     for i = 1:max(trial)
-%         itrial_kfr = calcSmoothedFR_SpatialBin(spike_idx(i==trial(spike_idx)), posx(i==trial),posx, p, trackEnd);
-        itrial_kfr = calcFR_SpatialBin(spike_idx(i==trial(spike_idx)), posx(i==trial),posx, p, trackEnd);
+%         itrial_kfr = calcSmoothedFR_SpatialBin(spike_idx(i==trial(spike_idx)), posx(i==trial),posx, params, trackEnd);
+        itrial_kfr = calcFR_SpatialBin(spike_idx(i==trial(spike_idx)), posx(i==trial),posx, params, trackEnd);
         singleCellallTrialsFR(i,:) = itrial_kfr;
     end
     %% 
-    ogSpatialBinSize = 2;
-    spatialBinSize = 10;
+    ogSpatialBinSize = 2; %original spatial bin is 2cm
+    spatialBinSize = 4; % 6cm is the larger spatial bin size
     numCol2AvgOver = spatialBinSize/ogSpatialBinSize;
-    singleCellFR10 = reshape(nanmean(reshape(singleCellallTrialsFR.',numCol2AvgOver,[])),size(singleCellallTrialsFR,2)/numCol2AvgOver,[]).';
+    singleCellFR4 = reshape(nanmean(reshape(singleCellallTrialsFR.',numCol2AvgOver,[])),size(singleCellallTrialsFR,2)/numCol2AvgOver,[]).';
 
     
-    
+    singleCellFR_smoothed = smoothdata(singleCellallTrialsFR,2,'gaussian',10);
     
     %%%%%%%%%%
     % Calculate drug scores
-    [drugCorrEffectScore, cellCorrScore, corrTemplate] = calculateCorrScore(singleCellFR10, trials_corrTemplate);    
+    [drugCorrEffectScore, cellCorrScore, corrTemplate] = calculateCorrScore(singleCellFR_smoothed, trials_corrTemplate);    
     all_cellCorrScore(k,:) = cellCorrScore;
     
-    all_cellStabilityScore(k,:) = calculateStabilityScore(singleCellFR10);
+    all_cellStabilityScore(k,:) = calculateStabilityScore(singleCellFR_smoothed);
     
-    [drugFRdiff,cntrlFRdiff,drugFREffectScore] = calculateFRScore(singleCellFR10, 100, 50);
+    [drugFRdiff,cntrlFRdiff,drugFREffectScore] = calculateFRScore(singleCellFR_smoothed, 100, 50);
     
     all_drugEffectScores(k,:) = [drugFRdiff,cntrlFRdiff, drugFREffectScore, drugCorrEffectScore, spike_depth(k)];
 
     %% calculate trial by trial correlation matrix for one cell 
-    corrMatrix = corr(singleCellFR10');
+    corrMatrix = corr(singleCellFR_smoothed');
     
     %% calcualte spatial information
+    spatialBinSize = 2; %because it's calculating it off of the smoothed data
     linearFractionalOccupancy = calculate_1D_LFO(posx,post,spatialBinSize,speed);
-    [I_sec, I_spike] = calculate_1DspatialInformation(singleCellFR10,linearFractionalOccupancy);
+    [I_sec, I_spike] = calculate_1DspatialInformation(singleCellFR_smoothed,linearFractionalOccupancy);
 
     trialBlockSpatialInformation = nan(max(trial),2);
     for j = 1:max(trial)
@@ -155,18 +156,18 @@ for k = 1:nCells
         trial_speed = speed(trial==j);
         linearFractionalOccupancyBlock = calculate_1D_LFO(trial_posx,trial_post,spatialBinSize,trial_speed);
 
-        [I_sec_block, I_spike_block] = calculate_1DspatialInformation(singleCellFR10(j,:),linearFractionalOccupancyBlock);
+        [I_sec_block, I_spike_block] = calculate_1DspatialInformation(singleCellFR_smoothed(j,:),linearFractionalOccupancyBlock);
         trialBlockSpatialInformation(j,:) = [I_sec_block, I_spike_block];
     end
     %% Peakiness
-    peakiness = peak2rms(singleCellFR10');
+    peakiness = peak2rms(singleCellFR_smoothed');
     %%
     % store one cell's firing rates and trial by trial correlation matrix
     % in a session matrix containing all cells
-    all_fr10(k,:,:) = singleCellFR10;
+    all_fr4(k,:,:) = singleCellFR4;
     all_fr(k, :, :) = singleCellallTrialsFR;
+    all_fr_smoothed(k,:,:) = singleCellFR_smoothed;
     all_corrmatrix(k, :, :) = corrMatrix;
-%     all_corrblock(k, :, :) = corrBlock;
     all_waveforms(k,:) = waveforms(sp.cids==cells_to_plot(k),:);
     all_spatialInfo(k,:) = [I_sec, I_spike];
     all_spatialInfoCurves(k,1:max(trial),:) = trialBlockSpatialInformation(1:max(trial),:);

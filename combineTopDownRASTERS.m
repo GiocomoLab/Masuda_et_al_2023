@@ -1,4 +1,4 @@
-function combineTopDownRASTERS(session_name,foldername, size_vert, size_horiz, numrow)
+function combineTopDownRASTERS(session_name,foldername, size_vert, size_horiz)
 % script to combine rasters into one giant png for one session
 % MGC 3/1/2019
 % functionalized by FKM on 7/1/19
@@ -32,7 +32,7 @@ sessionDate = extractBefore(extractAfter(session_name,'_'),'_');
 % get png file names
 png_files = dir(sprintf('%s/%s_%s_*.png',image_dir,animalName,sessionDate));
 png_files = {png_files.name};
-
+numrow = round(sqrt(numel(png_files)));
 
 % create empty matrix for holding final image
 numcol = ceil(numel(png_files)/numrow);

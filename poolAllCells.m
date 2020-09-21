@@ -29,7 +29,8 @@ for k=1:numel(fn)
 end
 
 allCellsFR2 = nan(count,300,200);
-allCellsFR10 = nan(count,300,40);
+allCellsFRSmooth = nan(count,300,200);
+allCellsFR4 = nan(count,300,100);
 allCellsDES = nan(count,5); % [drugFRdiff,cntrlFRdiff, drugFREffectScore, drugCorrEffectScore, spike_depth(k)]
 allCellsCorrMatrix = nan(count,300,300);
 allCellsCorrScoreCurve = nan(count,300);
@@ -92,7 +93,7 @@ for n = 1:numel(fn)
              'all_waveforms', 'cells_to_plot','spike_depth','all_drugEffectScores',...
             'trial','all_cellCorrScore','trials_corrTemplate', 'avg_all_cellCorrScore', 'avg_cell_fr',...
             'trial_ds', 'all_frTime', 'all_cellStabilityScore','post','posx','speed','lickt','lickx',...
-            'all_spike_idx','all_fr10','all_spatialInfo','all_spatialInfoCurves', 'all_peakiness');
+            'all_spike_idx','all_fr4','all_spatialInfo','all_spatialInfoCurves', 'all_peakiness','all_fr_smoothed');
         try
             spatialIndx = ismember(cells_to_plot,allSpatialIndx.(seshStr));
         catch
@@ -111,7 +112,8 @@ for n = 1:numel(fn)
                maxTrial = max(trial);
            end
            allCellsFR2(z+1:z+nCells,1:maxTrial,:) = all_fr(1:nCells,1:maxTrial,1:200);
-           allCellsFR10(z+1:z+nCells,1:maxTrial,:) = all_fr10(1:nCells,1:maxTrial,1:40);
+           allCellsFRSmooth(z+1:z+nCells,1:maxTrial,:) = all_fr_smoothed(1:nCells,1:maxTrial,1:200);
+           allCellsFR4(z+1:z+nCells,1:maxTrial,:) = all_fr4(1:nCells,1:maxTrial,1:100);
            allCellsDES(z+1:z+nCells,:,:) = all_drugEffectScores(1:nCells,1:5);
            allCellsCorrMatrix(z+1:z+nCells,1:maxTrial,1:maxTrial) = all_corrmatrix(1:nCells,1:maxTrial,1:maxTrial);
            allCellsCorrScoreCurve(z+1:z+nCells,1:maxTrial) = all_cellCorrScore(1:nCells,1:maxTrial);
@@ -179,8 +181,9 @@ fprintf('Done with allocation\n')
 %%
 % SAVE ALLCELLS MAT DATA STRUCTURE
 allCells.metadata = allCellsMetaData;
-allCells.spatialFR2 = allCellsFR2; 
-allCells.spatialFR10 = allCellsFR10;
+allCells.spatialFR2 = allCellsFR2;
+allCells.spatialFRsmooth = allCellsFRSmooth; 
+allCells.spatialFR4 = allCellsFR4;
 allCells.stabilityScoreCurve = allCellsStabilityScoreCurve;
 allCells.drugEffectScores = allCellsDES;
 allCells.correlationMatrix = allCellsCorrMatrix;

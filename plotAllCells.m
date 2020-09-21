@@ -33,16 +33,6 @@ baselineStabilityIndx = stabilityTable.baselineStability > stabilityThreshold;
 WTbaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & WTcellsIndx;
 KObaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & KOcellsIndx;
 
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% FIGURE 0
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-% plots alls cells
-image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters';
-plotAllSingleCells(allCells,image_save_dir,false)
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,7 +40,7 @@ plotAllSingleCells(allCells,image_save_dir,false)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Plot Nice Single Cell Figure
-plot_niceSingleCellFig(fltrCells,dch);
+plot_niceSingleCellFig(fltrCells);
 %% Plot  Peakiness
 plot_peakinessCurves(fltrCells);
 
@@ -62,7 +52,7 @@ plot_peakinessCurves(fltrCells);
 [~,sortIndx] = sortrows(nanmean(fltrCells.peakiness,2),'ascend');
 sortedCells = sortAllCellsStruct(fltrCells,sortIndx);
 %% Plots single cells sorted by peakiness
-image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters';
+image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_by_peakiness';
 plotAllSingleCells(sortedCells,image_save_dir,false)
 %%
 plot_sortedMatrix(fltrCells.peakiness,sortIndx,'ascend')

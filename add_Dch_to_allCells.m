@@ -1,4 +1,4 @@
-function add_Dch_to_allCells(allCells,dch)
+function allCells = add_Dch_to_allCells(allCells,dch)
 % Find unique sessions in cells struct
 seshes = unique(cellfun(@num2str,allCells.metadata(:,1),'uni',0));
 count = numel(allCells.metadata(:,1));
@@ -6,7 +6,7 @@ count = numel(allCells.metadata(:,1));
 clear allCells_Dch
 allCells_Dch(count) = struct(); 
 z = 0;
-fprintf('Done with the Pre-Allocation\n');
+
 
 for i = 1:numel(seshes)
     clear dchSeshOnly
@@ -28,7 +28,7 @@ for i = 1:numel(seshes)
     end
 
     z = z + nCells;
-    fprintf('Session: %d; Adding dch %d for %d/%d cells\n', i,nCells,z,count)
+%     fprintf('Session: %d; Adding dch %d for %d/%d cells\n', i,nCells,z,count)
 end
-
+fprintf('Done with the Dch to all Cells addition\n');
 allCells.dch = allCells_Dch;
