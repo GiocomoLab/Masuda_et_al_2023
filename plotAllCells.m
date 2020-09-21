@@ -60,7 +60,7 @@ plotRasterGrid(sortedCells,36)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%% Plot  Peakiness
+%% Plot  Peakiness Curves
 plot_peakinessCurves(fltrCells);
 
  
@@ -78,10 +78,10 @@ plot_FRoverTime5minBefore10minafter(fltrCells)
 plot_STATS_5minBefore5minafter(fltrCells)
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection
-plot_FRneg5to60minAfterKetamineInjx(fltrCells);
+plot_FRneg5to60minAfterKetamineInjx(fltrCells,'Ketamine-induced Avg FR Change');
 
 %% Plot Firing Rate over Trials by Mouse
-plot_avgFRbyMouse(fltrCells)
+plot_avgFRbyMouse(fltrCells,'Average FR by Mouse')
 
 %% Plot Correlation Score Curves
 plot_correlationScoreCurves(fltrCells,'WT')
@@ -107,7 +107,7 @@ for i = 1:numel(seshes)
     seshIndx = ismember(fltrCells.metadata(:,1),seshes{i});
     cells.metadata = fltrCells.metadata(seshIndx,:);
     cells.correlationMatrix = fltrCells.correlationMatrix(seshIndx,:,:);
-    cells.spatialFR10 = fltrCells.spatialFR10(seshIndx,:,:);
+    cells.spatialFRsmooth = fltrCells.spatialFRsmooth(seshIndx,:,:);
     plot_correlationMatrix(cells,cells.metadata{1,4})
     pause
 end

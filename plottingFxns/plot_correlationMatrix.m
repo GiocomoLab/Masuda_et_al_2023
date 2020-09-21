@@ -19,10 +19,10 @@ function plot_correlationMatrix(cells,filter)
     
 %     [corrMatrix,pval] = corr(squeeze(nanmean(cells.spatialFR2,3))); 
     
-    numCells = size(cells.spatialFR10,1);
-    trialNum = size(cells.spatialFR10,2);
-    spatialBins = size(cells.spatialFR10,3);
-    flatFR2 = reshape(permute(cells.spatialFR10,[3 1 2]), [numCells*spatialBins, trialNum]);
+    numCells = size(cells.spatialFRsmooth,1);
+    trialNum = size(cells.spatialFRsmooth,2);
+    spatialBins = size(cells.spatialFRsmooth,3);
+    flatFR2 = reshape(permute(cells.spatialFRsmooth,[3 1 2]), [numCells*spatialBins, trialNum]);
     %P-by-P matrix containing the pairwise linear correlation coefficient between each pair of columns in the N-by-P matrix X.
     corrMatrix = corr(fillmissing(flatFR2,'linear')); 
     figure();

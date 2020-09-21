@@ -43,7 +43,7 @@ load(dchFilePath);
 allCells = add_Dch_to_allCells(allCells,dch);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% FIGURE 0
+%% Pre-Figures
 % Plot decoherence bands stats
 plotDecoherenceBandStats(dch)
 %% Plot Single Cell Raster plots with Decoherence Period Highlighted

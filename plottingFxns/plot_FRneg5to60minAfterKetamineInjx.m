@@ -1,4 +1,4 @@
-function plot_FRneg5to60minAfterKetamineInjx(cells)
+function plot_FRneg5to60minAfterKetamineInjx(cells,titleStr)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plot Firing Rate over Time 5min before and 60 min after injection
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -29,7 +29,7 @@ set(gca,'FontName','Helvetica');
 axis square;
 set(gcf,'Position',[100 100 1000 1000])
 set(gca,'FontSize',30);
-title('MK801-induced FR Change')
+title(titleStr)
 xlabel('Minutes since Injection')
 ylabel('Firing Rate (Hz)')
 xlim([-5 60])
