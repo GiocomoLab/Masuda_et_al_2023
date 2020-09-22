@@ -53,7 +53,7 @@ image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch';
 plotSaveCombine_SingleCellRastersPlotsWithDecoherence(allCells,image_save_dir,save_figs)
 
 
-%% plots All cells
+%% plots All cells rasters & ratemaps
 save_figs = true;
 image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters';
 plotAllSingleCells(allCells,image_save_dir,save_figs)
@@ -61,6 +61,26 @@ plotAllSingleCells(allCells,image_save_dir,save_figs)
 % Combine single cell rasters into large session pngs 
 size_vert = 1250; % changed from 1042 to 346
 size_horiz = 2083; % changed from 333 to 667 for repeating tracks
+combinebySesh(allCells,image_save_dir,size_vert,size_horiz)
+
+%% plots all single cells rasters only
+save_figs = true;
+image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_black&white';
+plotAllSingleCellsRastersOnly(allCells,image_save_dir,save_figs)
+
+% Combine single cell rasters into large session pngs 
+size_vert = 1042; 
+size_horiz = 333;
+combinebySesh(allCells,image_save_dir,size_vert,size_horiz)
+
+%% plots all single cells RATEMAPS only
+save_figs = true;
+image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/ratemaps';
+plotAllSingleCellsRastersOnly(allCells,image_save_dir,save_figs)
+
+% Combine single cell rasters into large session pngs 
+size_vert = 1042; 
+size_horiz = 333;
 combinebySesh(allCells,image_save_dir,size_vert,size_horiz)
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

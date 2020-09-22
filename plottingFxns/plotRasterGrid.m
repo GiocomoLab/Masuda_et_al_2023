@@ -1,5 +1,5 @@
 function plotRasterGrid(allCells,num2plot)
-    numCells = size(allCells.spatialFR10,1);
+    numCells = size(allCells.spatialFR2,1);
     num2plot = min(num2plot,numCells);
     rows = ceil(sqrt(num2plot));
     cols = rows;

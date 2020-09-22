@@ -32,7 +32,8 @@ sessionDate = extractBefore(extractAfter(session_name,'_'),'_');
 % get png file names
 png_files = dir(sprintf('%s/%s_%s_*.png',image_dir,animalName,sessionDate));
 png_files = {png_files.name};
-numrow = round(sqrt(numel(png_files)));
+height2widthRatio = size_vert/size_horiz;
+numrow = round((2*sqrt(numel(png_files)))/height2widthRatio);
 
 % create empty matrix for holding final image
 numcol = ceil(numel(png_files)/numrow);

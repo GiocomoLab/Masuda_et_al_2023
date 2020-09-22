@@ -47,6 +47,12 @@ sortedCells = sortAllCellsStruct(fltrCells,sortIndx);
 %% Plots single cells sorted by peakiness
 image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_by_peakiness';
 plotAllSingleCells(sortedCells,image_save_dir,false)
+
+%% Plot Raster Grid
+plotRasterGrid(fltrCells,100)
+% Plot Fr Grid
+plotFRGrid(fltrCells,100)
+
 %%
 plot_sortedMatrix(fltrCells.peakiness,sortIndx,'ascend')
 %% Sort by Peakiness and Firing Rate - Aggregated
@@ -54,7 +60,9 @@ sortIndx = sortByTwoCols(fltrCells);
 sortedCells = sortAllCellsStruct(fltrCells,sortIndx);
 plotRasterGrid(sortedCells,36)
 
-%%
+
+ 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FIGURE 1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,17 +70,7 @@ plotRasterGrid(sortedCells,36)
 
 %% Plot  Peakiness Curves
 plot_peakinessCurves(fltrCells);
-
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% FIGURE 2
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Plot Nice Single Cell Figure
-plot_niceSingleCellFig(fltrCells);
-
-
 %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
-
 plot_FRoverTime5minBefore10minafter(fltrCells)
 %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
 plot_STATS_5minBefore5minafter(fltrCells)
@@ -114,6 +112,15 @@ end
 %% Plot Behavior by Sessions for WT animals
 plot_BehaviorbySesh(fltrCells,true);
 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% FIGURE 2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plot Nice Single Cell Figure
+plot_niceSingleCellFig(fltrCells);
+
+
+
 %% Plot PCA by session for WT animals
 plot_PCAbySesh(fltrCells,true)
 
@@ -138,7 +145,7 @@ plot_FRoverTime5minBefore10minafter(fltrCells);
 plot_STATS_5minBefore5minafter(fltrCells)
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection
-plot_FRneg5to60minAfterKetamineInjx(fltrCells);
+plot_FRneg5to60minAfterKetamineInjx(fltrCells,'Ketamine-induced Avg FR Change on HCN1ko');
 
 %% Plot Firing Rate over Trials by Mouse
 plot_avgFRbyMouse(fltrCells)
