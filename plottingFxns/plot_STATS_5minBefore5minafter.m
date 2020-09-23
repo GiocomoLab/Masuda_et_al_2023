@@ -1,4 +1,4 @@
-function plot_STATS_5minBefore5minafter(allCells)
+function plot_STATS_5minBefore5minafter(cells)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -8,8 +8,8 @@ secInMin = 60;
 scaling  = sampleRate * secInMin; 
 % dsfactor = 50;
 %%
-cntrl = allCells.timeFRcircaControlInjx;
-ket = allCells.timeFRcircaKetamineInjx;
+cntrl = cells.timeFRcircaControlInjx;
+ket = cells.timeFRcircaKetamineInjx;
 
 cntrlBefore = cntrl(:,1:scaling*5);
 ketBefore = ket(:,1:scaling*5);
@@ -23,8 +23,11 @@ ketAfter = ket(:,scaling * 5+1:scaling * 10);
 cntrlDiff = mean(cntrlAfter-cntrlBefore,2);
 ketDiff = mean(ketAfter-ketBefore,2);
 
+% absCntrlDiff = abs(cntrlDiff);
+% absKetDiff = abs(cntrlDiff);
+
 [h,p] = ttest2(cntrlDiff, ketDiff);
-fprintf(num2str(p))
+
 %%
 close all; clear g;
 figure(); hold on;
@@ -44,5 +47,6 @@ set(gca,'FontSize',30);
 set(gca,'FontName','Helvetica');
 ylabel('Hz')
 set(findobj(gca,'type','line'),'linew',2)
+title(sprintf('P-value: %0.9f',p))
 end
 

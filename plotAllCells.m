@@ -16,7 +16,6 @@ else
 end
 
 %% Filter cells
-
 % Filter for cells in session where only ketamine was delivered
 seshIndx = ismember(allCells.metadata(:,8),'ketamine');
 ketamineCells = filterAllCellsStruct(allCells,seshIndx);
@@ -25,80 +24,99 @@ fprintf('done filtering ketamineCells\n');
 % filter for WT mec cells with ketamine
 seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
 wt_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
+
+seshIndx = ismember(ketamineCells.metadata(:,4),'KO');
+hcn1ko_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
 fprintf('done filtering for WT cells\n');
 %% Generate Indices
 
-WTcellsIndx = strcmp({ketamineCells.metadata{:,4}}, 'WT')';
-KOcellsIndx = strcmp({ketamineCells.metadata{:,4}}, 'KO')';
+WTcellsIndx = strcmp(ketamineCells.metadata(:,4), 'WT')';
+KOcellsIndx = strcmp(ketamineCells.metadata(:,4), 'KO')';
 
 stabilityTable = findStableCells(ketamineCells); % {'totalStability', 'baselineStability', 'acuteDrugStability', 'endingStability', 'gainStability'}
 stabilityThreshold = 0.2;
-totalStabilityIndx = stabilityTable.totalStability > stabilityThreshold;
+% totalStabilityIndx = stabilityTable.totalStability > stabilityThreshold;
 WTtotalStabilityIndx = (stabilityTable.totalStability > stabilityThreshold) & WTcellsIndx;
 KOtotalStabilityIndx = (stabilityTable.totalStability > stabilityThreshold) & KOcellsIndx;
 
-baselineStabilityIndx = stabilityTable.baselineStability > stabilityThreshold;
-WTbaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & WTcellsIndx;
-KObaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & KOcellsIndx;
+% baselineStabilityIndx = stabilityTable.baselineStability > stabilityThreshold;
+% WTbaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & WTcellsIndx;
+% KObaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold) & KOcellsIndx;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FIGURE 0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% Sort by peakiness
-% [~,sortIndx] = sortrows(...
-%     nanmean(ketamineCells.peakiness,2)/max(nanmean(ketamineCells.peakiness,2))...
-%     + (nanmean(nanmean(ketamineCells.spatialFR10,2),3))/max(nanmean(nanmean(ketamineCells.spatialFR10,2),3))...
-%     ,'descend');
-[~,sortIndx] = sortrows(nanmean(wt_ket_Cells.peakiness,2),'ascend');
-sortedCells = sortAllCellsStruct(wt_ket_Cells,sortIndx);
-%% Plots single cells sorted by peakiness
-image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_by_peakiness';
-plotAllSingleCells(sortedCells,image_save_dir,false)
-
-%% Plot Raster Grid
-plotRasterGrid(wt_ket_Cells,100)
-% Plot Fr Grid
-plotFRGrid(wt_ket_Cells,100)
-
-%%
-plot_sortedMatrix(wt_ket_Cells.peakiness,sortIndx,'ascend')
-%% Sort by Peakiness and Firing Rate - Aggregated
-sortIndx = sortByTwoCols(wt_ket_Cells);
-sortedCells = sortAllCellsStruct(wt_ket_Cells,sortIndx);
-plotRasterGrid(wt_ket_Cells,36)
+%% Plot Single Cell Raster plots with Decoherence Period Highlighted
+% by trials and then combine them into combined session rasters
+save_figs = true;
+image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_dch';
+plotSaveCombine_SingleCellRastersPlotsWithDecoherence(allCells,image_save_dir,save_figs)
 
 
- 
+%% plots All cells rasters & ratemaps
+save_figs = true;
+image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters';
+plotAllSingleCells(allCells,image_save_dir,save_figs)
+
+% Combine single cell rasters into large session pngs 
+size_vert = 1250; % changed from 1042 to 346
+size_horiz = 2083; % changed from 333 to 667 for repeating tracks
+combinebySesh(allCells,image_save_dir,size_vert,size_horiz)
+
+%% plots all single cells rasters only
+save_figs = true;
+image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_black&white';
+plotAllSingleCellsRastersOnly(allCells,image_save_dir,save_figs)
+
+% Combine single cell rasters into large session pngs 
+size_vert = 1042; 
+size_horiz = 333;
+combinebySesh(allCells,image_save_dir,size_vert,size_horiz)
+
+%% plots all single cells RATEMAPS only
+save_figs = true;
+image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/ratemaps';
+plotAllSingleCellsRatemapsOnly(allCells,image_save_dir,save_figs)
+
+% Combine single cell rasters into large session pngs 
+size_vert = 1042; 
+size_horiz = 333;
+combinebySesh(allCells,image_save_dir,size_vert,size_horiz)
+
+%% plots all umap embeddings
+savePath = '/Users/keimasuda/Desktop/fkm_analysis/umap';
+save_figs = true;
+plot_UMAPdataEmbedding(allCells,savePath,save_figs)
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FIGURE 1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
-plot_FRoverTime5minBefore10minafter(fltrCells)
+plot_FRoverTime5minBefore10minafter(wt_ket_Cells)
 %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
-plot_STATS_5minBefore5minafter(fltrCells)
+plot_STATS_5minBefore5minafter(wt_ket_Cells)
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection
-plot_FRneg5to60minAfterKetamineInjx(fltrCells,'Ketamine-induced Avg FR Change');
+plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells,'Ketamine-induced Avg FR Change');
 
 %% Plot Firing Rate over Trials by Mouse
-plot_avgFRbyMouse(fltrCells,'Average FR by Mouse')
+plot_avgFRbyMouse(wt_ket_Cells,'Average FR by Mouse')
 
 %% Plot Correlation Score Curves
-plot_correlationScoreCurves(fltrCells,'WT')
+plot_correlationScoreCurves(wt_ket_Cells,'WT')
 % plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
 
 %% Plot Peakiness Curves over Trials
-plot_peakinessCurves(fltrCells)
+plot_peakinessCurves(wt_ket_Cells)
 
 %% PLOT Histfit on Corr score
-plot_HistfitKetCorrEffectScore(fltrCells, 'WT')
+plot_HistfitKetCorrEffectScore(wt_ket_Cells, 'WT')
 
 
 %% Plot Correlation Matrix
-plot_correlationMatrix(fltrCells, 'WT');
+plot_correlationMatrix(wt_ket_Cells, 'WT');
 
 %% Plot Correlation Matrix by sessions
 seshes = unique(cellfun(@num2str,fltrCells.metadata(:,1),'uni',0));
@@ -133,11 +151,10 @@ plot_PCAbySesh(wt_ket_Cells,false)
 %% FIGURE 3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-seshIndx = ismember(ketamineCells.metadata(:,4),'KO');
-hcn1ko_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
+
 
 %% Plot Nice Single Cell Figure
-plot_niceSingleCellFig(hcn1ko_ket_Cells);
+plot_niceSingleCellFig(hcn1ko_ket_Cells,[]);
 %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
 plot_FRoverTime5minBefore10minafter(fltrCells);
 %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
@@ -408,6 +425,33 @@ set(gca,'FontName','Helvetica');
 set(gcf,'Position',[100 100 1000 1000])
 title(sprintf('Avg Cell Trial by Trial Correlation Matrix(%s)',filter))
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MISC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% Sort by peakiness
+% [~,sortIndx] = sortrows(...
+%     nanmean(ketamineCells.peakiness,2)/max(nanmean(ketamineCells.peakiness,2))...
+%     + (nanmean(nanmean(ketamineCells.spatialFR10,2),3))/max(nanmean(nanmean(ketamineCells.spatialFR10,2),3))...
+%     ,'descend');
+[~,sortIndx] = sortrows(nanmean(wt_ket_Cells.peakiness,2),'ascend');
+sortedCells = sortAllCellsStruct(wt_ket_Cells,sortIndx);
+%% Plots single cells sorted by peakiness
+image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_by_peakiness';
+plotAllSingleCells(sortedCells,image_save_dir,false)
+
+%% Plot Raster Grid
+plotRasterGrid(wt_ket_Cells,100)
+% Plot Fr Grid
+plotFRGrid(wt_ket_Cells,100)
+
+%%
+plot_sortedMatrix(wt_ket_Cells.peakiness,sortIndx,'ascend')
+%% Sort by Peakiness and Firing Rate - Aggregated
+sortIndx = sortByTwoCols(wt_ket_Cells);
+sortedCells = sortAllCellsStruct(wt_ket_Cells,sortIndx);
+plotRasterGrid(wt_ket_Cells,36)
 
 
 end
