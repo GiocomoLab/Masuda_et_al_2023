@@ -33,7 +33,8 @@ allCells = poolAllCells(filter,sessionMetaDataPath);
 % fprintf('done filtering for WT cells\n');
 
 %% Calculate a decoherence band for each session in given cells
-dch = calcDecoherenceBandForSessions(allCells);
+dchFolderPath = '/Users/keimasuda/Desktop/fkm_analysis/dch/';
+dch = calcDecoherenceBandForSessions(allCells,dchFolderPath);
 dchFilePath = '/Users/keimasuda/Desktop/fkm_analysis/dch.mat';
 save(dchFilePath,'dch');
 %% if dechorence bands have already been calculated — use this to add dch 
@@ -76,15 +77,21 @@ combinebySesh(allCells,image_save_dir,size_vert,size_horiz)
 %% plots all single cells RATEMAPS only
 save_figs = true;
 image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/ratemaps';
-plotAllSingleCellsRastersOnly(allCells,image_save_dir,save_figs)
+plotAllSingleCellsRatemapsOnly(allCells,image_save_dir,save_figs)
 
 % Combine single cell rasters into large session pngs 
 size_vert = 1042; 
 size_horiz = 333;
 combinebySesh(allCells,image_save_dir,size_vert,size_horiz)
+
+%% plots all umap embeddings
+savePath = '/Users/keimasuda/Desktop/fkm_analysis/umap';
+save_figs = true;
+plot_UMAPdataEmbedding(allCells,savePath,save_figs)
+
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FIGURES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Code to generate paper figures
-plotAllCells(allCells);
+plotAllCells(allCells,paramsPath);

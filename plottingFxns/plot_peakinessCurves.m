@@ -21,7 +21,7 @@ set(gca,'TickDir','out');
 set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
 box off;
-set(gca,'FontSize',30);
+set(gca,'FontSize',20);
 set(gca,'FontName','Helvetica');
 
 category = 'bitsPerSpikeCurve';
@@ -32,7 +32,7 @@ set(gca,'TickDir','out');
 set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
 box off;
-set(gca,'FontSize',30);
+set(gca,'FontSize',20);
 set(gca,'FontName','Helvetica');
 
 category = 'stabilityScoreCurve';
@@ -43,6 +43,6 @@ set(gca,'TickDir','out');
 set(gca,'ticklength',[0.005 0.025]);
 set(gca,'layer','bottom');
 box off;
-set(gca,'FontSize',30);
+set(gca,'FontSize',20);
 set(gca,'FontName','Helvetica');
 end

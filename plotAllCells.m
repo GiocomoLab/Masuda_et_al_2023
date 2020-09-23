@@ -1,4 +1,4 @@
-function plotAllCells(allCells)
+function plotAllCells(allCells,paramsPath)
 %% Make Plots. Use after running Pool All cells
 % Run all the plotting functions
 % input: ketamineCells struct
@@ -6,6 +6,14 @@ function plotAllCells(allCells)
 % add plotting functions to path
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 addpath(genpath('./plottingFxns'))
+
+
+if ~exist('paramsPath','var')
+    addpath(genpath('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/UniversalParams'));
+    params = readtable('UniversalParams.xlsx');
+else
+    params = readtable(paramsPath);
+end
 
 %% Filter cells
 
@@ -16,7 +24,7 @@ fprintf('done filtering ketamineCells\n');
 
 % filter for WT mec cells with ketamine
 seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
-fltrCells = filterAllCellsStruct(ketamineCells,seshIndx);
+wt_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
 fprintf('done filtering for WT cells\n');
 %% Generate Indices
 
@@ -42,23 +50,23 @@ KObaselineStabilityIndx = (stabilityTable.baselineStability > stabilityThreshold
 %     nanmean(ketamineCells.peakiness,2)/max(nanmean(ketamineCells.peakiness,2))...
 %     + (nanmean(nanmean(ketamineCells.spatialFR10,2),3))/max(nanmean(nanmean(ketamineCells.spatialFR10,2),3))...
 %     ,'descend');
-[~,sortIndx] = sortrows(nanmean(fltrCells.peakiness,2),'ascend');
-sortedCells = sortAllCellsStruct(fltrCells,sortIndx);
+[~,sortIndx] = sortrows(nanmean(wt_ket_Cells.peakiness,2),'ascend');
+sortedCells = sortAllCellsStruct(wt_ket_Cells,sortIndx);
 %% Plots single cells sorted by peakiness
 image_save_dir = '/Users/KeiMasuda/Desktop/fkm_analysis/rasters_by_peakiness';
 plotAllSingleCells(sortedCells,image_save_dir,false)
 
 %% Plot Raster Grid
-plotRasterGrid(fltrCells,100)
+plotRasterGrid(wt_ket_Cells,100)
 % Plot Fr Grid
-plotFRGrid(fltrCells,100)
+plotFRGrid(wt_ket_Cells,100)
 
 %%
-plot_sortedMatrix(fltrCells.peakiness,sortIndx,'ascend')
+plot_sortedMatrix(wt_ket_Cells.peakiness,sortIndx,'ascend')
 %% Sort by Peakiness and Firing Rate - Aggregated
-sortIndx = sortByTwoCols(fltrCells);
-sortedCells = sortAllCellsStruct(fltrCells,sortIndx);
-plotRasterGrid(sortedCells,36)
+sortIndx = sortByTwoCols(wt_ket_Cells);
+sortedCells = sortAllCellsStruct(wt_ket_Cells,sortIndx);
+plotRasterGrid(wt_ket_Cells,36)
 
 
  
@@ -67,9 +75,6 @@ plotRasterGrid(sortedCells,36)
 % FIGURE 1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%% Plot  Peakiness Curves
-plot_peakinessCurves(fltrCells);
 %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
 plot_FRoverTime5minBefore10minafter(fltrCells)
 %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
@@ -112,33 +117,27 @@ end
 %% Plot Behavior by Sessions for WT animals
 plot_BehaviorbySesh(fltrCells,true);
 
- 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIGURE 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Plot Nice Single Cell Figure
-plot_niceSingleCellFig(fltrCells);
+%% Plot  Peakiness Curves
+plot_peakinessCurves(wt_ket_Cells);
 
-
+%% Plot Nice Single Cell Figure
+plot_niceSingleCellFig(wt_ket_Cells,566);
 
 %% Plot PCA by session for WT animals
-plot_PCAbySesh(fltrCells,true)
+plot_PCAbySesh(wt_ket_Cells,false)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIGURE 3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 seshIndx = ismember(ketamineCells.metadata(:,4),'KO');
-fltrCells = filterAllCellsStruct(ketamineCells,seshIndx);
-seshIndx = mean(fltrCells.bitsPerSecCurve,2)>4;
-fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
-%% Plot Raster Grid
-plotRasterGrid(fltrCells,100)
-% Plot Fr Grid
-plotFRGrid(fltrCells,100)
- 
+hcn1ko_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
+
 %% Plot Nice Single Cell Figure
-plot_niceSingleCellFig(fltrCells);
+plot_niceSingleCellFig(hcn1ko_ket_Cells);
 %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
 plot_FRoverTime5minBefore10minafter(fltrCells);
 %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
@@ -181,8 +180,7 @@ fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
 seshIndx = mean(fltrCells.bitsPerSecCurve,2)>4;
 fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
 fprintf('Done Filtering For WT MK801 cells\n');
-%% Save raster plots without legends
-plotAllSingleCells(fltrCells,true)
+
 %% Plot Raster Grid
 plotRasterGrid(fltrCells,100)
 % Plot Fr Grid

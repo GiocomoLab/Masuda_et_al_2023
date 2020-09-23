@@ -1,6 +1,7 @@
-function dch = calcDecoherenceBandForSessions(fltrCells)
+function dch = calcDecoherenceBandForSessions(fltrCells,dchFolderPath)
 
-
+%filter for WT mec cells by session
+seshes = unique(cellfun(@num2str,fltrCells.metadata(:,1),'uni',0));
 ds_factor = 100;
 
 %filter for WT mec cells by session
@@ -12,6 +13,7 @@ decoherenceIdx = cell(numel(seshes),1);
 decoherenceTimeIdx = cell(numel(seshes),1);
 decoherenceTime = cell(numel(seshes),1);
 decoherenceStartDelay = cell(numel(seshes),1);
+umapArray = cell(numel(seshes),1);
 Fs = [];
 
 for i = 1:numel(seshes)
@@ -26,9 +28,13 @@ for i = 1:numel(seshes)
 
     ds_sm_cellFR = downsample(smoothedCellFR, ds_factor);
     % umap with no output
-    [reduction, umap, clusterIdentifiers, extras] = run_umap(ds_sm_cellFR, 'verbose','none','cluster_detail','adaptive');
-   %% umap with graphic output
+    savePath = fullfile(dchFolderPath,sprintf('umap_template_sesh%i.mat',i));
+    [reduction, umap, clusterIdentifiers, extras] = run_umap(ds_sm_cellFR, 'verbose','none','cluster_detail','adaptive','save_template_file', savePath,'python',true);
+    
+    %% umap with graphic output
 %     [reduction, umap, clusterIdentifiers, extras]=run_umap(ds_sm_cellFR, 'cluster_output','graphic','n_components',2,'cluster_detail','adaptive');
+    %% umap with python
+%     [reduction, umap, clusterIdentifiers, extras]=run_umap(ds_sm_cellFR, 'cluster_output','graphic','n_components',2,'cluster_detail','adaptive','python', true);
     %%
     [dch_idx, time_idx, dchTimeSec,dchStartDelaySec, smth_clusterIdentifiers_all,Fs, trialClust] = identifyUmapDecoherenceTimeBand(clusterIdentifiers, cells, ds_factor);
     
@@ -45,6 +51,11 @@ for i = 1:numel(seshes)
     
     decoherenceTime{i} = dchTimeSec;
     decoherenceStartDelay{i} = dchStartDelaySec;
+    umapOutput.umap = umap;
+    umapOutput.reduction = reduction;
+    umapOutput.clusterIdentifiers = clusterIdentifiers;
+    umapOutput.extras = extras;
+    umapArray{i} = umapOutput;
 end  
 
 % pass values into output struct
@@ -56,6 +67,7 @@ dch.decoherenceTime = decoherenceTime;
 dch.decoherenceStartDelay = decoherenceStartDelay;
 dch.decoherenceTimeIdx = decoherenceTimeIdx;
 dch.Fs = Fs;
+dch.umapOutput = umapArray;
 
 end
 

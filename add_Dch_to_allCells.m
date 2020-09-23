@@ -1,5 +1,6 @@
 function allCells = add_Dch_to_allCells(allCells,dch)
 % Find unique sessions in cells struct
+clear dchSeshOnly
 seshes = unique(cellfun(@num2str,allCells.metadata(:,1),'uni',0));
 count = numel(allCells.metadata(:,1));
 
@@ -9,7 +10,7 @@ z = 0;
 
 
 for i = 1:numel(seshes)
-    clear dchSeshOnly
+    
     dchSeshOnly.idxCellArray = dch.idxCellArray{i};
     dchSeshOnly.idxClusterArray = dch.idxClusterArray{i};
     dchSeshOnly.decoherenceIdx = dch.decoherenceIdx{i};
@@ -18,6 +19,7 @@ for i = 1:numel(seshes)
     dchSeshOnly.decoherenceStartDelay = dch.decoherenceStartDelay{i};
     dchSeshOnly.decoherenceTimeIdx = dch.decoherenceTimeIdx{i};
     dchSeshOnly.Fs = dch.Fs;
+    dchSeshOnly.umapOutput = dch.umapOutput{i};
     
     seshIndx = ismember(allCells.metadata(:,1),seshes{i});
     nCells = sum(seshIndx);
