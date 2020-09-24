@@ -144,6 +144,9 @@ plot_peakinessCurves(wt_ket_Cells);
 %% Plot Nice Single Cell Figure
 plot_niceSingleCellFig(wt_ket_Cells,566);
 
+%% Decoherence Plots
+plotDecoherencePlots(wt_ket_Cells);
+
 %% Plot PCA by session for WT animals
 plot_PCAbySesh(wt_ket_Cells,false)
 

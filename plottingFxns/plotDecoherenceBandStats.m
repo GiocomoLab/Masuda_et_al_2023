@@ -27,7 +27,7 @@ colormap jet
 title('Cluster Groups by Time Array');
 colormap jet
 yt = get(gca, 'YTick'); 
-set(gca, 'YTick',yt, 'YTickLabel',round(yt*dch.Fs/60))
+set(gca, 'YTick',yt, 'YTickLabel',round(yt/dch.Fs/60))
 ylabel('Minutes');
 
 %% Highlight the Decoherence Period for Time

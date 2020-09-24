@@ -37,7 +37,6 @@ smth_clusterIdentifiers_all = round(smoothdata(clusterIdentifiers,'movmedian',cl
 % ylabel('UMAP Cluster Group');
 % colorbar();
 %%
-
 % Create a vector of postKet trial length and assigns a cluster value to each trial based
 % on the median cluster value for the trial duration
 minTrial = min(trials);
@@ -97,64 +96,56 @@ catch
 end
 
 %% plot 1 example raster
-% close all;
-% dchRange = dch_idx;
-% plotWidth = 160;
-% plotHeight = 500;
-% 
-% h = figure('Position',[100 100 plotWidth plotHeight]); hold on;
-% i = randi(size(cells.spatialFR10,1),1);
-% 
-% 
-% singleCellFR2cm = squeeze(cells.spatialFR2(i,:,:));
-% 
-% name = cells.metadata{i,2};
-% genotype = cells.metadata{i,4};
-% sessionDate = cells.metadata{i,3};
-% % 
-% ogSpatialBinSize = 2;
-% spatialBinSize = 10;
-% numCol2AvgOver = spatialBinSize/ogSpatialBinSize;
-% singleCellFR = reshape(nanmean(reshape(singleCellFR2cm.',numCol2AvgOver,[])),size(singleCellFR2cm,2)/numCol2AvgOver,[]).';
-% 
-% posx = cells.posX(i).posx;
-% spike_idx = cells.spike_idx(i);
-% spike_idx = spike_idx{1};
-% % FRtime = allCells.FRtime(i).FRtime';
-% 
-% trial = cells.trial(i).trial;
-% 
-% 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % Figures
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
-% clf;
-% 
-% scatter(posx(spike_idx),trial(spike_idx),1,'k.'); hold on;
-% 
-% if ~isempty(dchRange)
-%     x = posx(spike_idx);
-%     y = trial(spike_idx);
-%     x = x(y>min(dchRange) & y<max(dchRange));
-%     y = y(y>min(dchRange) & y<max(dchRange));
-%     scatter(x,y,1,'r.');
-% end
-% colormap('default')
-% 
-% set(gca, 'YDir','reverse')
-% ylim([0 max(trial)+1]);
-% xlim([0 400]);
-% set(gca,'TickDir','out');
-% set(gca,'ticklength',[0.01 0.025]);   
-% set(gca,'layer','bottom');
-% 
-% set(gca,'FontName','Helvetica');
-% box off;
-% 
-% set(gca,'FontName','Helvetica');
-% % set(gcf,'Position',[100 100 1000 1000])
-% title(sprintf('Cell %d: %s,%s',i,name,genotype))
+close all;
+dchRange = dch_idx;
+plotWidth = 160;
+plotHeight = 500;
+
+h = figure('Position',[100 100 plotWidth plotHeight]); hold on;
+i = randi(size(cells.spatialFR2,1),1);
+
+name = cells.metadata{i,2};
+genotype = cells.metadata{i,4};
+sessionDate = cells.metadata{i,3};
+
+posx = cells.posX(i).posx;
+spike_idx = cells.spike_idx(i);
+spike_idx = spike_idx{1};
+% FRtime = allCells.FRtime(i).FRtime';
+
+trial = cells.trial(i).trial;
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Figures
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clf;
+
+scatter(posx(spike_idx),trial(spike_idx),1,'k.'); hold on;
+
+if ~isempty(dchRange)
+    x = posx(spike_idx);
+    y = trial(spike_idx);
+    x = x(y>min(dchRange) & y<max(dchRange));
+    y = y(y>min(dchRange) & y<max(dchRange));
+    scatter(x,y,1,'r.');
+end
+colormap('default')
+
+set(gca, 'YDir','reverse')
+ylim([0 max(trial)+1]);
+xlim([0 400]);
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.01 0.025]);   
+set(gca,'layer','bottom');
+
+set(gca,'FontName','Helvetica');
+box off;
+
+set(gca,'FontName','Helvetica');
+% set(gcf,'Position',[100 100 1000 1000])
+title(sprintf('Cell %d: %s,%s',i,name,genotype))
 
 
 end

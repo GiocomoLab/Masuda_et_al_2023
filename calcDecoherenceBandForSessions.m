@@ -68,7 +68,7 @@ dch.decoherenceStartDelay = decoherenceStartDelay;
 dch.decoherenceTimeIdx = decoherenceTimeIdx;
 dch.Fs = Fs;
 dch.umapOutput = umapArray;
-
+dch.timeDownSample = ds_factor;
 end
 
 %% Get spatially binned FR over time
