@@ -26,7 +26,9 @@ for i = 1:numel(seshes)
     pool_decoherence_sessions(i).decoherenceTimeIdx = cells.dch(cellIndx).dch.decoherenceTimeIdx;
     pool_decoherence_sessions(i).Fs = cells.dch(cellIndx).dch.Fs;
     pool_decoherence_sessions(i).umapOutput = cells.dch(cellIndx).dch.umapOutput;
-    pool_decoherence_sessions(i).timeDownSample = cells.dch(cellIndx).dch.timeDownSample;
+    % uncomment this next time I run calculate decoherence sessions
+%     pool_decoherence_sessions(i).timeDownSample = cells.dch(cellIndx).dch.timeDownSample; 
+    pool_decoherence_sessions(i).timeDownSample = 100;
 end
 
 end

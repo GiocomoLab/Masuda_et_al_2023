@@ -9,7 +9,7 @@ addpath(genpath('./plottingFxns'))
 
 
 if ~exist('paramsPath','var')
-    addpath(genpath('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/UniversalParams'));
+    addpath(genpath('./UniversalParams.xlsx'));
     params = readtable('UniversalParams.xlsx');
 else
     params = readtable(paramsPath);
@@ -24,10 +24,21 @@ fprintf('done filtering ketamineCells\n');
 % filter for WT mec cells with ketamine
 seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
 wt_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
-
+fprintf('done filtering for WT cells\n');
 seshIndx = ismember(ketamineCells.metadata(:,4),'KO');
 hcn1ko_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
-fprintf('done filtering for WT cells\n');
+fprintf('done filtering for HCN1ko cells\n');
+
+seshIndx = ismember(allCells.metadata(:,8),'MK801');
+MK801_cells = filterAllCellsStruct(allCells,seshIndx);
+fprintf('done filtering for MK801 cells\n');
+% filter for WT mec cells with ketamine
+seshIndx = ismember(MK801_cells.metadata(:,4),'WT');
+wt_mk801_Cells = filterAllCellsStruct(MK801_cells,seshIndx);
+fprintf('done filtering for WT mk801 cells\n');
+seshIndx = ismember(MK801_cells.metadata(:,4),'KO');
+hcn1ko_mk801_Cells = filterAllCellsStruct(MK801_cells,seshIndx);
+fprintf('done filtering for HCN1ko mk801 cells\n');
 %% Generate Indices
 
 WTcellsIndx = strcmp(ketamineCells.metadata(:,4), 'WT')';
@@ -151,7 +162,7 @@ plotDecoherencePlots(wt_ket_Cells);
 plot_PCAbySesh(wt_ket_Cells,false)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% FIGURE 3
+%% FIGURE 3?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -159,29 +170,31 @@ plot_PCAbySesh(wt_ket_Cells,false)
 %% Plot Nice Single Cell Figure
 plot_niceSingleCellFig(hcn1ko_ket_Cells,[]);
 %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
-plot_FRoverTime5minBefore10minafter(fltrCells);
+plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells);
 %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
-plot_STATS_5minBefore5minafter(fltrCells)
+plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells)
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection
-plot_FRneg5to60minAfterKetamineInjx(fltrCells,'Ketamine-induced Avg FR Change on HCN1ko');
+plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells,'Ketamine-induced Avg FR Change on HCN1ko');
 
 %% Plot Firing Rate over Trials by Mouse
-plot_avgFRbyMouse(fltrCells)
+plot_avgFRbyMouse(hcn1ko_ket_Cells)
 
-%% Plot Correlation Score Curves
-plot_correlationScoreCurves(fltrCells,'KO')
-% plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
+%% Plot dch plot
+plotDecoherencePlots(hcn1ko_ket_Cells);
+
+%% 
+plot_dch_autocorrelationScore_cells1_VS_cells2(wt_ket_Cells,hcn1ko_ket_Cells, 'WT Ketamine','HCN1ko Ketamine')
 
 %% Plot Correlation Score Curve Comparisions
-plot_correlationScoreCurveComparison(fltrCells, ko_fltrCells)
+plot_correlationScoreCurveComparison(hcn1ko_ket_Cells, wt_ket_Cells)
 
 
 %% Plot Peakiness Curves over Trials
-plot_peakinessCurves(fltrCells)
+plot_peakinessCurves(hcn1ko_ket_Cells)
 
 %% PLOT Histfit on Corr score
-plot_HistfitKetCorrEffectScore(fltrCells, 'KO')
+plot_HistfitKetCorrEffectScore(hcn1ko_ket_Cells, 'KO')
 
 
 %% Plot Correlation Matrix
@@ -193,14 +206,9 @@ plot_BehaviorbySesh(fltrCells,true);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plot MK801 WT Cells
-seshIndx = ismember(allCells.metadata(:,8),'MK801');
-fltrCells = filterAllCellsStruct(allCells,seshIndx);
-seshIndx = ismember(fltrCells.metadata(:,4),'WT');
-fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
-seshIndx = mean(fltrCells.bitsPerSecCurve,2)>4;
-fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
-fprintf('Done Filtering For WT MK801 cells\n');
-
+plot_dch_autocorrelationScore_cells1_VS_cells2(wt_ket_Cells,wt_mk801_Cells, 'WT Ketamine','MK801 Ketamine')
+plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_ket_Cells,wt_mk801_Cells, 'HCN1ko Ketamine','MK801 Ketamine')
+plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_mk801_Cells,wt_mk801_Cells, 'HCN1ko-MK801 Ketamine','MK801 Ketamine')
 %% Plot Raster Grid
 plotRasterGrid(fltrCells,100)
 % Plot Fr Grid

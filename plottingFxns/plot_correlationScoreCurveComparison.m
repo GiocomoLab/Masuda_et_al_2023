@@ -1,7 +1,7 @@
 function plot_correlationScoreCurveComparison(cells1,cells2)
 
-WTCellsFR = cells1.spatialFR10;
-KOCellsFR = cells2.spatialFR10;
+WTCellsFR = cells1.spatialFRsmooth;
+KOCellsFR = cells2.spatialFRsmooth;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Average Correleation Score Curve

@@ -92,5 +92,7 @@ goodFigPrefs
 xlabel('Min')
 ylabel('Number of Sessions')
 
+%% a plot that looks for spatial autocorrelation in the deocherence period
+plot_autocorrelation_before_and_after_dchPeriod(cells)
 
 end

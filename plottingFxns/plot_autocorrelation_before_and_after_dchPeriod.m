@@ -1,10 +1,7 @@
 function plot_autocorrelation_before_and_after_dchPeriod(cells)
 
 
-addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
-%%
-
-for i = 256:numel(cells.metadata)
+for i = 1:numel(cells.metadata)
     clf;
     smoothFR = cells.spatialFRsmooth;
     
@@ -48,6 +45,7 @@ for i = 256:numel(cells.metadata)
         hold on;
         plot(lags_dch,autocor_dch);
         title('Control vs Decoherence Autocorrelation')
+        legend('Control','Decoherence')
         
 %         nexttile();
 %         plot(lags_dch,autocor_dch);
