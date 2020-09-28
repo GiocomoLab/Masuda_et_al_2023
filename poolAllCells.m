@@ -3,8 +3,8 @@ function allCells = poolAllCells(filter, sessionMetaDataPath)
 % sessions = dir('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/fr_corr_matrices/*.mat');
 % sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter/*.mat'); 
 % sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/fr_data_matrices_noSmoothing/*.mat'); 
-sessions = dir('/Users/KeiMasuda/Desktop/fkm_analysis/combinedSesh/fr_data_matrices_noSmoothing/*.mat'); 
-spatialIndexPath = '/Users/KeiMasuda/Desktop/fkm_analysis/allSpatialIndx%s.mat';
+sessions = dir('../fkm_analysis/combinedSesh/fr_data_matrices_noSmoothing/*.mat'); 
+spatialIndexPath = '../fkm_analysis/allSpatialIndx%s.mat';
 
 if ~exist('filter','var')
     filter = 'mec';   
