@@ -7,15 +7,14 @@ function plotAllCells(allCells,paramsPath)
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 addpath(genpath('./plottingFxns'))
 
-
 if ~exist('paramsPath','var')
-    addpath(genpath('./UniversalParams.xlsx'));
-    params = readtable('UniversalParams.xlsx');
+    params = readtable('./UniversalParams.xlsx');
 else
     params = readtable(paramsPath);
 end
 
 %% Filter cells
+
 % Filter for cells in session where only ketamine was delivered
 seshIndx = ismember(allCells.metadata(:,8),'ketamine');
 ketamineCells = filterAllCellsStruct(allCells,seshIndx);
@@ -24,10 +23,11 @@ fprintf('done filtering ketamineCells\n');
 % filter for WT mec cells with ketamine
 seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
 wt_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
-fprintf('done filtering for WT cells\n');
+fprintf('done filtering for WT-ket cells\n');
+%%
 seshIndx = ismember(ketamineCells.metadata(:,4),'KO');
 hcn1ko_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
-fprintf('done filtering for HCN1ko cells\n');
+fprintf('done filtering for HCN1ko-ket cells\n');
 
 seshIndx = ismember(allCells.metadata(:,8),'MK801');
 MK801_cells = filterAllCellsStruct(allCells,seshIndx);
@@ -35,10 +35,11 @@ fprintf('done filtering for MK801 cells\n');
 % filter for WT mec cells with ketamine
 seshIndx = ismember(MK801_cells.metadata(:,4),'WT');
 wt_mk801_Cells = filterAllCellsStruct(MK801_cells,seshIndx);
-fprintf('done filtering for WT mk801 cells\n');
+fprintf('done filtering for WT-mk801 cells\n');
 seshIndx = ismember(MK801_cells.metadata(:,4),'KO');
 hcn1ko_mk801_Cells = filterAllCellsStruct(MK801_cells,seshIndx);
-fprintf('done filtering for HCN1ko mk801 cells\n');
+fprintf('done filtering for HCN1ko-mk801 cells\n');
+
 %% Generate Indices
 
 WTcellsIndx = strcmp(ketamineCells.metadata(:,4), 'WT')';
@@ -115,10 +116,6 @@ plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells,'Ketamine-induced Avg FR Change
 %% Plot Firing Rate over Trials by Mouse
 plot_avgFRbyMouse(wt_ket_Cells,'Average FR by Mouse')
 
-%% Plot Correlation Score Curves
-plot_correlationScoreCurves(wt_ket_Cells,'WT')
-% plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
-
 %% Plot Peakiness Curves over Trials
 plot_peakinessCurves(wt_ket_Cells)
 
@@ -159,11 +156,14 @@ plot_niceSingleCellFig(wt_ket_Cells,566);
 plotDecoherencePlots(wt_ket_Cells);
 
 %% Plot PCA by session for WT animals
-plot_PCAbySesh(wt_ket_Cells,false)
+% plot_PCAbySesh(wt_ket_Cells,false)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIGURE 3?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Plot Correlation Score Curves
+plot_correlationScoreCurves(wt_ket_Cells,'WT')
+% plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
 
 
 
@@ -178,7 +178,7 @@ plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells)
 plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells,'Ketamine-induced Avg FR Change on HCN1ko');
 
 %% Plot Firing Rate over Trials by Mouse
-plot_avgFRbyMouse(hcn1ko_ket_Cells)
+plot_avgFRbyMouse(hcn1ko_ket_Cells);
 
 %% Plot dch plot
 plotDecoherencePlots(hcn1ko_ket_Cells);
