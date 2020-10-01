@@ -25,11 +25,11 @@ avgControlInjxCorr = nanmean(all_cellCorrScore(:,1:50),2);
 normalizedCorrScoreCurves = all_cellCorrScore./avgControlInjxCorr;
 
 ds_factor = 100;
-timewarpedScore = timewarpTrialBasedScores(cells, normalizedCorrScoreCurves,ds_factor);
+tw = timewarpTrialBasedScores(cells, normalizedCorrScoreCurves,ds_factor);
+cntrlIndx = tw.controlIndx;
 
-
-normCSC_data.y = timewarpedScore;
-normCSC_data.x = 1:size(timewarpedScore,2);
+normCSC_data.y = tw.timewarpedScore(:,cntrlIndx:end);
+normCSC_data.x = cntrlIndx:
 g=gramm('x',normCSC_data.x ,'y',normCSC_data.y);
 g.stat_summary('setylim','true');
 g.set_names('x','Trial','y','Correlation compared to Baseline Template (rho)','size',20); 
