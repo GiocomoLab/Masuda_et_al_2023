@@ -19,9 +19,10 @@ runMultiAnalysis(filter,combinedSessionsPath,saveDir,paramsPath);
 % Not needed if a spatial index has already be created
 spatialIndx = generateSpatialIndx(filter);
 %% Pool All the Cells from calculated metadata files from sessions identified in spreadsheet into one big struct
+tic
 sessionMetaDataPath = '../fkm_analysis/SessionList.xlsx';
 allCells = poolAllCells(filter,sessionMetaDataPath);
-
+toc
 % % Filter for cells in session where only ketamine was delivered
 % seshIndx = ismember(allCells.metadata(:,8),'ketamine');
 % ketamineCells = filterAllCellsStruct(allCells,seshIndx);
