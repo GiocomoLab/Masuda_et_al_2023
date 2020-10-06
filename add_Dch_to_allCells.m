@@ -20,7 +20,11 @@ for i = 1:numel(seshes)
     dchSeshOnly.decoherenceTimeIdx = dch.decoherenceTimeIdx{i};
     dchSeshOnly.Fs = dch.Fs;
     dchSeshOnly.umapOutput = dch.umapOutput{i};
-    dchSeshOnly.timeDownSample = dch.timeDownSample{i};
+    try
+        dchSeshOnly.timeDownSample = dch.timeDownSample{i};
+    catch
+        dchSeshOnly.timeDownSample = 100;
+    end
     
     seshIndx = ismember(allCells.metadata(:,1),seshes{i});
     nCells = sum(seshIndx);
