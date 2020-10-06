@@ -1,5 +1,6 @@
 % Master Script for Ketamine Paper
 % Francis Kei Masuda 2020
+% Requires JohnKeiNPAnalysis to be on the same directory level as fkm_analysis
 
 addpath('./plottingFxns')
 filter = 'mec';
@@ -10,16 +11,16 @@ filter = 'mec';
 
 runMultiPostProcessing
 %%
-combinedSessionsPath = '/Users/KeiMasuda/Desktop/fkm_analysis/combinedSesh/*.mat';
-saveDir = '/Users/KeiMasuda/Desktop/fkm_analysis/combinedSesh/fr_data_matrices_noSmoothing';
-paramsPath = '/Users/keimasuda/Desktop/JohnKeiNPAnalysis/UniversalParams.xlsx';
+combinedSessionsPath = '../fkm_analysis/combinedSesh/*.mat';
+saveDir = '../fkm_analysis/combinedSesh/fr_data_matrices_noSmoothing';
+paramsPath = './UniversalParams.xlsx';
 runMultiAnalysis(filter,combinedSessionsPath,saveDir,paramsPath);
 
 %% Generate spatial indx to figure out what cells exist to pool together in the next step
 % Not needed if a spatial index has already be created
 spatialIndx = generateSpatialIndx(filter);
 %% Pool All the Cells from calculated metadata files from sessions identified in spreadsheet into one big struct
-sessionMetaDataPath = '/Users/KeiMasuda/Desktop/fkm_analysis/SessionList.xlsx';
+sessionMetaDataPath = '../fkm_analysis/SessionList.xlsx';
 allCells = poolAllCells(filter,sessionMetaDataPath);
 
 % % Filter for cells in session where only ketamine was delivered
@@ -33,13 +34,13 @@ allCells = poolAllCells(filter,sessionMetaDataPath);
 % fprintf('done filtering for WT cells\n');
 
 %% Calculate a decoherence band for each session in given cells
-dchFolderPath = '/Users/keimasuda/Desktop/fkm_analysis/dch/';
+dchFolderPath = '../fkm_analysis/dch/';
 dch = calcDecoherenceBandForSessions(allCells,dchFolderPath);
 dchFilePath = '/Users/keimasuda/Desktop/fkm_analysis/dch.mat';
 save(dchFilePath,'dch');
 %% if dechorence bands have already been calculated — use this to add dch 
 % band to the allCells struct
-dchFilePath = '/Users/keimasuda/Desktop/fkm_analysis/dch.mat';
+dchFilePath = '../fkm_analysis/dch.mat';
 load(dchFilePath);
 allCells = add_Dch_to_allCells(allCells,dch);
 
