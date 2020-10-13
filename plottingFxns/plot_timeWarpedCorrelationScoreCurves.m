@@ -1,4 +1,4 @@
-function plot_timeWarpedCorrelationScoreCurves(cells, filter)
+function plot_timeWarpedCorrelationScoreCurves(cells)
 
 cellsFR = cells.spatialFR2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,16 +24,15 @@ figure();
 avgControlInjxCorr = nanmean(all_cellCorrScore(:,1:50),2);
 normalizedCorrScoreCurves = all_cellCorrScore./avgControlInjxCorr;
 
-ds_factor = 100;
-tw = timewarpTrialBasedScores(cells, normalizedCorrScoreCurves,ds_factor);
+tw = timewarpTrialBasedScores(cells, normalizedCorrScoreCurves);
 cntrlIndx = tw.controlIndx;
 
 normCSC_data.y = tw.timewarpedScore(:,cntrlIndx:end);
-normCSC_data.x = cntrlIndx:
+normCSC_data.x = cntrlIndx:size(tw.timewarpedScore,2);
 g=gramm('x',normCSC_data.x ,'y',normCSC_data.y);
 g.stat_summary('setylim','true');
 g.set_names('x','Trial','y','Correlation compared to Baseline Template (rho)','size',20); 
-g.set_title(sprintf('Average Correlation Score Curve(%s - %d Cells)',filter,size(cellsFR,1)),'fontSize',30);
+g.set_title(sprintf('Average Correlation Score Curve(mec - %d Cells)',size(cellsFR,1)),'fontSize',30);
 g.axe_property('FontSize',25);
 g.set_color_options('chroma',0,'lightness',30);
 g.draw;

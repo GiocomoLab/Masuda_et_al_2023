@@ -86,7 +86,7 @@ all_spatialInfoCurves = nan(nCells, max(trial),2);
 all_peakiness = cell(nCells,1);
 fprintf('Calculating firing rate for %d cells with a spatial bin size of %dcm\n',nCells,params.SpatialBin);
 %%
-ds_factor = params.ds_factor; %currently 1 aka don't downsample
+ds_factor = 1; %currently 1 aka don't downsample
 
 % calculate 1 fr to preallocate fr space
 spike_t = sp.st(sp.clu==cells_to_plot(1));

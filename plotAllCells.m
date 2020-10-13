@@ -7,11 +7,11 @@ function plotAllCells(allCells,paramsPath)
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 addpath(genpath('./plottingFxns'))
 
-if ~exist('paramsPath','var')
-    params = readtable('./UniversalParams.xlsx');
-else
-    params = readtable(paramsPath);
-end
+% if ~exist('paramsPath','var')
+%     params = readtable('./UniversalParams.xlsx');
+% else
+%     params = readtable(paramsPath);
+% end
 
 %% Filter cells
 
@@ -100,7 +100,6 @@ savePath = '../fkm_analysis/umap';
 save_figs = true;
 plot_UMAPdataEmbedding(allCells,savePath,save_figs)
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FIGURE 1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,26 +121,22 @@ plot_peakinessCurves(wt_ket_Cells)
 %% PLOT Histfit on Corr score
 plot_HistfitKetCorrEffectScore(wt_ket_Cells, 'WT')
 
-
 %% Plot Correlation Matrix
 plot_correlationMatrix(wt_ket_Cells, 'WT');
 
 %% Plot Correlation Matrix by sessions
-seshes = unique(cellfun(@num2str,fltrCells.metadata(:,1),'uni',0));
-
-rows = ceil(sqrt(numel(seshes)));
-cols = rows;
+seshes = unique(cellfun(@num2str,wt_ket_Cells.metadata(:,1),'uni',0));
 
 for i = 1:numel(seshes)
-    seshIndx = ismember(fltrCells.metadata(:,1),seshes{i});
-    cells.metadata = fltrCells.metadata(seshIndx,:);
-    cells.correlationMatrix = fltrCells.correlationMatrix(seshIndx,:,:);
-    cells.spatialFRsmooth = fltrCells.spatialFRsmooth(seshIndx,:,:);
-    plot_correlationMatrix(cells,cells.metadata{1,4})
+    seshIndx = ismember(wt_ket_Cells.metadata(:,1),seshes{i});
+    temp_cells.metadata = wt_ket_Cells.metadata(seshIndx,:);
+    temp_cells.correlationMatrix = wt_ket_Cells.correlationMatrix(seshIndx,:,:);
+    temp_cells.spatialFRsmooth = wt_ket_Cells.spatialFRsmooth(seshIndx,:,:);
+    plot_correlationMatrix(wt_ket_Cells,temp_cells.metadata{1,4})
     pause
 end
 %% Plot Behavior by Sessions for WT animals
-plot_BehaviorbySesh(fltrCells,true);
+plot_BehaviorbySesh(wt_ket_Cells,true);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIGURE 2
@@ -164,8 +159,6 @@ plotDecoherencePlots(wt_ket_Cells);
 %% Plot Correlation Score Curves
 plot_correlationScoreCurves(wt_ket_Cells,'WT')
 % plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
-
-
 
 %% Plot Nice Single Cell Figure
 plot_niceSingleCellFig(hcn1ko_ket_Cells,[]);
@@ -240,51 +233,8 @@ plot_HistfitKetCorrEffectScore(fltrCells, 'WT-MK801')
 
 %% Plot Correlation Matrix
 plot_correlationMatrix(fltrCells, 'MK801');
-
-%% Plot MK801 KO Cells
-seshIndx = ismember(allCells.metadata(:,8),'MK801');
-fltrCells = filterAllCellsStruct(allCells,seshIndx);
-seshIndx = ismember(fltrCells.metadata(:,4),'KO');
-fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
-seshIndx = mean(fltrCells.bitsPerSecCurve,2)>4;
-fltrCells = filterAllCellsStruct(fltrCells,seshIndx);
-fprintf('Done Filtering For KO MK801 cells\n');
-%% Save raster plots without legends
-plotAllSingleCells(fltrCells,true)
-%% Plot Raster Grid
-plotRasterGrid(fltrCells,100)
-% Plot Fr Grid
-plotFRGrid(fltrCells,100)
-
-%% Plot Nice Single Cell Figure
-plot_niceSingleCellFig(fltrCells);
-
-%% Plot Firing Rate over Time 5min before and 60 min after injection
-plot_FRneg5to60minAfterKetamineInjx(fltrCells);
-
-%% Plot Firing Rate over Trials by Mouse
-plot_avgFRbyMouse(fltrCells)
-
-%% Plot Correlation Score Curves
-plot_correlationScoreCurves(fltrCells,'WT')
-% plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
-
-%% Plot Correlation Score Curve Comparisions
-plot_correlationScoreCurveComparison(fltrCells, ko_fltrCells)
-
-
-%% Plot Peakiness Curves over Trials
-plot_peakinessCurves(fltrCells)
-
-%% PLOT Histfit on Corr score
-plot_HistfitKetCorrEffectScore(fltrCells, 'WT-MK801')
-
-
-%% Plot Correlation Matrix
-plot_correlationMatrix(fltrCells, 'MK801');
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% MISC7
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MISC
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plot Control
 
