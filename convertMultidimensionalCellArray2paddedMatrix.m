@@ -1,20 +1,13 @@
 function result = convertMultidimensionalCellArray2paddedMatrix(A)
+% takes a n x 1 cell array where n can be different sizes of m x 1 cell
+% arrays and converts it to a matrix padded with nans 
 
 nCol   = cellfun('size', A, 1);
-nRow   = cellfun('size', A, 2);
 
-Output1 = NaN(max(nCol), numel(A));
-Output2 = NaN(numel(A), max(nRow));
+result = NaN(max(nCol), numel(A));
 
 for iA = 1:numel(A)
-    try
-      idx = A{iA,:};
-      Output1(1:size(idx,1), iA) = idx;
-      result = Output1;
-    catch
-      idx = A{iA,:};
-      Output2(iA,1:size(idx,2)) = idx;
-      result = Output2';
-    end
+  idx = A{iA,:};
+  result(1:size(idx,1), iA) = idx;
 end
 
