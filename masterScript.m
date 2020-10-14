@@ -24,16 +24,6 @@ spatialIndx = generateSpatialIndx(filter);
 sessionMetaDataPath = '../fkm_analysis/SessionList.xlsx';
 allCells = poolAllCells(filter,sessionMetaDataPath);
 
-% % Filter for cells in session where only ketamine was delivered
-% seshIndx = ismember(allCells.metadata(:,8),'ketamine');
-% ketamineCells = filterAllCellsStruct(allCells,seshIndx);
-% fprintf('done filtering ketamineCells\n');
-% 
-% % Filter for only WT mec cells with ketamine
-% seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
-% fltrCells = filterAllCellsStruct(ketamineCells,seshIndx);
-% fprintf('done filtering for WT cells\n');
-
 %% Calculate a decoherence band for each session in given cells
 dchFolderPath = '../fkm_analysis/dch/';
 dch = calcDecoherenceBandForSessions(allCells,dchFolderPath);

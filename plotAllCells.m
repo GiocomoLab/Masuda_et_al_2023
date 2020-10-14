@@ -40,6 +40,9 @@ seshIndx = ismember(MK801_cells.metadata(:,4),'KO');
 hcn1ko_mk801_Cells = filterAllCellsStruct(MK801_cells,seshIndx);
 fprintf('done filtering for HCN1ko-mk801 cells\n');
 
+%% Example session
+seshIndx = ismember(allCells.metadata(:,1),'G1_190817_baseline1+controlinjx1+ketamine1_fr+corr');
+singleSession_Cells = filterAllCellsStruct(allCells,seshIndx);
 %% Generate Indices
 
 WTcellsIndx = strcmp(ketamineCells.metadata(:,4), 'WT')';
@@ -159,7 +162,9 @@ plotDecoherencePlots(wt_ket_Cells);
 %% Plot Correlation Score Curves
 plot_correlationScoreCurves(wt_ket_Cells,'WT')
 % plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
-
+%% Plot Timewarped Correlation Score Curves
+plot_timeWarpedCorrelationScoreCurves(wt_ket_Cells);
+plot_timeWarpedCorrelationScoreCurves(hcn1ko_ket_Cells);
 %% Plot Nice Single Cell Figure
 plot_niceSingleCellFig(hcn1ko_ket_Cells,[]);
 %% Plot Firing Rate over Time 5 min before injection and 10 min after injection

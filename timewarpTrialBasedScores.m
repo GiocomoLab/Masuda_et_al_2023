@@ -27,12 +27,26 @@ for i = 1:numCells
     
     ketamineIndx(i) = find(ds_trial > ketamineTrial,1,'first');
     controlIndx(i) = find(ds_trial > controlTrial,1,'first');
-    gainIndx(i) = find(ds_trial > gainTrial,1,'first');
-
+    
+    if max(ds_trial) > gainTrial
+        gainIndx(i) = find(ds_trial > gainTrial,1,'first');
+    else
+        gainIndx(i) = nan;
+    end
+    
+    
     single_cell_trialBasedScore = trialBasedScore(i,:);
     single_cell_timewarpedScore = nan(numSamples,1);
     for j = 1:numSamples
-        single_cell_timewarpedScore(j) = single_cell_trialBasedScore(ds_trial(j));
+        try
+            single_cell_timewarpedScore(j) = single_cell_trialBasedScore(ds_trial(j));
+        catch
+            if ds_trial(j) > 300
+            	single_cell_timewarpedScore(j) = single_cell_trialBasedScore(300);
+            else
+                
+            end
+        end
     end
     
     timewarpedScores{i} = single_cell_timewarpedScore;
