@@ -23,6 +23,7 @@ for n = 1:numel(sessions)
         matPath = fullfile(sessions(n).folder, sessions(n).name);
         trackLength = 400;
         
+        %% calculate files
         [lickt,lickx,post,posx,speed, sp, ...
             all_fr, avg_all_fr, all_corrmatrix, avg_all_corrmatrix,...
             all_waveforms, cells_to_plot,spike_depth,...
@@ -32,14 +33,7 @@ for n = 1:numel(sessions)
             all_spatialInfo,all_spatialInfoCurves, all_peakiness, all_fr_smoothed]...
         = calcFRmapCorrMatrixAllCells(matPath, trackLength, paramsPath);
                 
-%         doPCA(matPath); 
-
-%         
-        %save avg_all_fr and avg_all_corrmatrix to OAK
-%         saveDir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/fkm_analysis/fr_corr_matrices_noSpeedFilter';
-%         saveDir = '/Users/KeiMasuda/Desktop/fkm_analysis/fr_corr_matrices_noSpeedFilter';
-        
-        
+        %% save to file
         [~,sessionName,~] = fileparts(matPath);
         saveName = fullfile(saveDir, strcat(sessionName,'_fr+corr.mat'));
         save(saveName, 'all_fr', 'avg_all_fr', 'all_corrmatrix', 'avg_all_corrmatrix', ...
@@ -54,6 +48,3 @@ for n = 1:numel(sessions)
         warning('FAILED: %s\n',sessions(n).name);
     end
 end
-
-end
-

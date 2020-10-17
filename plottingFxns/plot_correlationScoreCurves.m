@@ -1,6 +1,6 @@
 function plot_correlationScoreCurves(cells, filter)
 
-cellsFR = cells.spatialFR2;
+cellsFR = cells.spatialFRsmooth;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Average Correleation Score Curve
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

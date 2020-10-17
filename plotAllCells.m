@@ -36,9 +36,17 @@ fprintf('done filtering for MK801 cells\n');
 seshIndx = ismember(MK801_cells.metadata(:,4),'WT');
 wt_mk801_Cells = filterAllCellsStruct(MK801_cells,seshIndx);
 fprintf('done filtering for WT-mk801 cells\n');
+% filter for MK801 cells with HCN1ko
 seshIndx = ismember(MK801_cells.metadata(:,4),'KO');
 hcn1ko_mk801_Cells = filterAllCellsStruct(MK801_cells,seshIndx);
 fprintf('done filtering for HCN1ko-mk801 cells\n');
+
+% Control
+seshIndx = ismember(allCells.metadata(:,8),'control');
+controlCells = filterAllCellsStruct(allCells,seshIndx);
+seshIndx = ismember(controlCells.metadata(:,4),'WT');
+controlCells = filterAllCellsStruct(controlCells,seshIndx);
+fprintf('done filtering Control Cells\n');
 
 %% Example session
 seshIndx = ismember(allCells.metadata(:,1),'G1_190817_baseline1+controlinjx1+ketamine1_fr+corr');
@@ -128,24 +136,19 @@ plot_HistfitKetCorrEffectScore(wt_ket_Cells, 'WT')
 plot_correlationMatrix(wt_ket_Cells, 'WT');
 
 %% Plot Correlation Matrix by sessions
-seshes = unique(cellfun(@num2str,wt_ket_Cells.metadata(:,1),'uni',0));
-
-for i = 1:numel(seshes)
-    seshIndx = ismember(wt_ket_Cells.metadata(:,1),seshes{i});
-    temp_cells.metadata = wt_ket_Cells.metadata(seshIndx,:);
-    temp_cells.correlationMatrix = wt_ket_Cells.correlationMatrix(seshIndx,:,:);
-    temp_cells.spatialFRsmooth = wt_ket_Cells.spatialFRsmooth(seshIndx,:,:);
-    plot_correlationMatrix(wt_ket_Cells,temp_cells.metadata{1,4})
-    pause
-end
-%% Plot Behavior by Sessions for WT animals
-plot_BehaviorbySesh(wt_ket_Cells,true);
-
+plot_correlationMatrixBySessionThenAvg(wt_ket_Cells);
+plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells);
+plot_correlationMatrixBySessionThenAvg(wt_mk801_Cells);
+plot_correlationMatrixBySessionThenAvg(hcn1ko_mk801_Cells);
+plot_correlationMatrixBySessionThenAvg(controlCells);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIGURE 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plot  Peakiness Curves
 plot_peakinessCurves(wt_ket_Cells);
+
+%% Plot Time Warped Stability Score Curves
+plot_timeWarpedStabilityScoreCurves(cells)
 
 %% Plot Nice Single Cell Figure
 plot_niceSingleCellFig(wt_ket_Cells,566);
@@ -161,6 +164,7 @@ plotDecoherencePlots(wt_ket_Cells);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plot Correlation Score Curves
 plot_correlationScoreCurves(wt_ket_Cells,'WT')
+plot_correlationScoreCurves(hcn1ko_ket_Cells,'HCN1ko')
 % plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
 %% Plot Timewarped Correlation Score Curves
 plot_timeWarpedCorrelationScoreCurves(wt_ket_Cells);
@@ -185,7 +189,7 @@ plotDecoherencePlots(hcn1ko_ket_Cells);
 plot_dch_autocorrelationScore_cells1_VS_cells2(wt_ket_Cells,hcn1ko_ket_Cells, 'WT Ketamine','HCN1ko Ketamine')
 
 %% Plot Correlation Score Curve Comparisions
-plot_correlationScoreCurveComparison(hcn1ko_ket_Cells, wt_ket_Cells)
+plot_correlationScoreCurveComparison(wt_ket_Cells,hcn1ko_ket_Cells)
 
 
 %% Plot Peakiness Curves over Trials
@@ -241,7 +245,8 @@ plot_correlationMatrix(fltrCells, 'MK801');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% MISC
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Plot Control
+%% Plot Behavior by Sessions for WT animals
+plot_BehaviorbySesh(wt_ket_Cells,true);
 
 %% Filter cells to ketamine cells
 seshIndx = ismember(allCells.metadata(:,8),'control');

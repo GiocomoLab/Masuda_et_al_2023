@@ -30,7 +30,6 @@ for i = 1:numTrial
 %     cellCorrScore(i-trials_corrTemplate) = corrScore;
 end
 
-cellCorrScore = fillmissing(cellCorrScore,'linear');
 
 % smoothCellCorrScore = smoothdata(cellCorrScore, 'gaussian',10);
 

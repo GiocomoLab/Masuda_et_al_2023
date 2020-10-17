@@ -19,6 +19,7 @@ ketamineIndx = nan(numCells,1);
 controlIndx = nan(numCells,1);
 gainIndx = nan(numCells,1);
 timewarpedScores = cell(numCells,1);
+session = cell(numCells,1);
 
 for i = 1:numCells
     
@@ -50,11 +51,13 @@ for i = 1:numCells
     end
     
     timewarpedScores{i} = single_cell_timewarpedScore;
+    session{i} = cells.metadata(i,1);
 end
 
 tw.timewarpedScore = timewarpedScores;
 tw.ketamineIndx = ketamineIndx;
 tw.controlIndx = controlIndx;
 tw.gainIndx = gainIndx;
+tw.session = session;
 
 end
