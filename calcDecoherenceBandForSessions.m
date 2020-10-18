@@ -1,8 +1,12 @@
-function dch = calcDecoherenceBandForSessions(fltrCells,dchFolderPath)
+function dch = calcDecoherenceBandForSessions(fltrCells,dchFolderPath,paramsPath)
 
 %filter for WT mec cells by session
 seshes = unique(cellfun(@num2str,fltrCells.metadata(:,1),'uni',0));
-ds_factor = 100;
+numSesh = numel(seshes);
+
+% load params tabel
+params = readtable(paramsPath);
+ds_factor = params.ds_factor;
 
 %filter for WT mec cells by session
 seshes = unique(cellfun(@num2str,fltrCells.metadata(:,1),'uni',0));
@@ -15,9 +19,9 @@ decoherenceTime = cell(numel(seshes),1);
 decoherenceStartDelay = cell(numel(seshes),1);
 umapArray = cell(numel(seshes),1);
 Fs = [];
-
-for i = 1:numel(seshes)
-    fprintf('Clustering session %i/%i\n',i,numel(seshes));
+%%
+for i = 1:numSesh
+    fprintf('\nClustering session %i/%i\n',i,numel(seshes));
     seshIndx = ismember(fltrCells.metadata(:,1),seshes{i});
     seshCells = filterAllCellsStruct(fltrCells,seshIndx);
     cells = seshCells;
@@ -27,19 +31,20 @@ for i = 1:numel(seshes)
     smoothedCellFR = smoothdata(cellFR, 'sgolay',50);
 
     ds_sm_cellFR = downsample(smoothedCellFR, ds_factor);
-    % umap with no output
+    norm_ds_sm_cellFR = normalize(ds_sm_cellFR,2,'range');
+%     imagesc(norm_ds_sm_cellFR); colorbar;
+    %% umap with no output
     savePath = fullfile(dchFolderPath,sprintf('umap_template_sesh%i.mat',i));
-    [reduction, umap, clusterIdentifiers, extras] = run_umap(ds_sm_cellFR, 'verbose','none','cluster_detail','adaptive','save_template_file', savePath,'python',true);
+    [reduction, umap, clusterIdentifiers, extras] = run_umap(norm_ds_sm_cellFR, 'verbose','none','cluster_detail','adaptive','save_template_file', savePath); %'python',true
     
     %% umap with graphic output
-%     [reduction, umap, clusterIdentifiers, extras]=run_umap(ds_sm_cellFR, 'cluster_output','graphic','n_components',2,'cluster_detail','adaptive');
+%     [reduction, umap, clusterIdentifiers, extras]=run_umap(norm_ds_sm_cellFR, 'cluster_output','graphic','n_components',2,'cluster_detail','adaptive');
     %% umap with python
 %     [reduction, umap, clusterIdentifiers, extras]=run_umap(ds_sm_cellFR, 'cluster_output','graphic','n_components',2,'cluster_detail','adaptive','python', true);
     %%
-    [dch_idx, time_idx, dchTimeSec,dchStartDelaySec, smth_clusterIdentifiers_all,Fs, trialClust] = identifyUmapDecoherenceTimeBand(clusterIdentifiers, cells, ds_factor);
-    
+    [dch_idx, time_idx, dchTimeSec,dchStartDelaySec,Fs, trialClust,trialBasedClustIdentifiers] = identifyUmapDecoherenceTimeBand(clusterIdentifiers, cells, ds_factor);
     %%
-    idxClusterArray{i} = smth_clusterIdentifiers_all;
+    idxClusterArray{i} = trialBasedClustIdentifiers;
     idxCellArray{i} = trialClust;
     %%
     try

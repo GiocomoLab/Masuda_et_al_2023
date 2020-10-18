@@ -3,6 +3,7 @@
 % Requires JohnKeiNPAnalysis to be on the same directory level as fkm_analysis
 
 addpath('./plottingFxns')
+paramsPath = './UniversalParams.xlsx';
 filter = 'mec';
 %% Only run once after each session has been spike sorted
 % run stitch sessions together, plot raster plots, combine rasters, plot
@@ -13,7 +14,7 @@ runMultiPostProcessing
 %%
 combinedSessionsPath = '../fkm_analysis/combinedSesh/*.mat';
 saveDir = '../fkm_analysis/combinedSesh/fr_data_matrices_noSmoothing';
-paramsPath = './UniversalParams.xlsx';
+
 runMultiAnalysis(filter,combinedSessionsPath,saveDir,paramsPath);
 
 %% Generate spatial indx to figure out what cells exist to pool together in the next step
@@ -26,7 +27,7 @@ allCells = poolAllCells(filter,sessionMetaDataPath);
 
 %% Calculate a decoherence band for each session in given cells
 dchFolderPath = '../fkm_analysis/dch/';
-dch = calcDecoherenceBandForSessions(allCells,dchFolderPath);
+dch = calcDecoherenceBandForSessions(allCells,dchFolderPath,paramsPath);
 dchFilePath = '../fkm_analysis/dch.mat';
 save(dchFilePath,'dch');
 %% if dechorence bands have already been calculated — use this to add dch 
@@ -39,7 +40,7 @@ allCells = add_Dch_to_allCells(allCells,dch);
 %% Pre-Figures
 % Plot decoherence bands stats
 plotDecoherenceBandStats(dch)
-
+% 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FIGURES
