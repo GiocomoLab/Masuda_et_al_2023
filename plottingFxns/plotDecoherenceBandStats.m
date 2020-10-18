@@ -48,13 +48,13 @@ set(gca, 'YTick',yt, 'YTickLabel',round(yt*dch.Fs/60))
 ylabel('Minutes');
 %% Plot how many groups UMAP identified per session
 figure()
-bar(cellfun(@max,dch.idxCellArray))
+bar(cellfun(@max,dch.idxCellArray,'UniformOutput',false))
 goodFigPrefs
 title('Number of UMAP identified groups');
 
 %% Plot number of trials
 figure();
-bar(cellfun(@numel,dch.decoherenceIdx))
+bar(cellfun(@numel,dch.decoherenceIdx,'UniformOutput',false))
 goodFigPrefs
 title('Decoherence Period Length (trials)');
 

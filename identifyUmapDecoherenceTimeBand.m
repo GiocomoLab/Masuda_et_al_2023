@@ -10,6 +10,14 @@ dchStartDelay_min = 15 ; % maximum start delay of decoherence period
 %% IDs the decoherence band from the results of UMAP being run on a
 % time-binned FR across all cells
 trials = downsample(cells.trial(1).trial,ds_factor);
+try
+    gainTrialsStart = find(trials>290,1,'first');
+    trials = trials(1:gainTrialsStart);
+catch
+   fprintf('No gain trials to chop off. Less than 290 trials.\n')
+end
+
+
 post = downsample(cells.posT(1).post,ds_factor);
 Fs = 1/(post(2)-post(1)); %sampling rate is 50hz
 
@@ -127,7 +135,7 @@ set(gca,'FontName','Helvetica');
 title(sprintf('Cell %d: %s,%s',i,name,genotype))
 
 %%
-figure('Position',[500 500 plotWidth plotHeight]); clf;
+figure('Position',[500 100 plotWidth plotHeight]); clf;
 imagesc(trialClust);
 
 end

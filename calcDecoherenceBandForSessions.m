@@ -32,6 +32,15 @@ for i = 1:numSesh
 
     ds_sm_cellFR = downsample(smoothedCellFR, ds_factor);
     norm_ds_sm_cellFR = normalize(ds_sm_cellFR,2,'range');
+    
+    trials = downsample(cells.trial(1).trial,ds_factor);
+    try
+        gainTrialsStart = find(trials>290,1,'first');
+        norm_ds_sm_cellFR = norm_ds_sm_cellFR(1:gainTrialsStart,:);
+    catch
+       fprintf('No gain trials to chop off. Less than 290 trials.\n')
+    end
+    
 %     imagesc(norm_ds_sm_cellFR); colorbar;
     %% umap with no output
     savePath = fullfile(dchFolderPath,sprintf('umap_template_sesh%i.mat',i));
