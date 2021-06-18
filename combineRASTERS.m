@@ -1,4 +1,4 @@
-function combineRASTERS(session_name, size_vert, size_horiz, numrow)
+function combineRASTERS(session_name, size_vert, size_horiz, numrow, image_save_dir)
 % script to combine rasters into one giant png for one session
 % MGC 3/1/2019
 % functionalized by FKM on 7/1/19
@@ -13,7 +13,7 @@ function combineRASTERS(session_name, size_vert, size_horiz, numrow)
 %   session_name = {'F3_190625_johnrepeatingtrack_meth2'}; % new output from singeSessionRasterplots
 
 % where to save images
-image_save_dir = '/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/images/pretty_rasters_whole_session_combined';
+% image_save_dir = '/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/images/pretty_rasters_whole_session_combined';
 % image_save_dir = '/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1';
 
 if exist(image_save_dir,'dir')~=7
@@ -21,8 +21,9 @@ if exist(image_save_dir,'dir')~=7
 end
 %% Combine images for one session
 
-    
-    image_dir = fullfile('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/images/',session_name,'/pretty_rasters/');
+    image_dir = strcat('/Users/keimasuda/Desktop/data/images/',session_name,'/pretty_rasters/');
+
+%     image_dir = fullfile('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/images/',session_name,'/pretty_rasters/');
     % image_dir = fullfile('/Volumes/groups/giocomo/export/data/Projects/JohnKei_NPH3/E2/E2_190614_johncontrasttrack_train1_g0/E2_190614_johncontrasttrack_train1/select_trials_pretty_rasters');
     
     % get png file names
@@ -65,7 +66,7 @@ end
     final_image = uint8(final_image);
     
     % write to file
-    imwrite(final_image,fullfile(image_save_dir,sprintf('%s_all_rasters_combined.png',session_name)));
+    imwrite(final_image,fullfile(image_dir,sprintf('%s_all_rasters_combined.png',session_name)));
 
 fprintf('Done Combining\n');
 end

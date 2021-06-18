@@ -78,4 +78,17 @@ g.set_order_options('color',{'WT','KO'});
 g.draw;
 
 
+[p1,h1] = ranksum(nanmean(WTnormalizedCorrScoreCurves(:,plotTrialRange)), nanmean(KOnormalizedCorrScoreCurves(:,plotTrialRange)))
+[p2,h2] = ranksum(nanmean(WTnormalizedCorrScoreCurves(:,51:100)), nanmean(KOnormalizedCorrScoreCurves(:,51:100)))
+[h3,p3] = ttest2(WTnormalizedCorrScoreCurves(:,plotTrialRange), KOnormalizedCorrScoreCurves(:,plotTrialRange));
+
+figure()
+plot(plotTrialRange,p3)
+figure()
+imagesc(h3)
+set(gca,'ytick',[]);
+x_tick_label = get(gca,'xticklabels');
+new_x_tick_label = cellfun(@(x) str2num(x)+50,x_tick_label);
+xticklabels(new_x_tick_label)
+colormap('hot')
 end

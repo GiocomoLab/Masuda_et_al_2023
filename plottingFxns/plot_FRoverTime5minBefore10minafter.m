@@ -27,8 +27,8 @@ box off;
 set(gca,'FontName','Helvetica');
 axis square;
 set(gcf,'Position',[100 100 1000 1000])
-set(gca,'FontSize',30);
-title('Control vs Ketamine')
+set(gca,'FontSize',50);
+% title('Control vs Ketamine')
 xlabel('Minutes since Injection')
 ylabel('Firing Rate (Hz)')
 
@@ -36,8 +36,9 @@ function plotsemline(x,y,color)
     y = downsample(y',dsfactor)';
     y = smoothdata(y,2,'movmean',30);
     data_SEM = nanstd(y,1)./sqrt(size(y,1));
-    shadedErrorBar(x,nanmean(y,1),data_SEM,'lineprops',color)
-    plot(x,nanmean(y,1),'-k')
+    shadedErrorBar(x,nanmean(y,1),data_SEM,'lineprops',color);
+    plot(x,nanmean(y,1),'-k');
+    vline(0,'k');
 end
 
 end

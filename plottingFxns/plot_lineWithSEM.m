@@ -7,6 +7,7 @@ function plot_lineWithSEM(matrix,indx)
     end
     data_SEM = nanstd(matrix,1)./sqrt(size(matrix,1));
     shadedErrorBar(x,y,data_SEM)
+    
     set(gca,'TickDir','out');
     set(gca,'ticklength',[0.015 0.025]);
     set(gca,'layer','bottom');

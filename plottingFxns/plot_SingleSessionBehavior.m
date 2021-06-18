@@ -34,7 +34,7 @@ if savefigTF
 
     clear g;
     figure('Position',[100 100 1800 600]);
-    g(1,1) = gramm('y',trial(lick_idx),'x',posx(lick_idx));
+    g(1,1) = gramm('y',trial(lick_idx)*-1,'x',posx(lick_idx));
     g(1,1).geom_point();
     g(1,1).set_title(session_name);
     g(1,1).set_names('x','Lick Position in VR','y','trial number');
@@ -63,4 +63,3 @@ if savefigTF
     saveas(gcf,saveName, 'jpg'); 
 end
 
-end

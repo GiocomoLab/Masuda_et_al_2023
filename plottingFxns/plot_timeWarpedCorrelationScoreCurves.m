@@ -87,11 +87,12 @@ g.draw;
 
 %% Combined baseline, cntrl, ketamine
 figure();
+min = 10;
 % baselineIndx_timewarpedScore = indexTimewarpedScoreOnBaselineOnline(tw,15);
 % baseline_y = convertMultidimensionalCellArray2paddedMatrix(baselineIndx_timewarpedScore)';
-cntrlIndx_timewarpedScore = indexTimewarpedScoreOnControlIndx(tw,10);
+cntrlIndx_timewarpedScore = indexTimewarpedScoreOnControlIndx(tw,min);
 cntrl_y = convertMultidimensionalCellArray2paddedMatrix(cntrlIndx_timewarpedScore)';
-ketIndx_timewarpedScore = indexTimewarpedScoreOnKetamineIndx(tw,10);
+ketIndx_timewarpedScore = indexTimewarpedScoreOnKetamineIndx(tw,min);
 ket_y = convertMultidimensionalCellArray2paddedMatrix(ketIndx_timewarpedScore)';
 
 normCSC_data.y = vertcat(cntrl_y,ket_y);
@@ -101,7 +102,7 @@ normCSC_data.color = vertcat(repmat({'Control'},size(cntrl_y,1),1),repmat({'Keta
 
 
 g=gramm('x',normCSC_data.x ,'y',normCSC_data.y,'color',normCSC_data.color);
-g.stat_summary('setylim','true');
+g.stat_summary('setylim','true','type','ci');
 g.set_names('x','Time','y','Correlation compared to Baseline Template (rho)','size',15); 
 g.set_title('Correlation Score Curves','fontSize',30);
 g.axe_property('FontSize',15);
@@ -123,12 +124,12 @@ normCSC_data.x = normCSC_data.x./conversionFactor;
 normCSC_data.color = vertcat(repmat({'Control'},size(cntrl_y,1),1),repmat({'Ketamine'},size(ket_y,1),1));
 
 [~,p] = ttest2(cntrl_y, ket_y);
-
+clear g;
 g=gramm('x',normCSC_data.color ,'y',normCSC_data.y,'color',normCSC_data.color);
 g.stat_violin('normalization','width','dodge',0,'fill','edge');
 g.stat_boxplot('width',0.15);
 g.set_names('x','Time','y','Correlation compared to Baseline Template (rho)','size',15); 
-g.set_title(sprintf('Corr Score p = %0.02f',mean(p)),'fontSize',30);
+g.set_title(sprintf('Corr Score p = %f',mean(p)),'fontSize',30);
 g.axe_property('FontSize',15);
 % g.set_color_options('chroma',0,'lightness',30);
 g.draw;

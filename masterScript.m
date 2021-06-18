@@ -36,6 +36,12 @@ dchFilePath = '../fkm_analysis/dch.mat';
 load(dchFilePath);
 allCells = add_Dch_to_allCells(allCells,dch);
 
+% Add a stability flag to all the cells
+stabilityTable = findStableCells(allCells); % {'totalStability', 'baselineStability', 'acuteDrugStability', 'endingStability', 'gainStability'}
+stabilityThreshold = 0.2;
+totalStabilityIndx = stabilityTable.totalStability > stabilityThreshold;
+allCells.stabilityFlag = totalStabilityIndx;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Pre-Figures
 % Plot decoherence bands stats

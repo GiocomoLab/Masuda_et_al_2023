@@ -27,7 +27,13 @@ ketDiff = mean(ketAfter-ketBefore,2);
 % absKetDiff = abs(cntrlDiff);
 
 [h,p] = ttest2(cntrlDiff, ketDiff);
+fprintf(num2str(p))
+p = ranksum(cntrlDiff,ketDiff);
+fprintf('\n')
+fprintf(num2str(p))
 
+ket_sem = std( ketDiff ) / sqrt( numel(ketDiff) );
+cntrl_sem = std( cntrlDiff ) / sqrt( numel(cntrlDiff) );
 %%
 close all; clear g;
 figure(); hold on;

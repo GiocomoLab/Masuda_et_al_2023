@@ -38,8 +38,12 @@ function singleSessionRasterplots(data_dir,session_name, trackLength, plotWidth,
 
 
     % make image dir if it doesn't exist
-    image_save_dir = strcat('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/images/',...
-        session_name,'/pretty_rasters/');
+%     image_save_dir = strcat('/Volumes/groups/giocomo/export/data/Users/KMasuda/Neuropixels/images/',...
+%         session_name,'/pretty_rasters/');
+
+    image_save_dir = strcat('/Users/keimasuda/Desktop/data/images/',...
+        session_name);
+    
     if exist(image_save_dir,'dir')~=7
         mkdir(image_save_dir);
     end

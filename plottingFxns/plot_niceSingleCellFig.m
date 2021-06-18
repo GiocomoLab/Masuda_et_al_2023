@@ -64,6 +64,7 @@ linearFractionalOccupancy = calculate_1D_LFO(posx,post,spatialBinSize,speed);
 
 
 trialBlockSpatialInformation = nan(max(trial),2);
+trialAvgSpeed = nan(max(trial),1);
 for j = 1:max(trial)
     trial_posx = posx(trial==j);
     trial_post = post(trial==j);
@@ -72,6 +73,7 @@ for j = 1:max(trial)
 
     [I_sec_block, I_spike_block] = calculate_1DspatialInformation(singleCellFR4cm(j,:),linearFractionalOccupancyBlock);
     trialBlockSpatialInformation(j,:) = [I_sec_block, I_spike_block];
+    trialAvgSpeed(j) = nanmean(trial_speed);
 end
 
 % Stability Score Curve
@@ -102,10 +104,10 @@ figure('Position',[200 200 plotWidth plotHeight]);
 clf;
 
 row = 6;
-col = 7;
+col = 4;
 
 columnSubplot = [1,col+1,2*col+1,3*col+1,4*col+1,5*col+1];
-subplot(row,col,columnSubplot);
+subplot(row,col,columnSubplot); %raster
 scatter(posx(spike_idx),trial(spike_idx),'k.');
 set(gca, 'YDir','reverse')
 ylim([0 max(trial)+1]);
@@ -121,47 +123,44 @@ title(sprintf('Cell %d: %s,%s',i,name,genotype))
 xlabel('VR cm')
 ylabel('Trial Number')
 
-subplot(row,col,columnSubplot+1);
+subplot(row,col,columnSubplot+1); %ratemap
 imagesc(singleCellsmoothFR);
 colormap('hot')
 set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
+set(gca,'ticklength',[0.015 0.025]);
 set(gca,'layer','bottom');
 box off;
-axis off;
+% axis off;
+set(gca,'Yticklabel',[])
+set(gca,'Xticklabel',[])
 set(gca,'FontSize',titleFontSize);
 set(gca,'FontName','Helvetica');
 % set(gcf,'Position',[100 100 1000 1000])
 % title(sprintf('Max FR: %0.1f Hz',max(singleCellsmoothFR,[],'all')));
 title('Spatial FR')
-xlabel('VR cm')
-ylabel('Trial Number')
+colorbar
 
-subplot(row,col,columnSubplot+2);
-imagesc(dch.idxCellArray);
+subplot(row,col,columnSubplot+2); %speed
+imagesc(trialAvgSpeed)
 set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
-set(gca,'layer','bottom');
-box off;
-axis off;
-set(gca,'FontSize',titleFontSize);
-set(gca,'FontName','Helvetica');
-% set(gcf,'Position',[100 100 1000 1000])
-title('UMAP clusters')
-ylabel('Trial Number')
-% [unq, ~, iunq] = unique(dch.idxCellArray);
-% ncol = max(dch.idxCellArray);
-% cb = colorbar;
-% set(gca, 'clim', [0.5 ncol+0.5]);
-% set(cb, 'ticks', 1:1:ncol, 'ticklabels', cellstr(num2str(unq)));
-% set(gca,'TickDir','out');
-
-subplot(row,col,columnSubplot+3)
-scatter(posx(lick_idx),trial(lick_idx),'k');
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.005 0.025]);
+set(gca,'ticklength',[0.015 0.025]);
 set(gca,'Yticklabel',[])
 set(gca,'Xticklabel',[])
+set(gca,'layer','bottom');
+set(gca,'FontName','Helvetica');
+title('Speed')
+box off;
+set(gca,'FontSize',titleFontSize);
+ylabel('')
+colorbar
+
+subplot(row,col,columnSubplot+3) %licks
+scatter(posx(lick_idx),trial(lick_idx),'k');
+set(gca,'TickDir','out');
+set(gca,'ticklength',[0.015 0.125]);
+set(gca,'Yticklabel',[])
+set(gca,'Xticklabel',[])
+box off;
 set(gca,'layer','bottom');
 set(gca,'FontName','Helvetica');
 title('Licks')
@@ -170,15 +169,37 @@ ylabel('')
 % xlabel('VR cm')
 % set(gca,'FontSize',10);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Spatial Firing Rate Map at 4 timepoints
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%
+% subplot(row,col,columnSubplot+2);
+% imagesc(dch.idxCellArray);
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.005 0.025]);
+% set(gca,'layer','bottom');
+% box off;
+% axis off;
+% set(gca,'FontSize',titleFontSize);
+% set(gca,'FontName','Helvetica');
+% % set(gcf,'Position',[100 100 1000 1000])
+% title('UMAP clusters')
+% ylabel('Trial Number')
+% % [unq, ~, iunq] = unique(dch.idxCellArray);
+% % ncol = max(dch.idxCellArray);
+% % cb = colorbar;
+% % set(gca, 'clim', [0.5 ncol+0.5]);
+% % set(cb, 'ticks', 1:1:ncol, 'ticklabels', cellstr(num2str(unq)));
+% % set(gca,'TickDir','out');
 
-rowStart = 6;
-rowEnd = 7;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Spatial Firing Rate Map at 4 timepoints
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+figure()
+rowStart = 1;
+rowEnd = 2;
 ylim_range = [0 18];
 smoothFactor = 10;
 
+row = 6;
+col = 2;
 subplot(row,col,rowStart:rowEnd);
 plot_lineWithSEM(smoothdata(singleCellFR2cm(1:50,:),2,'movmean',smoothFactor),[])
 title('Trial 1-50');

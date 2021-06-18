@@ -31,13 +31,13 @@ function plotAllSingleCellsRastersOnly(cells, image_save_dir, save_figs)
         ylim([0 max(trial)+1]);
         xlim([0 400]);
         set(gca,'TickDir','out');
-%         set(gca,'Xticklabel',[], 'Yticklabel', [])
+        set(gca,'Xticklabel',[], 'Yticklabel', [])
         set(gca,'ticklength',[0.01 0.025]);   
         set(gca,'layer','bottom');
         
         set(gca,'FontName','Helvetica');
         box off;
-        title(sprintf('Cell %d: %s,%s',i,name,genotype))
+        title(sprintf('C%d: %s,%s',i,name,genotype))
         
    
         %%

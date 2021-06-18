@@ -28,9 +28,9 @@ function plotAllSingleCellsRatemapsOnly(cells, image_save_dir, save_figs)
         colormap('hot');
 %         xlabel('Virtual cm')
 %         ylabel('Trial')
-        x_tick_label = get(gca,'xticklabels');
-        new_x_tick_label = cellfun(@(x) str2num(x)*2,x_tick_label);
-        xticklabels(new_x_tick_label)
+%         x_tick_label = get(gca,'xticklabels');
+%         new_x_tick_label = cellfun(@(x) str2num(x)*2,x_tick_label);
+%         xticklabels(new_x_tick_label)
         %%
         if save_figs
             saveas(h,fullfile(image_save_dir,sprintf('%s%s%s%s%d.png',name,'_',sessionDate,'_',i)),'png');
