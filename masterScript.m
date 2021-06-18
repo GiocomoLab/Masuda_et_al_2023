@@ -41,7 +41,7 @@ stabilityTable = findStableCells(allCells); % {'totalStability', 'baselineStabil
 stabilityThreshold = 0.2;
 totalStabilityIndx = stabilityTable.totalStability > stabilityThreshold;
 allCells.stabilityFlag = totalStabilityIndx;
-
+fprintf('Done adding a stability flag to AllCells\n');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Pre-Figures
 % Plot decoherence bands stats
