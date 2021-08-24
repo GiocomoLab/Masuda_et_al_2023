@@ -59,7 +59,7 @@ singleSession_Cells_onlyStable = filterAllCellsStruct(singleSession_Cells,single
 wt_ket_Cells_onlyStable = filterAllCellsStruct(wt_ket_Cells,wt_ket_Cells.stabilityFlag);
 hcn1ko_ket_Cells_onlyStable = filterAllCellsStruct(hcn1ko_ket_Cells,hcn1ko_ket_Cells.stabilityFlag);
 
-
+fprintf('=====\ndone filtering\n');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIGURE 0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,8 +68,6 @@ hcn1ko_ket_Cells_onlyStable = filterAllCellsStruct(hcn1ko_ket_Cells,hcn1ko_ket_C
 save_figs = true;
 image_save_dir = '../fkm_analysis/rasters_dch';
 plotSaveCombine_SingleCellRastersPlotsWithDecoherence(allCells,image_save_dir,save_figs)
-
-
 
 %% plots All cells rasters & ratemaps
 save_figs = true;
@@ -147,14 +145,43 @@ plot_peakinessCurves(wt_ket_Cells)
 
 %% Plot Time Warped Stability Score Curves
 plot_timeWarpedStabilityScoreCurves(wt_ket_Cells)
+
+%% Plot Time Warped Stability Score Curves with only Stable Cells
+plot_timeWarpedStabilityScoreCurves(wt_ket_Cells_onlyStable)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIGURE 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plot Nice Single Cell Figure
+% i = 1148 %  G4, WT
+% i = 300 %  G2, WT
+% i = 3213%  HCNd1, WT
+% i = 3484 %  HCNd2, KO
+% i = 545 % G3, WT
+% i = 285 % G2, WT
+% i = 297 % G2, WT
+% i = 302 % G2, WT
+% i = 481 % G3, WT
+% i = 258 %G2, WT
+% i = 297 % G2,WT
+% i = 689
+% i = 566; %G3, WT
 plot_niceSingleCellFig(allCells,566); % G3_190704_baseline1+controlinjx1+ketamine1_fr+corr
 plot_niceSingleCellFig(allCells,568); % G3_190704_baseline1+controlinjx1+ketamine1_fr+corr
-
+plot_niceSingleCellFig(allCells,285); 
 %% Plot Correlation Matrix by sessions
+% Example session
+seshIndx = ismember(allCells.metadata(:,1),'G3_190704_baseline1+controlinjx1+ketamine1_fr+corr');
+singleSession_Cells = filterAllCellsStruct(allCells,seshIndx);
+plot_correlationMatrixBySessionThenAvg(singleSession_Cells);
+
+% Example session2
+seshIndx = ismember(allCells.metadata(:,1),'G4_190622_baseline1+controlinjx1+ketamine1_fr+corr');
+singleSession_Cells = filterAllCellsStruct(allCells,seshIndx);
+plot_correlationMatrixBySessionThenAvg(singleSession_Cells);
+
+% Example session3
+seshIndx = ismember(allCells.metadata(:,1),'G1_190817_baseline1+controlinjx1+ketamine1_fr+corr');
+singleSession_Cells = filterAllCellsStruct(allCells,seshIndx);
 plot_correlationMatrixBySessionThenAvg(singleSession_Cells);
 
 % PCA for example session G3_190704_baseline1+controlinjx1+ketamine1_fr+corr
@@ -170,6 +197,7 @@ plot_correlationScoreCurves(wt_ket_Cells,'WT')
 
 %% PLOT Histfit on Corr score
 plot_HistfitKetCorrEffectScore(wt_ket_Cells, 'WT')
+plot_HistfitKetCorrEffectScore(wt_ket_Cells_onlyStable, 'WT')
 
 
 %% Plot Correlation Matrix by sessions
@@ -183,30 +211,46 @@ plotDecoherencePlots(wt_ket_Cells);
 plot_PCAbySesh(allCells,false);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% FIGURE 3?
+%% FIGURE HCN1ko
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Plot Firing Rate over Time 5 min before injection and 10 min after injection
+plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells)
+
+%% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
+plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells)
+
+%% Plot Peakiness Curves over Trials
+plot_peakinessCurves(hcn1ko_ket_Cells_onlyStable)
+
+%% Plot Time Warped Stability Score Curves
+plot_timeWarpedStabilityScoreCurves(hcn1ko_ket_Cells)
+
+%% Plot Time Warped Stability Score Curves with only Stable Cells
+plot_timeWarpedStabilityScoreCurves(hcn1ko_ket_Cells_onlyStable)
+
 %% Plot Correlation Score Curves
 plot_correlationScoreCurves(wt_ket_Cells_onlyStable,'WT')
 plot_correlationScoreCurves(hcn1ko_ket_Cells_onlyStable,'HCN1ko')
 plot_correlationScoreCurveComparison(wt_ket_Cells_onlyStable,hcn1ko_ket_Cells_onlyStable);
 % plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
 %% Plot Timewarped Correlation Score Curves
-plot_timeWarpedCorrelationScoreCurves(wt_ket_Cells);
-plot_timeWarpedCorrelationScoreCurves(hcn1ko_ket_Cells);
+plot_timeWarpedCorrelationScoreCurves(wt_ket_Cells_onlyStable);
+plot_timeWarpedCorrelationScoreCurves(hcn1ko_ket_Cells_onlyStable);
 
 %% Plot Nice Single Cell Figure
 plot_niceSingleCellFig(hcn1ko_ket_Cells,[]);
 %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
 plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells);
 %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
-plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells)
+% plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells)
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection
 plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells,'Ketamine-induced Avg FR Change on HCN1ko');
 
 %% Plot Firing Rate over Trials by Mouse
 plot_avgFRbyMouse(hcn1ko_ket_Cells);
-
+%% Plot Firing Rate over Time 5min before and 60 min after injection by mouse
+plot_neg5to60minAfterKetamineInjx_byMouse(hcn1ko_ket_Cells)
 %% Plot dch plot
 plotDecoherencePlots(hcn1ko_ket_Cells);
 
@@ -216,11 +260,13 @@ plot_dch_autocorrelationScore_cells1_VS_cells2(wt_ket_Cells,wt_mk801_Cells, 'WT 
 plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_ket_Cells,wt_mk801_Cells, 'HCN1ko Ketamine','MK801 Ketamine')
 plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_mk801_Cells,wt_mk801_Cells, 'HCN1ko-MK801 Ketamine','MK801 Ketamine')
 %% Plot Correlation Score Curve Comparisions
-plot_correlationScoreCurveComparison(wt_ket_Cells,hcn1ko_ket_Cells)
+plot_correlationScoreCurveComparison(wt_ket_Cells_onlyStable,hcn1ko_ket_Cells_onlyStable)
 
+%% Plot Timewarped Correlation Score Curve Comparisions
+plot_correlationScoreCurveComparison(wt_ket_Cells_onlyStable,hcn1ko_ket_Cells_onlyStable)
 
 %% Plot Peakiness Curves over Trials
-plot_peakinessCurves(hcn1ko_ket_Cells)
+plot_peakinessCurves(hcn1ko_ket_Cells_onlyStable)
 
 %% PLOT Histfit on Corr score
 plot_HistfitKetCorrEffectScore(hcn1ko_ket_Cells, 'KO')
@@ -275,6 +321,9 @@ plot_correlationMatrix(fltrCells, 'MK801');
 %% Plot Behavior by Sessions for WT animals
 plot_BehaviorbySesh(wt_ket_Cells,true);
 
+%% Plot Behavior WT vs Ketamine
+
+
 %% Filter cells to ketamine cells
 seshIndx = ismember(allCells.metadata(:,8),'control');
 fltrCells = filterAllCellsStruct(allCells,seshIndx);
@@ -306,7 +355,7 @@ plot_stabilityTableStats(ketamineCells, stabilityTable);
 %% PLOT Histfit on FR score
 plot_HistfitFRscore(ketamineCells, WTcellsIndx,'WT');
 plot_HistfitFRscore(ketamineCells, KOcellsIndx,'KO');
-
+ 
 plot_HistfitFRscore(ketamineCells, WTtotalStabilityIndx,'WT');
 plot_HistfitFRscore(ketamineCells, KOtotalStabilityIndx,'KO');
 %% Plot Distribution of Ketamine Correlation Scores

@@ -1,9 +1,9 @@
-function gainModulationValues = findGainModulatedCells(allCells)
+function gainModulationValues = findGainModulatedCells(cells)
 %%
-nCells = size(allCells.spatialFR2,1);
-gainStability = nan(nCells,2);
+nCells = size(cells.spatialFRsmooth,1);
+gainModulationValues = nan(nCells,4);
 for j = 1:nCells
-    frMap = squeeze(allCells.spatialFR2(j,:,:));
+    frMap = squeeze(cells.spatialFR2(j,:,:));
 
 
     zscore_FR = normalize(frMap,2,'center');
@@ -14,29 +14,41 @@ for j = 1:nCells
         fr1 = smoothdata(mean(frMap(281:290,:),1),'gaussian'); %pre-gain change avg
         fr2 = smoothdata(mean(frMap(291:300,:),1),'gaussian'); % post-gain change avg
         rho = corr(fr1',fr2');
-
-%         clf;
-%         figure(1); hold on;
-%         plot(fr1); plot(fr2);
-%         pause
-
+        
+%         if rho <0.2
+%             clf;
+%             figure(1); hold on;
+%             plot(fr1); plot(fr2);
+%             pause(1)
+%         end
     end
 
-    gainStability(j,1) = rho;
-    gainStability(j,2) = mean(fr1);
+    gainModulationValues(j,1) = rho;
+    gainModulationValues(j,2) = mean(fr1);
+    gainModulationValues(j,3) = mean(fr2);
     
-    close all
-    plotWidth = 160;
-    plotHeight = 500;
-    figure('Position',[100 100 plotWidth plotHeight]); hold on;
-    set(gca,'TickDir','out');
-    set(gca,'ticklength',[0.005 0.025]);
-    set(gca,'layer','bottom');
-    box off;
-    axis('tight');
-    set(gca,'YDir','reverse')
-    imagesc(frMap);
-    title(rho);
-    pause
+    if rho<0.2
+       gainModFlag = true;
+    else 
+       gainModFlag = false;
+    end
+    gainModulationValues(j,4) = gainModFlag;
+    
+% 
+%     if rho <0.2
+%         close all
+%         plotWidth = 160;
+%         plotHeight = 500;
+%         figure('Position',[100 100 plotWidth plotHeight]); hold on;
+%         set(gca,'TickDir','out');
+%         set(gca,'ticklength',[0.005 0.025]);
+%         set(gca,'layer','bottom');
+%         box off;
+%         axis('tight');
+%         set(gca,'YDir','reverse')
+%         imagesc(frMap);
+%         title(rho);
+%         pause(0.5)
+%     end
 end
 

@@ -1,7 +1,7 @@
 function plot_niceSingleCellFig(allCells, i)
 
 addpath(genpath('./plottingFxns'))
-%%
+ %%
 if isempty(i)
     i = randi(size(allCells.spatialFR4,1));
 end
@@ -195,7 +195,7 @@ ylabel('')
 figure()
 rowStart = 1;
 rowEnd = 2;
-ylim_range = [0 18];
+ylim_range = [0 max(max(mean(smoothdata(singleCellFR2cm(:,:)),2)))];
 smoothFactor = 10;
 
 row = 6;
@@ -378,21 +378,17 @@ set(gca,'FontSize',10);
 % Correlation Matrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
-% figure(3); clf; 
-% % subplot(row,col,1:18); 
-% imagesc(fillmissing(corrMatrix,'linear')); colorbar;
-% set(gca,'TickDir','out');
-% set(gca,'ticklength',[0.015 0.025]);
-% set(gca,'layer','bottom');
-% box on;
-% axis square;
-% set(gca,'FontSize',30);
-% set(gca,'FontName','Helvetica'); 
-% % set(gcf,'Position',[100 100 1000 1000])
-% title(sprintf('Trial by Trial Correlation Matrix'))
-% ylabel('Trials')
-% xlabel('Trials')
+figure(3); clf; 
+% subplot(row,col,1:18); 
+imagesc(fillmissing(corrMatrix,'linear')); colorbar;
 
+% set(gcf,'Position',[100 100 1000 1000])
+title(sprintf('Trial by Trial Correlation Matrix'))
+ylabel('Trials')
+xlabel('Trials')
+goodFigPrefs;
+colormap('bone');
+colorbar;
 %
 % subplot(row,col,19:24);
 % plot(smooth(offdiag,'sgolay'))

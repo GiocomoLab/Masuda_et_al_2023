@@ -1,4 +1,4 @@
-function plot_correlationScoreCurveComparison(cells1,cells2)
+function plot_timeWarpedCorrelationScoreCurveComparison(cells1,cells2)
 
 WTCellsFR = cells1.spatialFRsmooth;
 KOCellsFR = cells2.spatialFRsmooth;

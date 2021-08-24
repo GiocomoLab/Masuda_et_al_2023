@@ -87,26 +87,29 @@ g.draw;
 
 %% Combined baseline, cntrl, ketamine
 figure();
-min = 10;
-% baselineIndx_timewarpedScore = indexTimewarpedScoreOnBaselineOnline(tw,15);
-% baseline_y = convertMultidimensionalCellArray2paddedMatrix(baselineIndx_timewarpedScore)';
+min = 30;
+baselineIndx_timewarpedScore = indexTimewarpedScoreOnBaselineOnline(tw,min);
+baseline_y = convertMultidimensionalCellArray2paddedMatrix(baselineIndx_timewarpedScore)';
 cntrlIndx_timewarpedScore = indexTimewarpedScoreOnControlIndx(tw,min);
 cntrl_y = convertMultidimensionalCellArray2paddedMatrix(cntrlIndx_timewarpedScore)';
 ketIndx_timewarpedScore = indexTimewarpedScoreOnKetamineIndx(tw,min);
 ket_y = convertMultidimensionalCellArray2paddedMatrix(ketIndx_timewarpedScore)';
 
-normCSC_data.y = vertcat(cntrl_y,ket_y);
+normCSC_data.y = vertcat(baseline_y,cntrl_y,ket_y);
 normCSC_data.x = 1:size(normCSC_data.y,2);
 normCSC_data.x = normCSC_data.x./conversionFactor;
-normCSC_data.color = vertcat(repmat({'Control'},size(cntrl_y,1),1),repmat({'Ketamine'},size(ket_y,1),1));
+normCSC_data.color = vertcat(repmat({'Baseline'},size(baseline_y,1),1),repmat({'Control'},size(cntrl_y,1),1),repmat({'Ketamine'},size(ket_y,1),1));
 
 
 g=gramm('x',normCSC_data.x ,'y',normCSC_data.y,'color',normCSC_data.color);
 g.stat_summary('setylim','true','type','ci');
-g.set_names('x','Time','y','Correlation compared to Baseline Template (rho)','size',15); 
+g.set_names('x','Time (min)','y','Correlation compared to Baseline Template (rho)','size',15); 
 g.set_title('Correlation Score Curves','fontSize',30);
 g.axe_property('FontSize',15);
-% g.set_color_options('chroma',0,'lightness',30);
+customColorMap = [ 0.5 0.5 0.5 %grey
+    0.8 0.2 0.8 %magenta
+    0 0.8 0.2]; %green
+g.set_color_options('map',customColorMap);
 g.draw;
 
 
@@ -115,23 +118,29 @@ figure();
 
 cntrlIndx_timewarpedScore = indexTimewarpedScoreOnControlIndx(tw,10);
 cntrl_y = convertMultidimensionalCellArray2paddedMatrix(cntrlIndx_timewarpedScore)';
+mean_cntrl_y = nanmean(cntrl_y,2);
 ketIndx_timewarpedScore = indexTimewarpedScoreOnKetamineIndx(tw,10);
 ket_y = convertMultidimensionalCellArray2paddedMatrix(ketIndx_timewarpedScore)';
+mean_ket_y = nanmean(ket_y,2);
 
-normCSC_data.y = vertcat(cntrl_y,ket_y);
+normCSC_data.y = vertcat(mean_cntrl_y,mean_ket_y);
 normCSC_data.x = 1:size(normCSC_data.y,2);
 normCSC_data.x = normCSC_data.x./conversionFactor;
-normCSC_data.color = vertcat(repmat({'Control'},size(cntrl_y,1),1),repmat({'Ketamine'},size(ket_y,1),1));
+normCSC_data.color = vertcat(repmat({'Control'},size(mean_cntrl_y,1),1),repmat({'Ketamine'},size(mean_ket_y,1),1));
 
-[~,p] = ttest2(cntrl_y, ket_y);
+[~,p] = ttest2(mean_cntrl_y, mean_ket_y);
 clear g;
 g=gramm('x',normCSC_data.color ,'y',normCSC_data.y,'color',normCSC_data.color);
+% g.geom_jitter()
 g.stat_violin('normalization','width','dodge',0,'fill','edge');
 g.stat_boxplot('width',0.15);
 g.set_names('x','Time','y','Correlation compared to Baseline Template (rho)','size',15); 
 g.set_title(sprintf('Corr Score p = %f',mean(p)),'fontSize',30);
 g.axe_property('FontSize',15);
-% g.set_color_options('chroma',0,'lightness',30);
+customColorMap = [ ...
+    0.8 0.2 0.8 %magenta
+    0 0.8 0.2]; %green
+g.set_color_options('map',customColorMap);
 g.draw;
 
 

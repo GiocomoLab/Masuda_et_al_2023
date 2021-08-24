@@ -42,6 +42,11 @@ stabilityThreshold = 0.2;
 totalStabilityIndx = stabilityTable.totalStability > stabilityThreshold;
 allCells.stabilityFlag = totalStabilityIndx;
 fprintf('Done adding a stability flag to AllCells\n');
+
+% Add gain change modulation values (comparing last 10 trials)
+gainModulationValues = findGainModulatedCells(allCells);
+allCells.gainModulationValues = gainModulationValues;
+fprintf('Done adding gainModulationValues to AllCells\n');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Pre-Figures
 % Plot decoherence bands stats

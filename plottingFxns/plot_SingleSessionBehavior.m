@@ -1,4 +1,4 @@
-function lickAccuracyByTrial = plot_SingleSessionBehavior(cells,savefigTF)
+function [lickAccuracyByTrial,timewarpedLickAccuracy,trial,post] = plot_SingleSessionBehavior(cells,savefigTF)
 
     
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
@@ -28,6 +28,10 @@ for i = 1:max(trial)
     end
 end
 
+for i = 1:size(post,1)
+   trial_lickAccuracy = lickAccuracyByTrial(trial(i));
+   timewarpedLickAccuracy(i)=trial_lickAccuracy;
+end
 
 %%
 if savefigTF
@@ -55,6 +59,11 @@ if savefigTF
     g(1,4).set_names('x','Trial Number','y','Lick Accuracy (% within 50cm of target)');
     g.draw();
 
+    g(1,5) = gramm('x',post/60,'y',timewarpedLickAccuracy);
+    g(1,5).stat_smooth();
+    g(1,5).set_title('Lick Accuracy - Timewarped');
+    g(1,5).set_names('x','Time (min)','y','Lick Accuracy (% within 50cm of target)');
+    g.draw();
 
 
 

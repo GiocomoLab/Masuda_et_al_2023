@@ -85,7 +85,7 @@ tw = timewarpTrialBasedScores(cells, all_cellStabilityScore);
 
 %% Combined cntrl, ketamine
 close all;
-figure();
+figure(1);
 min = 30;
 baselineIndx_timewarpedScore = indexTimewarpedScoreOnBaselineOnline(tw,min);
 baseline_y = convertMultidimensionalCellArray2paddedMatrix(baselineIndx_timewarpedScore)';
@@ -112,16 +112,38 @@ customColorMap = [0.1 0 0
 
 g.set_color_options('map',customColorMap);
 g.draw;
+%% Stability Score Violin Plots mean stability score for 5 min post injection
+min = 15;
+baselineIndx_timewarpedScore = indexTimewarpedScoreOnBaselineOnline(tw,min);
+baseline_y = convertMultidimensionalCellArray2paddedMatrix(baselineIndx_timewarpedScore)';
+mean_baseline_y = nanmean(baseline_y,2);
 
-figure();
-clear g;
+cntrlIndx_timewarpedScore = indexTimewarpedScoreOnControlIndx(tw,min);
+cntrl_y = convertMultidimensionalCellArray2paddedMatrix(cntrlIndx_timewarpedScore)';
+mean_cntrl_y = nanmean(cntrl_y,2);
+
+ketIndx_timewarpedScore = indexTimewarpedScoreOnKetamineIndx(tw,min);
+ket_y = convertMultidimensionalCellArray2paddedMatrix(ketIndx_timewarpedScore)';
+mean_ket_y = nanmean(ket_y,2);
+
+normCSC_data.y = vertcat(mean_baseline_y,mean_cntrl_y,mean_ket_y);
+normCSC_data.color = vertcat(repmat({'Baseline'},size(mean_baseline_y,1),1),repmat({'Control'},size(mean_cntrl_y,1),1),repmat({'Ketamine'},size(mean_ket_y,1),1));
+
+figure(2);
+clear g; clf;
 g=gramm('x',normCSC_data.color ,'y',normCSC_data.y,'color',normCSC_data.color);
+% g.geom_jitter();
 g.stat_violin('normalization','width','dodge',0,'fill','edge');
-g.stat_boxplot('width',0.15);
+g.stat_boxplot('width',0.3);
 g.set_names('x',[],'y','Stability (rho)','size',20); 
-g.set_title(sprintf('Stability Score'),'fontSize',20);
+% g.set_title(sprintf('Stability Score'),'fontSize',20);
 g.axe_property('FontSize',12);
+
 % g.set_color_options('chroma',0,'lightness',30);
+customColorMap = [0.5 0.5 0.5
+    0.8 0.2 0.8
+    0 0.8 0.2];
+g.set_color_options('map',customColorMap);
 g.draw;
 
 % Stats

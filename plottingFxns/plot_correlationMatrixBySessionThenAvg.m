@@ -23,4 +23,4 @@ imagesc(avg_corrmatrices,[0.5 0.9]);
 goodFigPrefs;
 colormap('bone');
 colorbar;
-title('Average Session Spatial Correlation')
+% title('Average Session Spatial Correlation')
