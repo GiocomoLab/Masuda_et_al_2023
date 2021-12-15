@@ -8,10 +8,19 @@ scatter(wt_ket_Cells_onlyStable.drugEffectScores(:,3),wt_ket_Cells_onlyStable.ga
 % plottting gainModulation vs drugFRdiff
 scatter(wt_ket_Cells_onlyStable.drugEffectScores(:,1),wt_ket_Cells_onlyStable.gainModulationValues(:,1))
 scatter(wt_ket_Cells.drugEffectScores(:,1),wt_ket_Cells.gainModulationValues(:,1))
-scatter(abs(wt_ket_Cells.drugEffectScores(:,1)),wt_ket_Cells.gainModulationValues(:,1))
+scatter(wt_ket_Cells_onlyInterneurons.drugEffectScores(:,1),wt_ket_Cells_onlyInterneurons.gainModulationValues(:,1))
+scatter(wt_ket_Cells_noInterneurons.drugEffectScores(:,1),wt_ket_Cells_noInterneurons.gainModulationValues(:,1))
+% wt_ket_Cells_onlyInterneurons
 
-% looking at drugFREffectScore
+scatter(abs(wt_ket_Cells.drugEffectScores(:,1)),wt_ket_Cells.gainModulationValues(:,1))
+scatter(abs(wt_ket_Cells_onlyInterneurons.drugEffectScores(:,1)),wt_ket_Cells_onlyInterneurons.gainModulationValues(:,1))
+scatter(abs(wt_ket_Cells_noInterneurons.drugEffectScores(:,1)),wt_ket_Cells_noInterneurons.gainModulationValues(:,1))
+
+
+% looking at drugCorrEffectScore
 scatter(wt_ket_Cells.drugEffectScores(:,4),wt_ket_Cells.gainModulationValues(:,1))
+scatter(wt_ket_Cells_gainChange.drugEffectScores(:,4),wt_ket_Cells_gainChange.gainModulationValues(:,1))
+
 scatter(wt_ket_Cells.drugEffectScores(:,4),abs(wt_ket_Cells.gainModulationValues(:,1)))
 scatter(abs(wt_ket_Cells.drugEffectScores(:,4)),abs(wt_ket_Cells.gainModulationValues(:,1)))
 
@@ -22,7 +31,7 @@ scatter(abs(wt_ket_Cells.drugEffectScores(:,2)),abs(wt_ket_Cells.gainModulationV
 scatter(wt_ket_Cells.drugEffectScores(:,3),wt_ket_Cells.gainModulationValues(:,1))
 scatter(wt_ket_Cells.drugEffectScores(:,3),abs(wt_ket_Cells.gainModulationValues(:,1)))
 %%
-gainModValues = wt_ket_Cells_onlyStable.gainModulationValues(:,1);
+gainModValues = wt_ket_Cells_gainChange.gainModulationValues(:,1);
 gainNoNans = gainModValues(~isnan(gainModValues));
 drugEffectScores_NoGainNans = wt_ket_Cells_onlyStable.drugEffectScores(~isnan(gainModValues),:);
 scatter(zscore(drugEffectScores_NoGainNans(:,3)),zscore(gainNoNans))

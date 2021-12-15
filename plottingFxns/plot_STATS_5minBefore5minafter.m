@@ -22,6 +22,9 @@ ketAfter = ket(:,scaling * 5+1:scaling * 10);
 
 cntrlDiff = mean(cntrlAfter-cntrlBefore,2);
 ketDiff = mean(ketAfter-ketBefore,2);
+% 
+% cntrlDiff = mean((cntrlAfter-cntrlBefore)/nanmean(cntrlBefore),2);
+% ketDiff = mean((ketAfter-ketBefore)/nanmean(cntrlBefore),2);
 
 % absCntrlDiff = abs(cntrlDiff);
 % absKetDiff = abs(cntrlDiff);

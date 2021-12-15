@@ -24,11 +24,55 @@ fprintf('done filtering ketamineCells\n');
 seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
 wt_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
 fprintf('done filtering for WT-ket cells\n');
-%
+
+% filter for WT mec cells with ketamine not interurons
+seshIndx = ~wt_ket_Cells.interneuronFlag;
+wt_ket_Cells_noInterneurons = filterAllCellsStruct(wt_ket_Cells,seshIndx);
+fprintf('done filtering for WT-ket cells noInterneurons\n');
+
+% filter for WT mec cells with ketamine only interurons
+seshIndx = wt_ket_Cells.interneuronFlag;
+wt_ket_Cells_onlyInterneurons = filterAllCellsStruct(wt_ket_Cells,seshIndx);
+fprintf('done filtering for WT-ket cells only Interneurons\n');
+
+% filter for WT mec cells with gain change cells
+seshIndx = logical(wt_ket_Cells_noInterneurons.gainModulationValues(:,4));
+wt_ket_Cells_gainChange = filterAllCellsStruct(wt_ket_Cells_noInterneurons,seshIndx);
+fprintf('done filtering for WT-ket cells only gain change\n');
+
+% filter for WT mec cells with not gain change cells
+seshIndx = logical(~wt_ket_Cells_noInterneurons.gainModulationValues(:,4));
+wt_ket_Cells_noGainChange = filterAllCellsStruct(wt_ket_Cells_noInterneurons,seshIndx);
+fprintf('done filtering for WT-ket cells only Interneurons\n');
+
+% ========= HCN1KO FILTERING ========
 seshIndx = ismember(ketamineCells.metadata(:,4),'KO');
 hcn1ko_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
 fprintf('done filtering for HCN1ko-ket cells\n');
 
+% filter for HCN1KO mec cells with ketamine not interurons
+seshIndx = ~hcn1ko_ket_Cells.interneuronFlag;
+hcn1ko_ket_Cells_noInterneurons = filterAllCellsStruct(hcn1ko_ket_Cells,seshIndx);
+fprintf('done filtering for hcn1ko-ket cells noInterneurons\n');
+
+% filter for HCN1KO mec cells with ketamine only interurons
+seshIndx = hcn1ko_ket_Cells.interneuronFlag;
+hcn1ko_ket_Cells_onlyInterneurons = filterAllCellsStruct(hcn1ko_ket_Cells,seshIndx);
+fprintf('done filtering for hcn1ko-ket cells only Interneurons\n');
+
+
+% filter for WT mec cells with gain change cells
+seshIndx = logical(hcn1ko_ket_Cells_noInterneurons.gainModulationValues(:,4));
+hcn1ko_ket_Cells_gainChange = filterAllCellsStruct(hcn1ko_ket_Cells_noInterneurons,seshIndx);
+fprintf('done filtering for hcn1ko-ket cells only gain change\n');
+
+% filter for WT mec cells with not gain change cells
+seshIndx = logical(~hcn1ko_ket_Cells_noInterneurons.gainModulationValues(:,4));
+hcn1ko_ket_Cells_noGainChange = filterAllCellsStruct(hcn1ko_ket_Cells_noInterneurons,seshIndx);
+fprintf('done filtering for hcn1ko-ket cells only Interneurons\n');
+
+
+% ========= MK801 & Control FILTERING ========
 seshIndx = ismember(allCells.metadata(:,8),'MK801'); 
 MK801_cells = filterAllCellsStruct(allCells,seshIndx);
 fprintf('done filtering for MK801 cells\n');
@@ -51,8 +95,15 @@ fprintf('done filtering Control Cells\n');
 % All Cells with only stable Cells
 allCells_onlyStable = filterAllCellsStruct(allCells,allCells.stabilityFlag);
 % Example session
-seshIndx = ismember(allCells.metadata(:,1),'G3_190704_baseline1+controlinjx1+ketamine1_fr+corr');
+seshIndx = ismember(allCells.metadata(:,1),'G3_190705_baseline1+controlinjx1+ketamine1_fr+corr');
 singleSession_Cells = filterAllCellsStruct(allCells,seshIndx);
+
+% WT 
+%'G3_190704_baseline1+controlinjx1+ketamine1_fr+corr'
+% 'G3_190705_baseline1+controlinjx1+ketamine1_fr+corr'
+% 'G4_190620_baseline1+controlinjx1+ketamine1_fr+corr'
+% 'G5_190708_baseline1+controlinjx1+ketamine1_fr+corr'
+% 'HCNd1_190808_baseline1+controlinjx1+ketamine1_fr+corr'
 
 % Example session with only Stable Cells
 singleSession_Cells_onlyStable = filterAllCellsStruct(singleSession_Cells,singleSession_Cells.stabilityFlag);
@@ -60,6 +111,7 @@ wt_ket_Cells_onlyStable = filterAllCellsStruct(wt_ket_Cells,wt_ket_Cells.stabili
 hcn1ko_ket_Cells_onlyStable = filterAllCellsStruct(hcn1ko_ket_Cells,hcn1ko_ket_Cells.stabilityFlag);
 
 fprintf('=====\ndone filtering\n');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIGURE 0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,11 +247,13 @@ plot_correlationMatrix(singleSession_Cells, 'WT');
 plot_correlationScoreCurves(wt_ket_Cells_onlyStable,'WT')
 plot_correlationScoreCurves(wt_ket_Cells,'WT')
 
+
+
 %% PLOT Histfit on Corr score
 plot_HistfitKetCorrEffectScore(wt_ket_Cells, 'WT')
 plot_HistfitKetCorrEffectScore(wt_ket_Cells_onlyStable, 'WT')
-
-
+plot_HistfitKetCorrEffectScore(wt_ket_Cells_noInterneurons,'WT')
+plot_HistfitKetCorrEffectScore(wt_ket_Cells_onlyInterneurons,'WT')
 %% Plot Correlation Matrix by sessions
 plot_correlationMatrixBySessionThenAvg(wt_ket_Cells);
 
@@ -210,6 +264,26 @@ plotDecoherencePlots(wt_ket_Cells);
 %% Plot PCA by session for WT animals
 plot_PCAbySesh(allCells,false);
 
+%% Plot FR comparisons of decoherence 
+plot_cells1_vs_cells2_dchPeriod_STATS(wt_ket_Cells_noInterneurons,'WT cells',wt_ket_Cells_onlyInterneurons,'interneurons')
+plot_cells1_vs_cells2_dchPeriod_STATS(wt_ket_Cells_gainChange,'Gain Change',wt_ket_Cells_noGainChange,'No Gain Change')
+
+%% Comparing Interneurons FR time course 
+plot_FRoverTime5minBefore10minafter(wt_ket_Cells_onlyInterneurons)
+plot_FRoverTime5minBefore10minafter(wt_ket_Cells_noInterneurons)
+
+plot_FRoverTime5minBefore10minafter(wt_ket_Cells_gainChange)
+plot_FRoverTime5minBefore10minafter(wt_ket_Cells_noGainChange)
+%%
+plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(wt_ket_Cells_noInterneurons,'WT cells',wt_ket_Cells_onlyInterneurons,'interneurons')
+plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(wt_ket_Cells_gainChange,'Gain Change',wt_ket_Cells_noGainChange,'No Gain Change')
+
+%%
+plot_STATS_5minBefore5minafter(wt_ket_Cells_onlyInterneurons)
+plot_STATS_5minBefore5minafter(wt_ket_Cells_noInterneurons)
+
+plot_STATS_5minBefore5minafter(wt_ket_Cells_gainChange)
+plot_STATS_5minBefore5minafter(wt_ket_Cells_noGainChange)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIGURE HCN1ko
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,6 +333,7 @@ plot_dch_autocorrelationScore_cells1_VS_cells2(wt_ket_Cells,hcn1ko_ket_Cells, 'W
 plot_dch_autocorrelationScore_cells1_VS_cells2(wt_ket_Cells,wt_mk801_Cells, 'WT Ketamine','MK801 Ketamine')
 plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_ket_Cells,wt_mk801_Cells, 'HCN1ko Ketamine','MK801 Ketamine')
 plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_mk801_Cells,wt_mk801_Cells, 'HCN1ko-MK801 Ketamine','MK801 Ketamine')
+
 %% Plot Correlation Score Curve Comparisions
 plot_correlationScoreCurveComparison(wt_ket_Cells_onlyStable,hcn1ko_ket_Cells_onlyStable)
 
@@ -274,12 +349,51 @@ plot_HistfitKetCorrEffectScore(hcn1ko_ket_Cells, 'KO')
 
 %% Plot Correlation Matrix
 plot_correlationMatrix(wt_ket_Cells, 'WT');
-plot_correlationMatrix(hcn1ko_ket_Cells, 'KO');
+plot_correlationMatrix(wt_ket_Cells_onlyInterneurons, 'WT');
+plot_correlationMatrix(wt_ket_Cells_noInterneurons, 'WT');
+plot_correlationMatrix(wt_ket_Cells_gainChange, 'WT');
+plot_correlationMatrix(wt_ket_Cells_noGainChange, 'WT');
 
+plot_correlationMatrix(hcn1ko_ket_Cells, 'KO');
+plot_correlationMatrix(hcn1ko_ket_Cells_onlyInterneurons, 'KO');
+plot_correlationMatrix(hcn1ko_ket_Cells_noInterneurons, 'KO');
+plot_correlationMatrix(hcn1ko_ket_Cells_gainChange, 'KO');
+plot_correlationMatrix(hcn1ko_ket_Cells_noGainChange, 'KO');
+
+
+
+hcn1ko_ket_Cells_noGainChange
 
 plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells);
+plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_gainChange);
+plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_noGainChange);
+plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_onlyInterneurons);
+plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_noInterneurons);
 %% Plot Behavior by Sessions for KO ketamine animals
 plot_BehaviorbySesh(fltrCells,true);
+
+
+%% Plot FR comparisons of decoherence 
+plot_cells1_vs_cells2_dchPeriod_STATS(hcn1ko_ket_Cells_noInterneurons,'WT cells',hcn1ko_ket_Cells_onlyInterneurons,'interneurons')
+plot_cells1_vs_cells2_dchPeriod_STATS(hcn1ko_ket_Cells_gainChange,'Gain Change',hcn1ko_ket_Cells_noGainChange,'No Gain Change')
+
+%% Comparing Interneurons FR time course 
+plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_onlyInterneurons)
+plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_noInterneurons)
+
+plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_gainChange)
+plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_noGainChange)
+%%
+plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_noInterneurons,'WT cells',hcn1ko_ket_Cells_onlyInterneurons,'interneurons')
+plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_gainChange,'Gain Change',hcn1ko_ket_Cells_noGainChange,'No Gain Change')
+
+%%
+plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_onlyInterneurons)
+plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_noInterneurons)
+
+plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_gainChange)
+plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_noGainChange)
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plot MK801 WT Cells

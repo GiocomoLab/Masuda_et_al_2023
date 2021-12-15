@@ -62,6 +62,10 @@ g=gramm('x',color,'y',fr,'color',color);
 g.stat_boxplot('notch','true');
 g.set_title('FR(hz) Control vs Decoherence Period');
 g.set_names('x','Mice','y', 'Hz');
+customColorMap = [ % 0.5 0.5 0.5 %grey
+    0.8 0.2 0.8 %magenta
+    0 0.8 0.2]; %green
+g.set_color_options('map',customColorMap);
 g.draw()
 
 %%
@@ -98,5 +102,9 @@ g.set_color_options('chroma',0);
 g.axe_property('YLim',[0 2300]);
 g.set_title('Decoherence FR Increase or Decrease','FontSize',20);
 g.set_names('x',[],'y', 'Number of Cells');
-g.draw()
+customColorMap = [ 0.5 0.5 0.5 %grey
+    0.8 0.2 0.8 %magenta
+    0 0.8 0.2]; %green
+g.set_color_options('map',customColorMap);
+g.draw();
 
