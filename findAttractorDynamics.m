@@ -1,4 +1,4 @@
-function slope = findAttractorDynamics(cells,save_figs,sf)
+function [slope,pearson_rho] = findAttractorDynamics(cells,save_figs,sf)
 % Add Description Here
 nCells = size(cells.spatialFRsmooth,1);
 
@@ -134,62 +134,86 @@ if(sum(goodPairsIndx)>10)
 
     h = tiledlayout(2,4);
     nexttile
-    scatter(linearized_rho1A(goodPairsIndx),linearized_rho1B(goodPairsIndx))
+    X = linearized_rho1A(goodPairsIndx);
+    Y = linearized_rho1B(goodPairsIndx);
+    scatter(X,Y)
     title("baselineA vs baselineB")
     hl = refline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(1) = B(2);
-
+    pearson_rho(1) = corr(X,Y,'rows', 'complete');
+   
 
     nexttile
-    scatter(linearized_rho1(goodPairsIndx),linearized_rho2(goodPairsIndx))
+    X = linearized_rho1(goodPairsIndx);
+    Y = linearized_rho2(goodPairsIndx);
+    scatter(X,Y)
     title("baseline vs cntrl")
     hl = refline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(2) = B(2);
-
+    pearson_rho(2) = corr(X,Y,'rows', 'complete');
+    
     nexttile
-    scatter(linearized_rho1(goodPairsIndx),linearized_rho3(goodPairsIndx))
+    X = linearized_rho1(goodPairsIndx);
+    Y = linearized_rho3(goodPairsIndx);
+    scatter(X,Y)
     title("baseline vs acuteKet")
     hl = refline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(3) = B(2);
+    pearson_rho(3) = corr(X,Y,'rows', 'complete');
 
     nexttile
-    scatter(linearized_rho2(goodPairsIndx),linearized_rho3(goodPairsIndx))
+    X = linearized_rho2(goodPairsIndx);
+    Y = linearized_rho3(goodPairsIndx);
+    scatter(X,Y)
     title("cntrl vs acuteKet")
     hl = refline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(4) = B(2);
+    pearson_rho(4) = corr(X,Y,'rows', 'complete');
 
     nexttile
-    scatter(linearized_rho1(goodPairsIndx),linearized_rho4(goodPairsIndx))
+    X = linearized_rho1(goodPairsIndx);
+    Y = linearized_rho4(goodPairsIndx);
+    scatter(X,Y)
     title("baseline vs acuteKet")
     hl = refline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(5) = B(2);
+    pearson_rho(5) = corr(X,Y,'rows', 'complete');
 
     nexttile
-    scatter(linearized_rho4(goodPairsIndx),linearized_rho5(goodPairsIndx))
+    X = linearized_rho4(goodPairsIndx);
+    Y = linearized_rho5(goodPairsIndx);
+    scatter(X,Y)
     title("acuteKet vs lateKet")
     hl = refline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(6) = B(2);
+    pearson_rho(6) = corr(X,Y,'rows', 'complete');
 
     nexttile
-    scatter(linearized_rho5(goodPairsIndx),linearized_rho6(goodPairsIndx))
+    X = linearized_rho5(goodPairsIndx);
+    Y = linearized_rho6(goodPairsIndx);
+    scatter(X,Y)
     title("lateKet vs gainChange")
     hl = refline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(7) = B(2);
+    pearson_rho(7) = corr(X,Y,'rows', 'complete');
 
     nexttile
-    scatter(linearized_rho2(goodPairsIndx),linearized_rho5(goodPairsIndx))
+    X = linearized_rho2(goodPairsIndx);
+    Y = linearized_rho5(goodPairsIndx);
+    scatter(X,Y)
     title("cnrl vs lateKet")
     hl = refline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(8) = B(2);
-
+    pearson_rho(8) = corr(X,Y,'rows', 'complete');
+    
     if save_figs
         saveas(h,fullfile(sf.image_save_dir,sprintf('%s%s%s%s%d.png',sf.name,'_',sf.sessionDate,'_sesh',sf.seshNum)),'png');
     end
