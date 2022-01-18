@@ -2,8 +2,8 @@ function findAttractorDynamicsbySession(cells,folderName)
 folderName = "wt_cell_gainchange_only";
 
 seshes = unique(cellfun(@num2str,cells.metadata(:,1),'uni',0));
-slopeMatrix = nan(numel(seshes),8);
-pearson_rhoMatrix = nan(numel(seshes),8);
+slopeMatrix = nan(numel(seshes),4);
+pearson_rhoMatrix = nan(numel(seshes),4);
 for i = 1:numel(seshes)
     
     seshIndx = ismember(cells.metadata(:,1),seshes{i});
@@ -14,13 +14,13 @@ for i = 1:numel(seshes)
     sf.image_save_dir = strcat('../fkm_analysis/attractorNetworkCorrelations/',folderName);
     sf.seshNum=i;
     save_figs = true;
-    try
+%     try
         [slope,pearson_rho] = findAttractorDynamics(seshCells,save_figs,sf);
         slopeMatrix(i,:) = slope;
         pearson_rhoMatrix(i,:) = pearson_rho;
-    catch
-        fprintf(strcat("could not do"+num2str(i)+"\n"))
-    end
+%     catch
+%         fprintf(strcat("could not do"+num2str(i)+"\n"))
+%     end
 end
 %%
 close all; clear g;
@@ -60,14 +60,14 @@ linearizedPearson_rhoMatrix = squeeze(reshape(pearson_rhoMatrix,[],1));
 y = linearizedPearson_rhoMatrix;
 
 x = vertcat(...
-    repmat({'baselineA vs baselineB'}, size(slopeMatrix,1),1),...
+%     repmat({'baselineA vs baselineB'}, size(slopeMatrix,1),1),...
     repmat({'baseline vs cntrl'}, size(slopeMatrix,1),1),...
     repmat({'baseline vs acuteKet'}, size(slopeMatrix,1),1),...
-    repmat({'cntrl vs acuteKet'}, size(slopeMatrix,1),1),...
+%     repmat({'cntrl vs acuteKet'}, size(slopeMatrix,1),1),...
     repmat({'baseline vs acuteKet'}, size(slopeMatrix,1),1),...
-    repmat({'acuteKet vs lateKet'}, size(slopeMatrix,1),1),...
-    repmat({'lateKet vs gainChange'}, size(slopeMatrix,1),1),...
-    repmat({'cntrl vs lateKet'}, size(slopeMatrix,1),1)...
+%     repmat({'acuteKet vs lateKet'}, size(slopeMatrix,1),1),...
+    repmat({'lateKet vs gainChange'}, size(slopeMatrix,1),1)...
+%     repmat({'cntrl vs lateKet'}, size(slopeMatrix,1),1)...
     );
 
 h=figure(1);
