@@ -1,76 +1,64 @@
 function [slope,pearson_rho] = findAttractorDynamics(cells,save_figs,sf)
-% Add Description Here
-nCells = size(cells.spatialFRsmooth,1);
+% A functioning attractor network should preserve correlations between
+% pairs of cells. 
+% E.g. So pairs of cells that are well correlated in trial 1 through 25
+% should also be well correlated in trials 26 through 50
 
-fr = cells.spatialFRsmooth(:,1:25,:);
-fr = permute(fr, [3 2 1]);
-linearized_cellFR = squeeze(reshape(fr,[],1,nCells));
-norm_linearized_cellFR = normalize(linearized_cellFR,1);
-[rho1A,pval1] = corrcoef(norm_linearized_cellFR);
-significantCellPairs = pval1<0.05;
-
-fr = cells.spatialFRsmooth(:,26:50,:);
-fr = permute(fr, [3 2 1]);
-linearized_cellFR = squeeze(reshape(fr,[],1,nCells));
-norm_linearized_cellFR = normalize(linearized_cellFR,1);
-[rho1B,pval] = corrcoef(norm_linearized_cellFR);
-
-
-fr = cells.spatialFRsmooth(:,1:50,:);
-fr = permute(fr, [3 2 1]);
-linearized_cellFR = squeeze(reshape(fr,[],1,nCells));
-norm_linearized_cellFR = normalize(linearized_cellFR,1);
-[rho1,pval] = corrcoef(norm_linearized_cellFR);
-
-fr = cells.spatialFRsmooth(:,21:100,:);
-fr = permute(fr, [3 2 1]);
-linearized_cellFR = squeeze(reshape(fr,[],1,nCells));
-norm_linearized_cellFR = normalize(linearized_cellFR,1);
-[rho2,pval] = corrcoef(norm_linearized_cellFR);
+slope = nan;
+pearson_rho = nan;
+%%
+nCells = size(cells.spatialFRsmooth,1); %get number of cells 
+% fr1to25 = cells.spatialFRsmooth(:,1:25,:); % get smoothed fr of 1st 25 trials: cellNum x trials(25) x spatial bin(200)
+% fr1to25 = permute(fr1to25, [3 2 1]);
+% linearized_fr1to25 = squeeze(reshape(fr1to25,[],1,nCells)); % linearize so it's a matrix of spatialbin x numCells
+% [rho1A,pvalue] = corrcoef(linearized_fr1to25);
+% 
+% 
+% fr26to50 = cells.spatialFRsmooth(:,26:50,:);
+% fr26to50 = permute(fr26to50, [3 2 1]);
+% linearized_fr26to50 = squeeze(reshape(fr26to50,[],1,nCells));
+% [rho1B,p1b] = corrcoef(linearized_fr26to50);
 
 
-fr = cells.spatialFRsmooth(:,101:150,:);
-fr = permute(fr, [3 2 1]);
-linearized_cellFR = squeeze(reshape(fr,[],1,nCells));
-norm_linearized_cellFR = normalize(linearized_cellFR,1);
-[rho3,pval] = corrcoef(norm_linearized_cellFR);
+fr1to50 = cells.spatialFRsmooth(:,1:50,:);% get smoothed fr of 1st 25 trials: cellNum x trials(25) x spatial bin(200)
+fr1to50 = permute(fr1to50, [3 2 1]);
+linearized_fr1to50 = squeeze(reshape(fr1to50,[],1,nCells));% linearize so it's a matrix of spatialbin x numCells
+[rho1,pvalue] = corrcoef(linearized_fr1to50);
+significantCellPairs = pvalue<0.05;  % find significant correlations
+triangleMask = tril(significantCellPairs); % only grab below the diagonal to avoid repeats
 
 
-fr = cells.spatialFRsmooth(:,200:250,:);
-fr = permute(fr, [3 2 1]);
-linearized_cellFR = squeeze(reshape(fr,[],1,nCells));
-norm_linearized_cellFR = normalize(linearized_cellFR,1);
-[rho4,pval] = corrcoef(norm_linearized_cellFR);
 
+fr51to100 = cells.spatialFRsmooth(:,51:100,:);
+fr51to100 = permute(fr51to100, [3 2 1]);
+linearized_fr51to100  = squeeze(reshape(fr51to100,[],1,nCells));
+[rho2,p2] = corrcoef(linearized_fr51to100);
 
-fr = cells.spatialFRsmooth(:,251:290,:);
-fr = permute(fr, [3 2 1]);
-linearized_cellFR = squeeze(reshape(fr,[],1,nCells));
-norm_linearized_cellFR = normalize(linearized_cellFR,1);
-[rho5,pval] = corrcoef(norm_linearized_cellFR);
+fr101to150 = cells.spatialFRsmooth(:,101:150,:);
+fr101to150 = permute(fr101to150, [3 2 1]);
+linearized_fr101to150 = squeeze(reshape(fr101to150,[],1,nCells));
+[rho3,p3] = corrcoef(linearized_fr101to150);
 
+fr200to250 = cells.spatialFRsmooth(:,200:250,:);
+fr200to250 = permute(fr200to250, [3 2 1]);
+linearized_fr200to250 = squeeze(reshape(fr200to250,[],1,nCells));
+[rho4,p4] = corrcoef(linearized_fr200to250);
 
-fr = cells.spatialFRsmooth(:,290:300,:);
-fr = permute(fr, [3 2 1]);
-linearized_cellFR = squeeze(reshape(fr,[],1,nCells));
-norm_linearized_cellFR = normalize(linearized_cellFR,1);
-[rho6,pval] = corrcoef(norm_linearized_cellFR);
+fr251to290 = cells.spatialFRsmooth(:,251:290,:);
+fr251to290 = permute(fr251to290, [3 2 1]);
+linearized_fr251to290 = squeeze(reshape(fr251to290,[],1,nCells));
+[rho5,p5] = corrcoef(linearized_fr251to290);
+
+fr290to300 = cells.spatialFRsmooth(:,290:300,:);
+fr290to300 = permute(fr290to300, [3 2 1]);
+linearized_fr290to300 = squeeze(reshape(fr290to300,[],1,nCells));
+[rho6,p6] = corrcoef(linearized_fr290to300);
 
 % 
 % linearized_rho1A = squeeze(reshape(rho1A,[],1));
 % linearized_rho1B = squeeze(reshape(rho1B,[],1));
-% 
-% linearized_rho1 = squeeze(reshape(rho1,[],1));
-% linearized_rho2 = squeeze(reshape(rho2,[],1));
-% linearized_rho3 = squeeze(reshape(rho3,[],1));
-% linearized_rho4 = squeeze(reshape(rho4,[],1));
-% linearized_rho5 = squeeze(reshape(rho5,[],1));
-% linearized_rho6 = squeeze(reshape(rho6,[],1));
 
-
-linearized_rho1A = squeeze(reshape(rho1A,[],1));
-linearized_rho1B = squeeze(reshape(rho1B,[],1));
-
+linearized_significantCellPairs = squeeze(reshape(triangleMask,[],1)); % linearize mask
 linearized_rho1 = squeeze(reshape(rho1,[],1));
 linearized_rho2 = squeeze(reshape(rho2,[],1));
 linearized_rho3 = squeeze(reshape(rho3,[],1));
@@ -79,74 +67,39 @@ linearized_rho5 = squeeze(reshape(rho5,[],1));
 linearized_rho6 = squeeze(reshape(rho6,[],1));
 
 
-% customColorMap = [ 0.5 0.5 0.5 %grey
-%     0.8 0.2 0.8 %magenta
-%     0 0.8 0.2]; %green
-
-% 
-% figure(1)
-% tiledlayout(4,4);
-% nexttile
-% scatter(linearized_rho1A,linearized_rho1B)
-% title("baselineA vs baselineB")
-% 
-% nexttile
-% scatter(linearized_rho1,linearized_rho2)
-% title("baseline vs cntrl")
-% 
-% nexttile
-% scatter(linearized_rho1,linearized_rho3)
-% title("baseline vs acuteKet")
-% 
-% nexttile
-% scatter(linearized_rho2,linearized_rho3)
-% title("cntrl vs acuteKet")
-% 
-% nexttile
-% scatter(linearized_rho1,linearized_rho4)
-% title("cntrl vs acuteKet")
-% 
-% nexttile
-% scatter(linearized_rho4,linearized_rho5)
-% title("acuteKet vs lateKet")
-% 
-% nexttile
-% scatter(linearized_rho5,linearized_rho6)
-% title("lateKet vs gainChange")
-% 
-% nexttile
-% scatter(linearized_rho2,linearized_rho5)
-% title("lateKet vs cntrl")
-% 
-
-
 %%
 % threshold = 0.25;
 % goodPairsIndx = (linearized_rho1A>threshold | linearized_rho1A<-threshold) & (linearized_rho1B>threshold | linearized_rho1B<-threshold);
 % goodPairsIndx = linearized_rho1A>threshold | linearized_rho1A<-threshold;
 
-
-linearized_significantCellPairs = squeeze(reshape(significantCellPairs,[],1));
+% X = linearized_rho1A(goodPairsIndx);
+% Y = linearized_rho1B(goodPairsIndx);
+% [~,pval] = corrcoef(X,Y,'rows', 'complete');
+% significantCellPairs = pval<0.05;
+% linearized_significantCellPairs = squeeze(reshape(significantCellPairs,[],1));
 goodPairsIndx = linearized_significantCellPairs;
+
+
 
 clf;
 if(sum(goodPairsIndx)>10)
-    
-    h = tiledlayout(1,4);
-    h.Renderer = 'painters';
-    h.Position = [100 100 540 400];
+    h1 = figure(1);
+    tiledlayout(1,4);
+    set(h1,'Position',[100 100 1600 400]);
     
 %     nexttile
 %     tileNum = 1;
 %     X = linearized_rho1A(goodPairsIndx);
 %     Y = linearized_rho1B(goodPairsIndx);
-%     scatter(X,Y)
-%     title("baselineA vs baselineB")
+%     scatter(X,Y,15,'MarkerFaceColor','k','MarkerFaceAlpha',0.2,'MarkerEdgeColor','w','LineWidth',0.1);
+%     axis([-1 1 -1 1])
+%     title("baseline vs cntrl")
 %     hl = refline;
 %     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
-%     slope(tileNum) = B(2);
-%     pearson_rho(tileNum) = corr(X,Y,'rows', 'complete');
-%    
+%     slope(tileNum) = B(2);   
+%     rho = corr(X,Y,'rows', 'complete');
+%     title(sprintf("baseline1 vs baseline2: rho %.3f",rho));
+%     pearson_rho(tileNum) = rho;
 
     nexttile
     tileNum = 1;
@@ -190,12 +143,12 @@ if(sum(goodPairsIndx)>10)
 
     nexttile
     tileNum = 3;
-    X = linearized_rho1(goodPairsIndx);
+    X = linearized_rho2(goodPairsIndx);
     Y = linearized_rho4(goodPairsIndx);
     rho = corr(X,Y,'rows', 'complete');
     scatter(X,Y,15,'MarkerFaceColor','k','MarkerFaceAlpha',0.2,'MarkerEdgeColor','w','LineWidth',0.1);
     axis([-1 1 -1 1])
-    title(sprintf("baseline vs lateKet: rho %.3f",rho));
+    title(sprintf("cntrl vs lateKet: rho %.3f",rho));
     hl = refline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(tileNum) = B(2);
@@ -237,9 +190,6 @@ if(sum(goodPairsIndx)>10)
 %     pearson_rho(8) = corr(X,Y,'rows', 'complete');
     
     if save_figs
-        saveas(h,fullfile(sf.image_save_dir,sprintf('%s%s%s%s%d.png',sf.name,'_',sf.sessionDate,'_sesh',sf.seshNum)),'png');
+        saveas(h1,fullfile(sf.image_save_dir,sprintf('%s%s%s%s%d.png',sf.name,'_',sf.sessionDate,'_sesh',sf.seshNum)),'png');
     end
 end
-% 
-% figure(2)
-% plot(slope)

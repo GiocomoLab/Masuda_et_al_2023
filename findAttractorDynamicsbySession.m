@@ -1,5 +1,5 @@
-function findAttractorDynamicsbySession(cells,folderName)
-folderName = "wt_cell_gainchange_only";
+function findAttractorDynamicsbySession(cells,save_figs,folderName)
+% folderName = "wt_cell_gainchange_only";
 
 close all;
 seshes = unique(cellfun(@num2str,cells.metadata(:,1),'uni',0));
@@ -57,12 +57,14 @@ close all; clear g;
 % 
 
 %
+k = figure(1);
+set(k,'Position',[100 100 1200 800]);
 linearizedPearson_rhoMatrix = squeeze(reshape(pearson_rhoMatrix,[],1));
 y = linearizedPearson_rhoMatrix;
 
 x = vertcat(repmat({'baseline vs cntrl'}, size(slopeMatrix,1),1),...
     repmat({'baseline vs acuteKet'}, size(slopeMatrix,1),1),...
-    repmat({'baseline vs acuteKet'}, size(slopeMatrix,1),1), ...
+    repmat({'cntrl vs lateKet'}, size(slopeMatrix,1),1), ...
     repmat({'lateKet vs gainChange'}, size(slopeMatrix,1),1));
 % 
 % x = vertcat(...
@@ -76,13 +78,13 @@ x = vertcat(repmat({'baseline vs cntrl'}, size(slopeMatrix,1),1),...
 % %     repmat({'cntrl vs lateKet'}, size(slopeMatrix,1),1)...
 % );
 
-h=figure(1);
+
 clear g;
 g=gramm('x',x,'y',y);
 g.stat_violin('fill', 'transparent');
 % g.stat_boxplot('notch','true')
 % g.stat_summary('geom',{'edge_bar','black_errorbar'},'type','ci','setylim','true');
-g.geom_jitter('width',0.6,'height',0,'dodge',1,'alpha',1);
+g.geom_jitter('width',0.3,'height',0,'dodge',1,'alpha',1);
 g.set_color_options('chroma',0);
 g.set_title('Spearman Correlations between Stable Cell Paris');
 g.set_names('x','','y', 'Rho');
@@ -90,6 +92,6 @@ g.set_names('x','','y', 'Rho');
 g.set_order_options('x',0);
 g.draw();
 if save_figs
-    saveas(h,fullfile(sf.image_save_dir,folderName),'png');
+    saveas(k,fullfile(sf.image_save_dir,folderName),'png');
 end
 
