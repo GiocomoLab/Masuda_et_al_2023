@@ -5,6 +5,7 @@ close all;
 seshes = unique(cellfun(@num2str,cells.metadata(:,1),'uni',0));
 slopeMatrix = nan(numel(seshes),4);
 pearson_rhoMatrix = nan(numel(seshes),4);
+
 for i = 1:numel(seshes)
     
     seshIndx = ismember(cells.metadata(:,1),seshes{i});
@@ -58,7 +59,7 @@ close all; clear g;
 
 %
 k = figure(1);
-set(k,'Position',[100 100 1200 800]);
+set(k,'Position',[100 100 1200 400]);
 linearizedPearson_rhoMatrix = squeeze(reshape(pearson_rhoMatrix,[],1));
 y = linearizedPearson_rhoMatrix;
 
@@ -95,3 +96,5 @@ if save_figs
     saveas(k,fullfile(sf.image_save_dir,folderName),'png');
 end
 
+[p,t,stats] = anova1(y,x,'off');
+[results,~] = multcompare(stats,'CType','bonferroni')

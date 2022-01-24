@@ -27,8 +27,6 @@ linearized_fr1to50 = squeeze(reshape(fr1to50,[],1,nCells));% linearize so it's a
 significantCellPairs = pvalue<0.05;  % find significant correlations
 triangleMask = tril(significantCellPairs); % only grab below the diagonal to avoid repeats
 
-
-
 fr51to100 = cells.spatialFRsmooth(:,51:100,:);
 fr51to100 = permute(fr51to100, [3 2 1]);
 linearized_fr51to100  = squeeze(reshape(fr51to100,[],1,nCells));
@@ -84,6 +82,9 @@ goodPairsIndx = linearized_significantCellPairs;
 clf;
 if(sum(goodPairsIndx)>10)
     h1 = figure(1);
+    markerSize = 25;
+    markerFaceAlpha = 0.4;
+    axisSize = [-0.5 0.8 -0.5 0.8];
     tiledlayout(1,4);
     set(h1,'Position',[100 100 1600 400]);
     
@@ -91,10 +92,10 @@ if(sum(goodPairsIndx)>10)
 %     tileNum = 1;
 %     X = linearized_rho1A(goodPairsIndx);
 %     Y = linearized_rho1B(goodPairsIndx);
-%     scatter(X,Y,15,'MarkerFaceColor','k','MarkerFaceAlpha',0.2,'MarkerEdgeColor','w','LineWidth',0.1);
+%     scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
 %     axis([-1 1 -1 1])
 %     title("baseline vs cntrl")
-%     hl = refline;
+%     hl = lsline;
 %     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
 %     slope(tileNum) = B(2);   
 %     rho = corr(X,Y,'rows', 'complete');
@@ -105,10 +106,10 @@ if(sum(goodPairsIndx)>10)
     tileNum = 1;
     X = linearized_rho1(goodPairsIndx);
     Y = linearized_rho2(goodPairsIndx);
-     scatter(X,Y,15,'MarkerFaceColor','k','MarkerFaceAlpha',0.2,'MarkerEdgeColor','w','LineWidth',0.1);
-    axis([-1 1 -1 1])
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
     title("baseline vs cntrl")
-    hl = refline;
+    hl = lsline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(tileNum) = B(2);   
     rho = corr(X,Y,'rows', 'complete');
@@ -122,9 +123,9 @@ if(sum(goodPairsIndx)>10)
     tileNum = 2;
     X = linearized_rho1(goodPairsIndx);
     Y = linearized_rho3(goodPairsIndx);
-    scatter(X,Y,15,'MarkerFaceColor','k','MarkerFaceAlpha',0.2,'MarkerEdgeColor','w','LineWidth',0.1);
-    axis([-1 1 -1 1])
-    hl = refline;
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
+    hl = lsline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(tileNum) = B(2);
     rho = corr(X,Y,'rows', 'complete');
@@ -136,7 +137,7 @@ if(sum(goodPairsIndx)>10)
 %     Y = linearized_rho3(goodPairsIndx);
 %     scatter(X,Y)
 %     title("cntrl vs acuteKet")
-%     hl = refline;
+%     hl = lsline;
 %     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
 %     slope(4) = B(2);
 %     pearson_rho(4) = corr(X,Y,'rows', 'complete');
@@ -146,10 +147,10 @@ if(sum(goodPairsIndx)>10)
     X = linearized_rho2(goodPairsIndx);
     Y = linearized_rho4(goodPairsIndx);
     rho = corr(X,Y,'rows', 'complete');
-    scatter(X,Y,15,'MarkerFaceColor','k','MarkerFaceAlpha',0.2,'MarkerEdgeColor','w','LineWidth',0.1);
-    axis([-1 1 -1 1])
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
     title(sprintf("cntrl vs lateKet: rho %.3f",rho));
-    hl = refline;
+    hl = lsline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
     slope(tileNum) = B(2);
     pearson_rho(tileNum) = rho;
@@ -159,7 +160,7 @@ if(sum(goodPairsIndx)>10)
 %     Y = linearized_rho5(goodPairsIndx);
 %     scatter(X,Y)
 %     title("acuteKet vs lateKet")
-%     hl = refline;
+%     hl = lsline;
 %     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
 %     slope(6) = B(2);
 %     pearson_rho(6) = corr(X,Y,'rows', 'complete');
@@ -168,10 +169,10 @@ if(sum(goodPairsIndx)>10)
     tileNum = 4;
     X = linearized_rho5(goodPairsIndx);
     Y = linearized_rho6(goodPairsIndx);
-    scatter(X,Y,15,'MarkerFaceColor','k','MarkerFaceAlpha',0.2,'MarkerEdgeColor','w','LineWidth',0.1);
-    axis([-1 1 -1 1])
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
     title("lateKet vs gainChange")
-    hl = refline;
+    hl = lsline;
     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);  
     slope(tileNum) = B(2);
     rho = corr(X,Y,'rows', 'complete');
@@ -184,7 +185,7 @@ if(sum(goodPairsIndx)>10)
 %     Y = linearized_rho5(goodPairsIndx);
 %     scatter(X,Y)
 %     title("cnrl vs lateKet")
-%     hl = refline;
+%     hl = lsline;
 %     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
 %     slope(8) = B(2);
 %     pearson_rho(8) = corr(X,Y,'rows', 'complete');

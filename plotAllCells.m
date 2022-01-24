@@ -45,7 +45,21 @@ seshIndx = logical(~wt_ket_Cells_noInterneurons.gainModulationValues(:,4));
 wt_ket_Cells_noGainChange = filterAllCellsStruct(wt_ket_Cells_noInterneurons,seshIndx);
 fprintf('done filtering for WT-ket cells only Interneurons\n');
 
-% ========= HCN1KO FILTERING ========
+
+% WT Cells with only stable Cells
+wt_ket_onlyStable = filterAllCellsStruct(wt_ket_Cells,wt_ket_Cells.stabilityFlag);
+
+% filter for stable gain change cells that are not interneurons
+wt_ket_Cells_noInterneurons_onlyStable = filterAllCellsStruct(wt_ket_Cells_noInterneurons,wt_ket_Cells_noInterneurons.stabilityFlag);
+seshIndx = logical(wt_ket_Cells_noInterneurons_onlyStable.gainModulationValues(:,4));
+wt_ket_Cells_stableGainChange = filterAllCellsStruct(wt_ket_Cells_noInterneurons_onlyStable,seshIndx);
+fprintf('done filtering for WT-ket cells stable only gain change\n');
+
+% Example session
+seshIndx = ismember(allCells.metadata(:,1),'G3_190705_baseline1+controlinjx1+ketamine1_fr+corr');
+singleSession_Cells = filterAllCellsStruct(allCells,seshIndx);
+
+%% ========= HCN1KO FILTERING ========
 seshIndx = ismember(ketamineCells.metadata(:,4),'KO');
 hcn1ko_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
 fprintf('done filtering for HCN1ko-ket cells\n');
@@ -61,16 +75,19 @@ hcn1ko_ket_Cells_onlyInterneurons = filterAllCellsStruct(hcn1ko_ket_Cells,seshIn
 fprintf('done filtering for hcn1ko-ket cells only Interneurons\n');
 
 
-% filter for WT mec cells with gain change cells
+% filter for hcn1ko mec cells with gain change cells
 seshIndx = logical(hcn1ko_ket_Cells_noInterneurons.gainModulationValues(:,4));
 hcn1ko_ket_Cells_gainChange = filterAllCellsStruct(hcn1ko_ket_Cells_noInterneurons,seshIndx);
 fprintf('done filtering for hcn1ko-ket cells only gain change\n');
 
-% filter for WT mec cells with not gain change cells
+% filter for hcn1ko mec cells with not gain change cells
 seshIndx = logical(~hcn1ko_ket_Cells_noInterneurons.gainModulationValues(:,4));
 hcn1ko_ket_Cells_noGainChange = filterAllCellsStruct(hcn1ko_ket_Cells_noInterneurons,seshIndx);
 fprintf('done filtering for hcn1ko-ket cells only Interneurons\n');
 
+% filter for hcn1ko stable cells
+hcn1ko = filterAllCellsStruct(hcn1ko_ket_Cells,hcn1ko_ket_Cells.stabilityFlag);
+fprintf('done filtering for hcn1ko-ket stable cells only Interneurons\n');
 
 % ========= MK801 & Control FILTERING ========
 seshIndx = ismember(allCells.metadata(:,8),'MK801'); 
@@ -92,11 +109,8 @@ seshIndx = ismember(controlCells.metadata(:,4),'WT');
 controlCells = filterAllCellsStruct(controlCells,seshIndx);
 fprintf('done filtering Control Cells\n');
 
-% All Cells with only stable Cells
-allCells_onlyStable = filterAllCellsStruct(allCells,allCells.stabilityFlag);
-% Example session
-seshIndx = ismember(allCells.metadata(:,1),'G3_190705_baseline1+controlinjx1+ketamine1_fr+corr');
-singleSession_Cells = filterAllCellsStruct(allCells,seshIndx);
+
+
 
 % WT 
 %'G3_190704_baseline1+controlinjx1+ketamine1_fr+corr'
@@ -284,6 +298,20 @@ plot_STATS_5minBefore5minafter(wt_ket_Cells_noInterneurons)
 
 plot_STATS_5minBefore5minafter(wt_ket_Cells_gainChange)
 plot_STATS_5minBefore5minafter(wt_ket_Cells_noGainChange)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Attractor Network Figure
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+findAttractorDynamicsbySession(wt_ket_Cells_gainChange,true,"wt_cell_gainchange_only")
+findAttractorDynamicsbySession(wt_ket_Cells_noInterneurons,true,"ket_noInterneurons")
+findAttractorDynamicsbySession(wt_ket_Cells_stableGainChange,true,"wt_cell_gainchange_only_stableOnly")
+findAttractorDynamicsbySession(wt_ket_onlyStable,true,"wt_cell_stableOnly")
+
+findAttractorDynamicsbySession(hcn1ko,true,"hcn1ko_ket_Cells_onlyStable")
+findAttractorDynamicsbySession(wt_mk801_Cells,true,"wt_mk801_Cells")
+findAttractorDynamicsbySession(hcn1ko_mk801_Cells,true,"hcn1ko_mk801_Cells")
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIGURE HCN1ko
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
