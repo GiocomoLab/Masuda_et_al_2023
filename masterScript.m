@@ -51,7 +51,7 @@ fprintf('Done adding gainModulationValues to AllCells\n');
 % Add interneuron flag (baseline mean FR > 15hz)
 allCells.interneuronFlag = findInterneurons(allCells);
 fprintf('Done adding interneuron flag to AllCells\n');
-z  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Pre-Figures
 % Plot decoherence bands stats

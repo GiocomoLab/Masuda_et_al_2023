@@ -86,8 +86,8 @@ hcn1ko_ket_Cells_noGainChange = filterAllCellsStruct(hcn1ko_ket_Cells_noInterneu
 fprintf('done filtering for hcn1ko-ket cells only Interneurons\n');
 
 % filter for hcn1ko stable cells
-hcn1ko = filterAllCellsStruct(hcn1ko_ket_Cells,hcn1ko_ket_Cells.stabilityFlag);
-fprintf('done filtering for hcn1ko-ket stable cells only Interneurons\n');
+hcn1ko_ket_Cells_onlyStable = filterAllCellsStruct(hcn1ko_ket_Cells,hcn1ko_ket_Cells.stabilityFlag);
+fprintf('done filtering for hcn1ko-ket stable cells\n');
 
 % ========= MK801 & Control FILTERING ========
 seshIndx = ismember(allCells.metadata(:,8),'MK801'); 
@@ -195,11 +195,16 @@ plot_UMAPdataEmbedding(allCells,savePath,save_figs)
 %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
 plot_FRoverTime5minBefore10minafter(wt_ket_Cells)
 
+plot_FRoverTime5minBefore10minafter(wt_ket_Cells_noInterneurons)
+plot_FRoverTime5minBefore10minafter(wt_ket_Cells_onlyInterneurons)
+plot_FRoverTime5minBefore10minafter(wt_ket_Cells_stableGainChange)
 %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
 plot_STATS_5minBefore5minafter(wt_ket_Cells)
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection
 plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells,'Ketamine-induced Avg FR Change');
+plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells_stableGainChange,'Ketamine-induced Avg FR Change - Grid Cells');
+plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells_onlyInterneurons,'Ketamine-induced Avg FR Change - Interneurons');
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection by mouse
 plot_neg5to60minAfterKetamineInjx_byMouse(cells)
@@ -279,7 +284,7 @@ plotDecoherencePlots(wt_ket_Cells);
 plot_PCAbySesh(allCells,false);
 
 %% Plot FR comparisons of decoherence 
-plot_cells1_vs_cells2_dchPeriod_STATS(wt_ket_Cells_noInterneurons,'WT cells',wt_ket_Cells_onlyInterneurons,'interneurons')
+plot_cells1_vs_cells2_dchPeriod_STATS(wt_ket_Cells_gainChange,'Grid cells',wt_ket_Cells_onlyInterneurons,'interneurons')
 plot_cells1_vs_cells2_dchPeriod_STATS(wt_ket_Cells_gainChange,'Gain Change',wt_ket_Cells_noGainChange,'No Gain Change')
 
 %% Comparing Interneurons FR time course 
@@ -289,7 +294,7 @@ plot_FRoverTime5minBefore10minafter(wt_ket_Cells_noInterneurons)
 plot_FRoverTime5minBefore10minafter(wt_ket_Cells_gainChange)
 plot_FRoverTime5minBefore10minafter(wt_ket_Cells_noGainChange)
 %%
-plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(wt_ket_Cells_noInterneurons,'WT cells',wt_ket_Cells_onlyInterneurons,'interneurons')
+plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(wt_ket_Cells_gainChange,'Grid cells',wt_ket_Cells_onlyInterneurons,'interneurons')
 plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(wt_ket_Cells_gainChange,'Gain Change',wt_ket_Cells_noGainChange,'No Gain Change')
 
 %%
@@ -308,6 +313,7 @@ findAttractorDynamicsbySession(wt_ket_Cells_gainChange,true,"wt_cell_gainchange_
 findAttractorDynamicsbySession(wt_ket_Cells_noInterneurons,true,"ket_noInterneurons")
 findAttractorDynamicsbySession(wt_ket_Cells_stableGainChange,true,"wt_cell_gainchange_only_stableOnly")
 findAttractorDynamicsbySession(wt_ket_onlyStable,true,"wt_cell_stableOnly")
+findAttractorDynamicsbySession(wt_ket_Cells_onlyInterneurons,true,"wt_cell_ket_interneuronOnly")
 
 findAttractorDynamicsbySession(hcn1ko,true,"hcn1ko_ket_Cells_onlyStable")
 findAttractorDynamicsbySession(wt_mk801_Cells,true,"wt_mk801_Cells")
@@ -348,7 +354,8 @@ plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells);
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection
 plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells,'Ketamine-induced Avg FR Change on HCN1ko');
-
+ plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells_onlyInterneurons,'Ketamine-induced Avg FR Change - interneurons HCN1ko');
+  plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells_gainChange,'Ketamine-induced Avg FR Change - Grid Cells HCN1ko');
 %% Plot Firing Rate over Trials by Mouse
 plot_avgFRbyMouse(hcn1ko_ket_Cells);
 %% Plot Firing Rate over Time 5min before and 60 min after injection by mouse
@@ -363,10 +370,10 @@ plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_ket_Cells,wt_mk801_Cells, 
 plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_mk801_Cells,wt_mk801_Cells, 'HCN1ko-MK801 Ketamine','MK801 Ketamine')
 
 %% Plot Correlation Score Curve Comparisions
-plot_correlationScoreCurveComparison(wt_ket_Cells_onlyStable,hcn1ko_ket_Cells_onlyStable)
+plot_correlationScoreCurveComparison(wt_ket_onlyStable,hcn1ko_ket_Cells_onlyStable)
 
 %% Plot Timewarped Correlation Score Curve Comparisions
-plot_correlationScoreCurveComparison(wt_ket_Cells_onlyStable,hcn1ko_ket_Cells_onlyStable)
+plot_correlationScoreCurveComparison(wt_ket_onlyStable,hcn1ko_ket_Cells_onlyStable)
 
 %% Plot Peakiness Curves over Trials
 plot_peakinessCurves(hcn1ko_ket_Cells_onlyStable)
@@ -389,8 +396,8 @@ plot_correlationMatrix(hcn1ko_ket_Cells_gainChange, 'KO');
 plot_correlationMatrix(hcn1ko_ket_Cells_noGainChange, 'KO');
 
 
-
-hcn1ko_ket_Cells_noGainChange
+% 
+% hcn1ko_ket_Cells_noGainChange
 
 plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells);
 plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_gainChange);
@@ -402,7 +409,7 @@ plot_BehaviorbySesh(fltrCells,true);
 
 
 %% Plot FR comparisons of decoherence 
-plot_cells1_vs_cells2_dchPeriod_STATS(hcn1ko_ket_Cells_noInterneurons,'WT cells',hcn1ko_ket_Cells_onlyInterneurons,'interneurons')
+plot_cells1_vs_cells2_dchPeriod_STATS(hcn1ko_ket_Cells_gainChange,'HCN1ko Grid cells',hcn1ko_ket_Cells_onlyInterneurons,'HCN1ko interneurons')
 plot_cells1_vs_cells2_dchPeriod_STATS(hcn1ko_ket_Cells_gainChange,'Gain Change',hcn1ko_ket_Cells_noGainChange,'No Gain Change')
 
 %% Comparing Interneurons FR time course 
@@ -412,9 +419,9 @@ plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_noInterneurons)
 plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_gainChange)
 plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_noGainChange)
 %%
-plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_noInterneurons,'WT cells',hcn1ko_ket_Cells_onlyInterneurons,'interneurons')
+plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_noInterneurons,'HCN1ko cells',hcn1ko_ket_Cells_onlyInterneurons,'interneurons')
+plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_gainChange,'Gain Change',hcn1ko_ket_Cells_onlyInterneurons,'interneurons')
 plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_gainChange,'Gain Change',hcn1ko_ket_Cells_noGainChange,'No Gain Change')
-
 %%
 plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_onlyInterneurons)
 plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_noInterneurons)
@@ -422,7 +429,10 @@ plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_noInterneurons)
 plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_gainChange)
 plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_noGainChange)
 
-
+%%
+plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(wt_ket_Cells_gainChange,'WT Grid cells',hcn1ko_ket_Cells_gainChange,'HCN1ko Grid Cells')
+plot_cells1_vs_cells2_dchPeriod_STATS(wt_ket_Cells_gainChange,'WT Grid cells',hcn1ko_ket_Cells_gainChange,'HCN1ko Grid Cells')
+plot_cells1_vs_cells2_dchPeriod_STATS(wt_ket_Cells_onlyInterneurons,'WT Interneurons',hcn1ko_ket_Cells_onlyInterneurons,'HCN1ko Interneurons')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plot MK801 WT Cells
 
