@@ -1,5 +1,7 @@
+function plot_timewarped_lickBehavior(cells)
+% Plots Timewarped Lick Accuracy: 30 min post-start; 30 min post-control;
+% 120min post-ketamine
 
-    
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 
 seshes = unique(cellfun(@num2str,cells.metadata(:,1),'uni',0));
