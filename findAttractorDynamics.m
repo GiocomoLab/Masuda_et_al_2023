@@ -7,6 +7,9 @@ function [slope,pearson_rho] = findAttractorDynamics(cells,save_figs,sf)
 slope = nan;
 pearson_rho = nan;
 %%
+% Spatially Binned Correlations
+
+
 nCells = size(cells.spatialFRsmooth,1); %get number of cells 
 % fr1to25 = cells.spatialFRsmooth(:,1:25,:); % get smoothed fr of 1st 25 trials: cellNum x trials(25) x spatial bin(200)
 % fr1to25 = permute(fr1to25, [3 2 1]);
@@ -20,7 +23,7 @@ nCells = size(cells.spatialFRsmooth,1); %get number of cells
 % [rho1B,p1b] = corrcoef(linearized_fr26to50);
 
 
-fr1to50 = cells.spatialFRsmooth(:,1:50,:);% get smoothed fr of 1st 25 trials: cellNum x trials(25) x spatial bin(200)
+fr1to50 = cells.spatialFRsmooth(:,1:50,:);% get smoothed fr of 1st 50 trials: cellNum x trials(25) x spatial bin(200)
 fr1to50 = permute(fr1to50, [3 2 1]);
 linearized_fr1to50 = squeeze(reshape(fr1to50,[],1,nCells));% linearize so it's a matrix of spatialbin x numCells
 [rho1,pvalue] = corrcoef(linearized_fr1to50);
@@ -63,8 +66,83 @@ linearized_rho3 = squeeze(reshape(rho3,[],1));
 linearized_rho4 = squeeze(reshape(rho4,[],1));
 linearized_rho5 = squeeze(reshape(rho5,[],1));
 linearized_rho6 = squeeze(reshape(rho6,[],1));
+%% Find Time Binned Correlations
+fr_timebinned = cells.FRtime;
+
+trialNumStart = 1;
+trialNumEnd = 50;
+trialNumIndx_Start = find(cells.trial(1).trial==trialNumStart,1,'first');
+trialNumIndx_End = find(cells.trial(1).trial==trialNumEnd,1,'last');
+fr_time_matrix = squeeze(cell2mat(struct2cell(fr_timebinned)));
+fr1to50_timebinned = fr_time_matrix(trialNumIndx_Start:trialNumIndx_End,:);% get fr of 1st 50 trials so it's a matrix of numCells x timebin
+fr1to50_timebinned = smoothdata(fr1to50_timebinned,1,'gaussian',10);% smoothData
+[rho1t,pvalue] = corrcoef(fr1to50_timebinned);
+
+significantCellPairs = pvalue<0.05;  % find significant correlations
+triangleMask = tril(significantCellPairs); % only grab below the diagonal to avoid repeats
+
+trialNumStart = 51;
+trialNumEnd = 100;
+trialNumIndx_Start = find(cells.trial(1).trial==trialNumStart,1,'first');
+trialNumIndx_End = find(cells.trial(1).trial==trialNumEnd,1,'last');
+fr_time_matrix = squeeze(cell2mat(struct2cell(fr_timebinned)));
+fr51to100_timebinned = fr_time_matrix(trialNumIndx_Start:trialNumIndx_End,:);% get fr of 1st 50 trials so it's a matrix of numCells x timebin
+fr51to100_timebinned = smoothdata(fr51to100_timebinned,1,'gaussian',10);% smoothData
+[rho2t,pvalue] = corrcoef(fr51to100_timebinned);
+
+trialNumStart = 101;
+trialNumEnd = 150;
+trialNumIndx_Start = find(cells.trial(1).trial==trialNumStart,1,'first');
+trialNumIndx_End = find(cells.trial(1).trial==trialNumEnd,1,'last');
+fr_time_matrix = squeeze(cell2mat(struct2cell(fr_timebinned)));
+fr101to150_timebinned = fr_time_matrix(trialNumIndx_Start:trialNumIndx_End,:);% get fr of 1st 50 trials so it's a matrix of numCells x timebin
+fr101to150_timebinned = smoothdata(fr101to150_timebinned,1,'gaussian',10);% smoothData
+[rho3t,pvalue] = corrcoef(fr101to150_timebinned);
+
+trialNumStart = 200;
+trialNumEnd = 250;
+trialNumIndx_Start = find(cells.trial(1).trial==trialNumStart,1,'first');
+trialNumIndx_End = find(cells.trial(1).trial==trialNumEnd,1,'last');
+fr_time_matrix = squeeze(cell2mat(struct2cell(fr_timebinned)));
+fr200to250_timebinned = fr_time_matrix(trialNumIndx_Start:trialNumIndx_End,:);% get fr of 1st 50 trials so it's a matrix of numCells x timebin
+fr200to250_timebinned = smoothdata(fr200to250_timebinned,1,'gaussian',10);% smoothData
+[rho4t,pvalue] = corrcoef(fr200to250_timebinned);
+
+trialNumStart = 200;
+trialNumEnd = 250;
+trialNumIndx_Start = find(cells.trial(1).trial==trialNumStart,1,'first');
+trialNumIndx_End = find(cells.trial(1).trial==trialNumEnd,1,'last');
+fr_time_matrix = squeeze(cell2mat(struct2cell(fr_timebinned)));
+fr200to250_timebinned = fr_time_matrix(trialNumIndx_Start:trialNumIndx_End,:);% get fr of 1st 50 trials so it's a matrix of numCells x timebin
+fr200to250_timebinned = smoothdata(fr200to250_timebinned,1,'gaussian',10);% smoothData
+[rho5t,pvalue] = corrcoef(fr200to250_timebinned);
+
+trialNumStart = 251;
+trialNumEnd = 290;
+trialNumIndx_Start = find(cells.trial(1).trial==trialNumStart,1,'first');
+trialNumIndx_End = find(cells.trial(1).trial==trialNumEnd,1,'last');
+fr_time_matrix = squeeze(cell2mat(struct2cell(fr_timebinned)));
+fr251to290_timebinned = fr_time_matrix(trialNumIndx_Start:trialNumIndx_End,:);% get fr of 1st 50 trials so it's a matrix of numCells x timebin
+fr251to290_timebinned = smoothdata(fr251to290_timebinned,1,'gaussian',10);% smoothData
+[rho6t,pvalue] = corrcoef(fr251to290_timebinned);
+
+trialNumStart = 291;
+trialNumEnd = 300;
+trialNumIndx_Start = find(cells.trial(1).trial==trialNumStart,1,'first');
+trialNumIndx_End = find(cells.trial(1).trial==trialNumEnd,1,'last');
+fr_time_matrix = squeeze(cell2mat(struct2cell(fr_timebinned)));
+fr291to300_timebinned = fr_time_matrix(trialNumIndx_Start:trialNumIndx_End,:);% get fr of 1st 50 trials so it's a matrix of numCells x timebin
+fr291to300_timebinned = smoothdata(fr291to300_timebinned,1,'gaussian',10);% smoothData
+[rho7t,pvalue] = corrcoef(fr291to300_timebinned);
 
 
+timebinned_significantCellPairs = squeeze(reshape(triangleMask,[],1)); % linearize mask
+timebinned_rho1t = squeeze(reshape(rho1t,[],1));
+timebinned_rho2t = squeeze(reshape(rho2t,[],1));
+timebinned_rho3t = squeeze(reshape(rho3t,[],1));
+timebinned_rho4t = squeeze(reshape(rho4t,[],1));
+timebinned_rho5t = squeeze(reshape(rho5t,[],1));
+timebinned_rho6t = squeeze(reshape(rho6t,[],1));
 %%
 % threshold = 0.25;
 % goodPairsIndx = (linearized_rho1A>threshold | linearized_rho1A<-threshold) & (linearized_rho1B>threshold | linearized_rho1B<-threshold);
@@ -80,13 +158,13 @@ goodPairsIndx = linearized_significantCellPairs;
 
 
 clf;
-if(sum(goodPairsIndx)>10)
+if(sum(goodPairsIndx)>5)
     h1 = figure(1);
     markerSize = 25;
     markerFaceAlpha = 0.4;
     axisSize = [-0.5 0.8 -0.5 0.8];
-    tiledlayout(1,4);
-    set(h1,'Position',[100 100 1600 400]);
+    tiledlayout(3,4);
+    set(h1,'Position',[100 100 1600 1600]);
     
 %     nexttile
 %     tileNum = 1;
@@ -189,6 +267,123 @@ if(sum(goodPairsIndx)>10)
 %     B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
 %     slope(8) = B(2);
 %     pearson_rho(8) = corr(X,Y,'rows', 'complete');
+%
+    %%%% 
+    % Comparing timebinned binned
+    nexttile
+    tileNum = 5;
+    X = timebinned_rho1t(timebinned_significantCellPairs);
+    Y = timebinned_rho2t(timebinned_significantCellPairs);
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
+    title("baseline(time) vs cntrl(time)")
+    hl = lsline;
+    B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
+    slope(tileNum) = B(2);   
+    rho = corr(X,Y,'rows', 'complete');
+    title(sprintf("baseline vs cntrl: rho %.3f",rho));
+    pearson_rho(tileNum) = rho;
+    
+ 
+    nexttile
+    tileNum = 6;
+    X = timebinned_rho1t(timebinned_significantCellPairs);
+    Y = timebinned_rho3t(timebinned_significantCellPairs);
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
+    hl = lsline;
+    B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
+    slope(tileNum) = B(2);
+    rho = corr(X,Y,'rows', 'complete');
+    title(sprintf("baseline(time) vs acuteKet(time): rho %.3f",rho));
+    pearson_rho(tileNum) = rho;
+   
+
+    nexttile
+    tileNum = 7;
+    X = timebinned_rho2t(timebinned_significantCellPairs);
+    Y = timebinned_rho4t(timebinned_significantCellPairs);
+    rho = corr(X,Y,'rows', 'complete');
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
+    title(sprintf("cntrl(time) vs lateKet(time): rho %.3f",rho));
+    hl = lsline;
+    B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
+    slope(tileNum) = B(2);
+    pearson_rho(tileNum) = rho;
+
+    nexttile
+    tileNum = 8;
+    X = timebinned_rho5t(timebinned_significantCellPairs);
+    Y = timebinned_rho6t(timebinned_significantCellPairs);
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
+    hl = lsline;
+    B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);  
+    slope(tileNum) = B(2);
+    rho = corr(X,Y,'rows', 'complete');
+    title(sprintf("lateKet(time) vs gainChange(time): rho %.3f",rho));
+    pearson_rho(tileNum) = rho;
+    
+    
+    %%%% 
+    % Comparing timebinned to spatially binneed
+
+    nexttile
+    tileNum = 9;
+    X = linearized_rho1(goodPairsIndx);
+    Y = timebinned_rho1t(goodPairsIndx);
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
+    hl = lsline;
+    B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);  
+    slope(tileNum) = B(2);
+    rho = corr(X,Y,'rows', 'complete');
+    title(sprintf("spatialBaseline vs timebinnedBaseline: rho %.3f",rho));
+    pearson_rho(tileNum) = rho;
+    
+    
+    nexttile
+    tileNum = 10;
+    X = linearized_rho3(goodPairsIndx);
+    Y = timebinned_rho3t(goodPairsIndx);
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
+    hl = lsline;
+    B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
+    slope(tileNum) = B(2);
+    rho = corr(X,Y,'rows', 'complete');
+    title(sprintf("acuteKet(spatial) vs acuteKet(timebinned): rho %.3f",rho));
+    pearson_rho(tileNum) = rho;
+    
+    nexttile
+    tileNum = 11;
+    X = linearized_rho2(goodPairsIndx);
+    Y = timebinned_rho3t(goodPairsIndx);
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
+    hl = lsline;
+    B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);  
+    slope(tileNum) = B(2);
+    rho = corr(X,Y,'rows', 'complete');
+    title(sprintf("control(spatial) vs acuteKet(timebinned): rho %.3f",rho));
+    pearson_rho(tileNum) = rho;
+    
+    nexttile
+    tileNum = 12;
+    X = linearized_rho6(goodPairsIndx);
+    Y = timebinned_rho6t(goodPairsIndx);
+    scatter(X,Y,markerSize,'MarkerFaceColor','k','MarkerFaceAlpha',markerFaceAlpha,'MarkerEdgeColor','w','LineWidth',0.1);
+    axis(axisSize)
+    hl = lsline;
+    B = [ones(size(hl.XData(:))), hl.XData(:)]\hl.YData(:);
+    slope(tileNum) = B(2);
+    rho = corr(X,Y,'rows', 'complete');
+    title(sprintf("gainChange(spatial) vs gainChange(timebinned): rho %.3f",rho));
+    pearson_rho(tileNum) = rho;
+    
+    
+    
     
     if save_figs
         saveas(h1,fullfile(sf.image_save_dir,sprintf('%s%s%s%s%d.png',sf.name,'_',sf.sessionDate,'_sesh',sf.seshNum)),'png');

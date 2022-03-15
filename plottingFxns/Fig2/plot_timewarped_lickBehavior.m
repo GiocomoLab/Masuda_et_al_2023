@@ -91,6 +91,7 @@ customColorMap = [ 0.5 0.5 0.5 %grey
     0 0.8 0.2]; %green
 
 close all;
+figure(1)
 clear g;
 g(1,1) = gramm('x',(0:time_indices-1)/fs_scaling,'y',timewarped_lickAccuracy_postStart);
 g(1,1).stat_summary();
@@ -98,19 +99,22 @@ g(1,1).set_title('Lick Accuracy - 30min Post Start');
 g(1,1).set_names('x','Time (min)','y','Lick Accuracy (% within 50cm of target)');
 
 g(1,1).set_color_options('map',[ 0.5 0.5 0.5]); %grey
+g.draw
 
 
-g(1,2) = gramm('x',(0:time_indices_cntrl-1)/fs_scaling-bufferMin,'y',timewarped_lickAccuracy_postControl);
-g(1,2).stat_summary();
-g(1,2).set_title('Lick Accuracy - 30min Post Control');
-g(1,2).set_names('x','Time (min)','y','Lick Accuracy (% within 50cm of target)');
-g(1,2).set_color_options('map',[ 0.8 0.2 0.8 ]); %magenta
+figure(2)
+clear g;
+g(1,1) = gramm('x',(0:time_indices_cntrl-1)/fs_scaling-bufferMin,'y',timewarped_lickAccuracy_postControl);
+g(1,1).stat_summary();
+g(1,1).set_title('Lick Accuracy - 30min Post Control');
+g(1,1).set_names('x','Time (min)','y','Lick Accuracy (% within 50cm of target)');
+g(1,1).set_color_options('map',[ 0.8 0.2 0.8 ]); %magenta
+g.draw
 
-g(1,3) = gramm('x',(0:time_indices_ket-1)/fs_scaling-bufferMin,'y',timewarped_lickAccuracy_postKet);
-g(1,3).stat_summary();
-g(1,3).set_title('Lick Accuracy - 120min Post Ketamine');
-g(1,3).set_names('x','Time (min)','y','Lick Accuracy (% within 50cm of target)');
-g(1,3).set_color_options('map',[0 0.8 0.2]); %green
-
-
+figure(3)
+g(1,1) = gramm('x',(0:time_indices_ket-1)/fs_scaling-bufferMin,'y',timewarped_lickAccuracy_postKet);
+g(1,1).stat_summary();
+g(1,1).set_title('Lick Accuracy - 120min Post Ketamine');
+g(1,1).set_names('x','Time (min)','y','Lick Accuracy (% within 50cm of target)');
+g(1,1).set_color_options('map',[0 0.8 0.2]); %green
 g.draw();
