@@ -55,7 +55,7 @@ seshIndx = logical(wt_ket_Cells_noInterneurons_onlyStable.gainModulationValues(:
 wt_ket_Cells_stableGainChange = filterAllCellsStruct(wt_ket_Cells_noInterneurons_onlyStable,seshIndx);
 fprintf('done filtering for WT-ket cells stable only gain change\n');
 
-% Example session
+%% Example session
 seshIndx = ismember(allCells.metadata(:,1),'G3_190705_baseline1+controlinjx1+ketamine1_fr+corr');
 singleSession_Cells = filterAllCellsStruct(allCells,seshIndx);
 
@@ -187,9 +187,17 @@ combinebySesh(allCells_onlyStable,image_save_dir,size_vert,size_horiz)
 savePath = '../fkm_analysis/umap';
 save_figs = true;
 plot_UMAPdataEmbedding(allCells,savePath,save_figs)
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% FIGURE 1
+% BEHAVIOR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+plot_BehaviorbySesh(cells,savefigTF)
+plot_sessionBehaviorStats(cells)
+[lickAccuracyByTrial,timewarpedLickAccuracy,trial,post] = plot_SingleSessionBehavior(cells,savefigTF);
+
+plot_timewarped_lickBehavior(cells)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FIGURE 3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
@@ -199,6 +207,7 @@ plot_FRoverTime5minBefore10minafter(wt_ket_Cells_noInterneurons)
 plot_FRoverTime5minBefore10minafter(wt_ket_Cells_onlyInterneurons)
 plot_FRoverTime5minBefore10minafter(wt_ket_Cells_stableGainChange)
 %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
+plot_STATS_5minBefore5minafter(wt_ket_Cells)
 plot_STATS_5minBefore5minafter(wt_ket_Cells)
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection

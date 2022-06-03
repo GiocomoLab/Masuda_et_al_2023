@@ -11,7 +11,7 @@ function plotAllSingleCellsRatemapsOnly(cells, image_save_dir, save_figs)
         name = cells.metadata{i,2};
         genotype = cells.metadata{i,4};
         sessionDate = cells.metadata{i,3};
-
+        maxFR = max(singleCellsmoothFR,[],'all');    
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Figures
@@ -24,7 +24,7 @@ function plotAllSingleCellsRatemapsOnly(cells, image_save_dir, save_figs)
         set(gca,'layer','bottom');
         box off;
         set(gca,'Xticklabel',[], 'Yticklabel', [])
-        title(sprintf('Cell %d: %s,%s',i,name,genotype))
+        title(sprintf('Cell %d: %s,%s,FR: %2.1fHz',i,name,genotype,maxFR))
         colormap('hot');
 %         xlabel('Virtual cm')
 %         ylabel('Trial')

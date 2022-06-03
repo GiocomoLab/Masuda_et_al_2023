@@ -7,7 +7,7 @@ sampleRate = 50; %hz
 secInMin = 60; 
 scaling  = sampleRate * secInMin; 
 % dsfactor = 50;
-%%
+%
 cntrl = cells.timeFRcircaControlInjx;
 ket = cells.timeFRcircaKetamineInjx;
 
@@ -20,11 +20,11 @@ ketAfter = ket(:,scaling * 5+1:scaling * 10);
 % cntrlDiff = mean(cntrlAfter,2)-mean(cntrlBefore,2);
 % ketDiff = mean(ketAfter,2)-mean(ketBefore,2);
 
-cntrlDiff = mean(cntrlAfter-cntrlBefore,2);
-ketDiff = mean(ketAfter-ketBefore,2);
+% cntrlDiff = mean(cntrlAfter-cntrlBefore,2);
+% ketDiff = mean(ketAfter-ketBefore,2);
 % 
-% cntrlDiff = mean((cntrlAfter-cntrlBefore)/nanmean(cntrlBefore),2);
-% ketDiff = mean((ketAfter-ketBefore)/nanmean(cntrlBefore),2);
+cntrlDiff = mean((cntrlAfter-cntrlBefore)/nanmean(cntrlBefore),2);
+ketDiff = mean((ketAfter-ketBefore)/nanmean(cntrlBefore),2);
 
 % absCntrlDiff = abs(cntrlDiff);
 % absKetDiff = abs(cntrlDiff);
@@ -35,8 +35,8 @@ p = ranksum(cntrlDiff,ketDiff);
 fprintf('\n')
 fprintf(num2str(p))
 
-ket_sem = std( ketDiff ) / sqrt( numel(ketDiff) );
-cntrl_sem = std( cntrlDiff ) / sqrt( numel(cntrlDiff) );
+% ket_sem = std( ketDiff ) / sqrt( numel(ketDiff) );
+% cntrl_sem = std( cntrlDiff ) / sqrt( numel(cntrlDiff) );
 %%
 close all; clear g;
 figure(); hold on;

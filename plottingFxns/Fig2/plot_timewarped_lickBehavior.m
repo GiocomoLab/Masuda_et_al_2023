@@ -45,6 +45,8 @@ for i = 1:numel(seshes)
     try
         if size(lickAccuracyByTrial,2) > 300
             allLickAccuracy(i,1:300) = lickAccuracyByTrial(1:300);
+        elseif size(lickAccuracyByTrial,2) < 300
+            allLickAccuracy(i,1:size(lickAccuracyByTrial,2)) = lickAccuracyByTrial;
         else
             allLickAccuracy(i,:) = lickAccuracyByTrial(:);
         end
@@ -106,15 +108,16 @@ figure(2)
 clear g;
 g(1,1) = gramm('x',(0:time_indices_cntrl-1)/fs_scaling-bufferMin,'y',timewarped_lickAccuracy_postControl);
 g(1,1).stat_summary();
-g(1,1).set_title('Lick Accuracy - 30min Post Control');
+g(1,1).set_title('Lick Accuracy - 30min Control');
 g(1,1).set_names('x','Time (min)','y','Lick Accuracy (% within 50cm of target)');
-g(1,1).set_color_options('map',[ 0.8 0.2 0.8 ]); %magenta
+g(1,1).set_color_options('map',[ 0.5 0.5 0.5]); %grey
 g.draw
 
 figure(3)
 g(1,1) = gramm('x',(0:time_indices_ket-1)/fs_scaling-bufferMin,'y',timewarped_lickAccuracy_postKet);
-g(1,1).stat_summary();
-g(1,1).set_title('Lick Accuracy - 120min Post Ketamine');
+% g(1,1).stat_summary();
+g(1,1).geom_line();
+g(1,1).set_title('Lick Accuracy - 120min Ketamine');
 g(1,1).set_names('x','Time (min)','y','Lick Accuracy (% within 50cm of target)');
-g(1,1).set_color_options('map',[0 0.8 0.2]); %green
+g(1,1).set_color_options('map',[ 0.5 0.5 0.5]); %grey
 g.draw();

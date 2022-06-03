@@ -1,15 +1,15 @@
-function plot_avgFRbyMouse(allCells,titleStr)
+function plot_avgFRbyMouse(cells,titleStr)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plot Firing Rate over Trials by Mouse
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-seshes = unique(cellfun(@num2str,allCells.metadata(:,2),'uni',0));
+seshes = unique(cellfun(@num2str,cells.metadata(:,2),'uni',0));
 
 figure(); hold on;
 
 for i = 1:numel(seshes)
     
-    seshIndx = ismember(allCells.metadata(:,2),seshes{i});
-    cellsFR = allCells.spatialFRsmooth(seshIndx,:,:);
+    seshIndx = ismember(cells.metadata(:,2),seshes{i});
+    cellsFR = cells.spatialFRsmooth(seshIndx,:,:);
     
     avgFRline = smooth(nanmean(nanmean(cellsFR,3),1),10);
     baselineFR = nanmean(nanmean(nanmean(cellsFR(:,1:50,:),3),1),2);
