@@ -21,10 +21,10 @@ runMultiAnalysis(filter,combinedSessionsPath,saveDir,paramsPath);
 % Not needed if a spatial index has already be created
 spatialIndx = generateSpatialIndx(filter);
 %% Pool All the Cells from calculated metadata files from sessions identified in spreadsheet into one big struct
-
+tic
 sessionMetaDataPath = '../fkm_analysis/SessionList.xlsx';
 allCells = poolAllCells(filter,sessionMetaDataPath);
-
+toc
 %% Calculate a decoherence band for each session in given cells
 dchFolderPath = '../fkm_analysis/dch/';
 dch = calcDecoherenceBandForSessions(allCells,dchFolderPath,paramsPath);
