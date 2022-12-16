@@ -3,6 +3,7 @@
 % Requires JohnKeiNPAnalysis to be on the same directory level as fkm_analysis
 
 addpath('./plottingFxns')
+addpath(genpath(pwd))
 paramsPath = './UniversalParams.xlsx';
 filter = 'mec';
 %% Only run once after each session has been spike sorted

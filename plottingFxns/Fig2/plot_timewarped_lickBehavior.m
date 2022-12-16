@@ -18,7 +18,7 @@ timewarped_lickAccuracy_postStart = nan(numel(seshes),time_indices);
 time_indices_cntrl = (min+bufferMin) * fs_scaling;
 timewarped_lickAccuracy_postControl = nan(numel(seshes),time_indices_cntrl);
 
-min_ket = 120;
+min_ket = 30;
 time_indices_ket = (min_ket+bufferMin) * fs_scaling;
 timewarped_lickAccuracy_postKet = nan(numel(seshes),time_indices_ket);
 
@@ -115,9 +115,9 @@ g.draw
 
 figure(3)
 g(1,1) = gramm('x',(0:time_indices_ket-1)/fs_scaling-bufferMin,'y',timewarped_lickAccuracy_postKet);
-% g(1,1).stat_summary();
+g(1,1).stat_summary();
 g(1,1).geom_line();
-g(1,1).set_title('Lick Accuracy - 120min Ketamine');
+g(1,1).set_title('Lick Accuracy - 30min Ketamine');
 g(1,1).set_names('x','Time (min)','y','Lick Accuracy (% within 50cm of target)');
 g(1,1).set_color_options('map',[ 0.5 0.5 0.5]); %grey
 g.draw();

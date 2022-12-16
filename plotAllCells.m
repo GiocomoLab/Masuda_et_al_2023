@@ -5,7 +5,7 @@
 
 % add plotting functions to path
 addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
-addpath(genpath('./plottingFxns'))
+addpath(genpath(pwd))
 
 % if ~exist('paramsPath','var')
 %     params = readtable('./UniversalParams.xlsx');
@@ -74,7 +74,6 @@ seshIndx = hcn1ko_ket_Cells.interneuronFlag;
 hcn1ko_ket_Cells_onlyInterneurons = filterAllCellsStruct(hcn1ko_ket_Cells,seshIndx);
 fprintf('done filtering for hcn1ko-ket cells only Interneurons\n');
 
-
 % filter for hcn1ko mec cells with gain change cells
 seshIndx = logical(hcn1ko_ket_Cells_noInterneurons.gainModulationValues(:,4));
 hcn1ko_ket_Cells_gainChange = filterAllCellsStruct(hcn1ko_ket_Cells_noInterneurons,seshIndx);
@@ -112,6 +111,9 @@ fprintf('done filtering Control Cells\n');
 
 
 
+
+
+% ========  Example session with only Stable Cells======== 
 % WT 
 %'G3_190704_baseline1+controlinjx1+ketamine1_fr+corr'
 % 'G3_190705_baseline1+controlinjx1+ketamine1_fr+corr'
@@ -119,7 +121,6 @@ fprintf('done filtering Control Cells\n');
 % 'G5_190708_baseline1+controlinjx1+ketamine1_fr+corr'
 % 'HCNd1_190808_baseline1+controlinjx1+ketamine1_fr+corr'
 
-% Example session with only Stable Cells
 singleSession_Cells_onlyStable = filterAllCellsStruct(singleSession_Cells,singleSession_Cells.stabilityFlag);
 wt_ket_Cells_onlyStable = filterAllCellsStruct(wt_ket_Cells,wt_ket_Cells.stabilityFlag);
 hcn1ko_ket_Cells_onlyStable = filterAllCellsStruct(hcn1ko_ket_Cells,hcn1ko_ket_Cells.stabilityFlag);
@@ -208,18 +209,25 @@ plot_FRoverTime5minBefore10minafter(wt_ket_Cells_onlyInterneurons)
 plot_FRoverTime5minBefore10minafter(wt_ket_Cells_stableGainChange)
 %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
 plot_STATS_5minBefore5minafter(wt_ket_Cells)
-plot_STATS_5minBefore5minafter(wt_ket_Cells)
+plot_STATS_5minBefore5minafter(wt_ket_Cells_stableGainChange)
+plot_STATS_5minBefore5minafter(wt_ket_Cells_onlyInterneurons)
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection
 plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells,'Ketamine-induced Avg FR Change');
-plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells_stableGainChange,'Ketamine-induced Avg FR Change - Grid Cells');
-plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells_onlyInterneurons,'Ketamine-induced Avg FR Change - Interneurons');
+plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells_stableGainChange,'Ketamine-induced Avg FR - Grid Cells');
+plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells_onlyInterneurons,'Ketamine-induced Avg FR - Interneurons');
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection by mouse
-plot_neg5to60minAfterKetamineInjx_byMouse(cells)
+plot_neg5to60minAfterKetamineInjx_byMouse(wt_ket_Cells_stableGainChange)
+plot_neg5to60minAfterKetamineInjx_byMouse(wt_ket_Cells_onlyInterneurons)
 %% Plot Firing Rate over Trials by Mouse
 plot_avgFRbyMouse(wt_ket_Cells,'Average FR by Mouse')
-
+plot_avgFRbyMouse(wt_ket_Cells_stableGainChange,'Average FR by Mouse - Grid Cells')
+plot_avgFRbyMouse(wt_ket_Cells_onlyInterneurons,'Average FR by Mouse - Interneurons')
+%%
+plot_HistfitFRscore(wt_ket_Cells,'WT');
+plot_HistfitFRscore(wt_ket_Cells_stableGainChange,'WT');
+plot_HistfitFRscore(wt_ket_Cells_onlyInterneurons,'WT');
 %% Plot Peakiness Curves over Trials
 plot_peakinessCurves(wt_ket_Cells)
 

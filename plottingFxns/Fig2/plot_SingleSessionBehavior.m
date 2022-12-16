@@ -8,13 +8,14 @@ post = extractSessionValueFromCellsStruct(cells.posT);
 posx = extractSessionValueFromCellsStruct(cells.posX);
 lickt = extractSessionValueFromCellsStruct(cells.lickT);
 lickx = extractSessionValueFromCellsStruct(cells.lickX);
+speed = extractSessionValueFromCellsStruct(cells.speed);
 
 session_name = sprintf('%s_%s_%s_%s', cells.metadata{1,2},cells.metadata{1,3},cells.metadata{1,4},cells.metadata{1,8});
 fprintf('session: %s\n',session_name);
 
 
 [~,~,lick_idx] = histcounts(lickt,post);
-
+%% Calculate lick Accuracy
 lickAccuracyByTrial = zeros(1,max(trial));
 for i = 1:max(trial)
     trialLicks = lickx(trial(lick_idx) == i);
@@ -31,6 +32,7 @@ for i = 1:size(post,1)
    trial_lickAccuracy = lickAccuracyByTrial(trial(i));
    timewarpedLickAccuracy(i)=trial_lickAccuracy;
 end
+
 
 %%
 if savefigTF

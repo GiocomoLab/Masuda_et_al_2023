@@ -25,11 +25,14 @@ ketAfter = ket(:,scaling * 5+1:scaling * 10);
 % 
 cntrlDiff = mean((cntrlAfter-cntrlBefore)/nanmean(cntrlBefore),2);
 ketDiff = mean((ketAfter-ketBefore)/nanmean(cntrlBefore),2);
+fprintf('\nCntrl Diff: %f',mean(mean((cntrlAfter-cntrlBefore))))
+fprintf('\nKet Diff: %f',mean(mean((ketAfter-ketBefore))))
 
 % absCntrlDiff = abs(cntrlDiff);
 % absKetDiff = abs(cntrlDiff);
 
 [h,p] = ttest2(cntrlDiff, ketDiff);
+fprintf('\n')
 fprintf(num2str(p))
 p = ranksum(cntrlDiff,ketDiff);
 fprintf('\n')
