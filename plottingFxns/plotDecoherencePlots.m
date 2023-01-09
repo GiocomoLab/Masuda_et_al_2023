@@ -1,6 +1,6 @@
-function plotDecoherencePlots(cells)
+ function plotDecoherencePlots(cells)
 
-
+addpath(genpath(pwd))
 pool_decoherence_sessions = poolDecoherenceSessions(cells);
 seshNum = numel({pool_decoherence_sessions.seshName});
 
@@ -14,10 +14,14 @@ seshNum = numel({pool_decoherence_sessions.seshName});
 figure()
 highlightedDecoherenceIndx = cell(seshNum,1);
 for i = 1:seshNum
-    iCA = pool_decoherence_sessions(i).idxCellArray;
-    iDI = pool_decoherence_sessions(i).decoherenceIdx;
-    highlightedDecoherenceIndx{i} = iCA;
-    highlightedDecoherenceIndx{i}(iDI) = 20;
+    try
+        iCA = pool_decoherence_sessions(i).idxCellArray;
+        iDI = pool_decoherence_sessions(i).decoherenceIdx;
+        highlightedDecoherenceIndx{i} = iCA;
+        highlightedDecoherenceIndx{i}(iDI) = 20;
+    catch
+        fprintf('\nFailed')
+    end
 end
 plot_multiDimensionalCellArray(highlightedDecoherenceIndx)
 goodFigPrefs

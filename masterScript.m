@@ -11,12 +11,12 @@ filter = 'mec';
 % lick data for 3 unity sessions. NEED TO UPDATE WITH NEW SYNC DRIFT
 % CORRECT
 
-runMultiPostProcessing
+% runMultiPostProcessing
 %%
-combinedSessionsPath = '../fkm_analysis/combinedSesh/*.mat';
-saveDir = '../fkm_analysis/combinedSesh/fr_data_matrices_noSmoothing';
-
-runMultiAnalysis(filter,combinedSessionsPath,saveDir,paramsPath);
+% combinedSessionsPath = '../fkm_analysis/combinedSesh/*.mat';
+% saveDir = '../fkm_analysis/combinedSesh/fr_data_matrices_noSmoothing';
+% 
+% runMultiAnalysis(filter,combinedSessionsPath,saveDir,paramsPath);
 
 %% Generate spatial indx to figure out what cells exist to pool together in the next step
 % Not needed if a spatial index has already be created
@@ -27,10 +27,10 @@ sessionMetaDataPath = '../fkm_analysis/SessionList.xlsx';
 allCells = poolAllCells(filter,sessionMetaDataPath);
 toc
 %% Calculate a decoherence band for each session in given cells
-dchFolderPath = '../fkm_analysis/dch/';
-dch = calcDecoherenceBandForSessions(allCells,dchFolderPath,paramsPath);
-dchFilePath = '../fkm_analysis/dch.mat';
-save(dchFilePath,'dch');
+% dchFolderPath = '../fkm_analysis/dch/';
+% dch = calcDecoherenceBandForSessions(allCells,dchFolderPath,paramsPath);
+% dchFilePath = '../fkm_analysis/dch.mat';
+% save(dchFilePath,'dch');
 %% if dechorence bands have already been calculated — use this to add dch 
 % band to the allCells struct
 dchFilePath = '../fkm_analysis/dch.mat';

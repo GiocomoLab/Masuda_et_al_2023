@@ -49,7 +49,7 @@ fr251to290 = cells.spatialFRsmooth(:,251:290,:);
 fr251to290 = permute(fr251to290, [3 2 1]);
 linearized_fr251to290 = squeeze(reshape(fr251to290,[],1,nCells));
 [rho5,p5] = corrcoef(linearized_fr251to290);
-
+    
 fr290to300 = cells.spatialFRsmooth(:,290:300,:);
 fr290to300 = permute(fr290to300, [3 2 1]);
 linearized_fr290to300 = squeeze(reshape(fr290to300,[],1,nCells));

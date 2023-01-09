@@ -24,7 +24,7 @@ fprintf('done filtering ketamineCells\n');
 seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
 wt_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
 fprintf('done filtering for WT-ket cells\n');
-
+%%
 % filter for WT mec cells with ketamine not interurons
 seshIndx = ~wt_ket_Cells.interneuronFlag;
 wt_ket_Cells_noInterneurons = filterAllCellsStruct(wt_ket_Cells,seshIndx);
@@ -107,9 +107,6 @@ controlCells = filterAllCellsStruct(allCells,seshIndx);
 seshIndx = ismember(controlCells.metadata(:,4),'WT');
 controlCells = filterAllCellsStruct(controlCells,seshIndx);
 fprintf('done filtering Control Cells\n');
-
-
-
 
 
 
@@ -253,9 +250,15 @@ plot_timeWarpedStabilityScoreCurves(wt_ket_Cells_onlyStable)
 % i = 297 % G2,WT
 % i = 689
 % i = 566; %G3, WT
+plot_niceSingleCellFig(allCells,545); 
 plot_niceSingleCellFig(allCells,566); % G3_190704_baseline1+controlinjx1+ketamine1_fr+corr
 plot_niceSingleCellFig(allCells,568); % G3_190704_baseline1+controlinjx1+ketamine1_fr+corr
 plot_niceSingleCellFig(allCells,285); 
+
+seshIndx = ismember(allCells.metadata(:,1),'G3_190705_baseline1+controlinjx1+ketamine1_fr+corr');
+singleSession_Cells = filterAllCellsStruct(allCells,seshIndx);
+
+plot_peakinessCurves(singleSession_Cells)
 %% Plot Correlation Matrix by sessions
 % Example session
 seshIndx = ismember(allCells.metadata(:,1),'G3_190704_baseline1+controlinjx1+ketamine1_fr+corr');
@@ -311,7 +314,7 @@ plot_FRoverTime5minBefore10minafter(wt_ket_Cells_noInterneurons)
 plot_FRoverTime5minBefore10minafter(wt_ket_Cells_gainChange)
 plot_FRoverTime5minBefore10minafter(wt_ket_Cells_noGainChange)
 %%
-plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(wt_ket_Cells_gainChange,'Grid cells',wt_ket_Cells_onlyInterneurons,'interneurons')
+plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(wt_ket_Cells_noInterneurons,'Grid cells',wt_ket_Cells_onlyInterneurons,'interneurons')
 plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(wt_ket_Cells_gainChange,'Gain Change',wt_ket_Cells_noGainChange,'No Gain Change')
 
 %%

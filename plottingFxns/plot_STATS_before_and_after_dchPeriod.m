@@ -40,7 +40,7 @@ dch_avg_cellFR = dchAndBefore.dch_avg_cellFR;
 %%
 [h,p] = ttest2(before_dch_avg_cellFR, dch_avg_cellFR);
 fprintf('The hypothesis test is %i; P-value is %.02d\n',h,p);
-%% Compare Before and After Figures
+%% Compare Before Dch and After Dch Figures
 close all; 
 fr = vertcat(before_dch_avg_cellFR,dch_avg_cellFR);
 nanIndx = isnan(fr);
@@ -60,6 +60,7 @@ clear g;
 g=gramm('x',color,'y',fr,'color',color);
 % g.stat_violin('normalization','width','dodge',0,'fill','edge','half','true');
 g.stat_boxplot('notch','true');
+% g.stat_summary();
 g.set_title('FR(hz) Control vs Decoherence Period');
 g.set_names('x','Mice','y', 'Hz');
 customColorMap = [ % 0.5 0.5 0.5 %grey

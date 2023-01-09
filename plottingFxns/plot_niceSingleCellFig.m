@@ -195,7 +195,7 @@ ylabel('')
 figure()
 rowStart = 1;
 rowEnd = 2;
-ylim_range = [0 max(max(mean(smoothdata(singleCellFR2cm(:,:)),2)))];
+ylim_range = [0 max(max(mean(smoothdata(singleCellFR2cm(:,:)),2)))+15];
 smoothFactor = 10;
 
 row = 6;
@@ -294,19 +294,19 @@ plotWidth = 600;
 plotHeight = 600;
 
 figure('Position',[200 200 plotWidth plotHeight]);
-t = tiledlayout(4,1);
+t = tiledlayout(3,1);
 
-nexttile(t)
-plot(smooth(mean(singleCellFR2cm,2),smoothFactor),'k','LineWidth',linewidth);
-% plot(smooth(mean(singleCellFR2cm,2),'sgolay'),'r');
-title('Avg Trial Firing Rate');
-ylabel('Hz');
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.015 0.025]);
-set(gca,'layer','bottom');
-box off;
-set(gca,'Xticklabel',[])
-set(gca,'FontSize',12);
+% nexttile(t)
+% plot(smooth(mean(singleCellFR2cm,2),smoothFactor),'k','LineWidth',linewidth);
+% % plot(smooth(mean(singleCellFR2cm,2),'sgolay'),'r');
+% title('Avg Trial Firing Rate');
+% ylabel('Hz');
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.015 0.025]);
+% set(gca,'layer','bottom');
+% box off;
+% set(gca,'Xticklabel',[])
+% set(gca,'FontSize',12);
 
 % subplot(row,col,rowStart+col:rowEnd+col)
 nexttile(t)
@@ -338,39 +338,39 @@ set(gca,'FontSize',12);
 
 % rowPlotNum = 3;
 % subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
-% nexttile(t)
-% % plot(stabilityScore,'k');
-% plot(smooth(stabilityScore,smoothFactor),'k','LineWidth',linewidth);
-% % plot(smooth(stabilityScore,10,'sgolay'));
-% % plot(stabilityScoreCurve);
-% % plot(smooth(stabilityScoreCurve,10,'sgolay'));
-% % plot(offdiag,'m')
-% % set(gca,'TickDir','out');
-% % set(gca,'ticklength',[0.015 0.025]);
-% % set(gca,'layer','bottom');
-% % box off;
-% % ylim([0 400]);
-% % set(gca,'FontName','Helvetica');
-% title('Stability Score')
-% ylabel('Stability Score')
-% % set(gca,'Xticklabel',[])
-% set(gca,'FontSize',12);
-% xlabel('Trial Number')
-
-
 nexttile(t)
-% subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
-plot(smooth(lickAccuracyByTrial,smoothFactor),'k','LineWidth',linewidth);
-% scatter(trial(lick_idx),posx(lick_idx),'k');
-set(gca,'TickDir','out');
-set(gca,'ticklength',[0.015 0.025]);
-set(gca,'layer','bottom');
-box off;
-set(gca,'FontName','Helvetica');
-title('Lick Accuracy')
+% plot(stabilityScore,'k');
+plot(smooth(stabilityScore,smoothFactor),'k','LineWidth',linewidth);
+% plot(smooth(stabilityScore,10,'sgolay'));
+% plot(stabilityScoreCurve);
+% plot(smooth(stabilityScoreCurve,10,'sgolay'));
+% plot(offdiag,'m')
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.015 0.025]);
+% set(gca,'layer','bottom');
+% box off;
+% ylim([0 400]);
+% set(gca,'FontName','Helvetica');
+title('Stability Score')
+ylabel('Stability Score')
+% set(gca,'Xticklabel',[])
+set(gca,'FontSize',12);
 xlabel('Trial Number')
-ylabel('Lick Accuracy')
-set(gca,'FontSize',10);
+
+
+% nexttile(t)
+% % subplot(row,col,rowStart+col*rowPlotNum:rowEnd+col*rowPlotNum)
+% plot(smooth(lickAccuracyByTrial,smoothFactor),'k','LineWidth',linewidth);
+% % scatter(trial(lick_idx),posx(lick_idx),'k');
+% set(gca,'TickDir','out');
+% set(gca,'ticklength',[0.015 0.025]);
+% set(gca,'layer','bottom');
+% box off;
+% set(gca,'FontName','Helvetica');
+% title('Lick Accuracy')
+% xlabel('Trial Number')
+% ylabel('Lick Accuracy')
+% set(gca,'FontSize',10);
 
 %%
 
@@ -378,7 +378,7 @@ set(gca,'FontSize',10);
 % Correlation Matrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
-figure(3); clf; 
+figure(); clf; 
 % subplot(row,col,1:18); 
 imagesc(fillmissing(corrMatrix,'linear')); colorbar;
 
