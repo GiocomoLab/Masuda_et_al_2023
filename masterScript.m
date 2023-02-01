@@ -21,6 +21,7 @@ filter = 'mec';
 %% Generate spatial indx to figure out what cells exist to pool together in the next step
 % Not needed if a spatial index has already be created
 spatialIndx = generateSpatialIndx(filter);
+
 %% Pool All the Cells from calculated metadata files from sessions identified in spreadsheet into one big struct
 tic
 sessionMetaDataPath = '../fkm_analysis/SessionList.xlsx';
@@ -56,7 +57,7 @@ fprintf('Done adding interneuron flag to AllCells\n');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Pre-Figures
 % Plot decoherence bands stats
-plotDecoherenceBandStats(dch)
+% plotDecoherenceBandStats(dch)
 % 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,3 +65,5 @@ plotDecoherenceBandStats(dch)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Code to generate paper figures
 plotAllCells(allCells,paramsPath);
+
+

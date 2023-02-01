@@ -9,7 +9,7 @@ end
 % i = 300 %  G2, WT
 % i = 3213%  HCNd1, WT
 % i = 3484 %  HCNd2, KO
-% i = 545 % G3, WT
+i = 545; % G3, WT THIS IS WHAT IS USED IN FIG 3 
 % i = 285 % G2, WT
 % i = 297 % G2, WT
 % i = 302 % G2, WT
@@ -141,18 +141,18 @@ title('Spatial FR')
 colorbar
 
 subplot(row,col,columnSubplot+2); %speed
-imagesc(trialAvgSpeed)
+scatter(trialAvgSpeed,300:-1:1,'k')
 set(gca,'TickDir','out');
 set(gca,'ticklength',[0.015 0.025]);
 set(gca,'Yticklabel',[])
-set(gca,'Xticklabel',[])
+% set(gca,'Xticklabel',[])
 set(gca,'layer','bottom');
 set(gca,'FontName','Helvetica');
 title('Speed')
-box off;
+% box off;
 set(gca,'FontSize',titleFontSize);
-ylabel('')
-colorbar
+xlabel('Mean Trial Speed cm/s')
+
 
 subplot(row,col,columnSubplot+3) %licks
 scatter(posx(lick_idx),trial(lick_idx),'k');

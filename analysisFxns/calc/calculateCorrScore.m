@@ -15,7 +15,7 @@ function [drugCorrEffectScore, cellCorrScore, corrTemplate] = calculateCorrScore
 %   corrTemplate - generates baseline template from mean FR map of the baseline trials
 
 
-% for cell k, calculate correlation template from 1st 40trials
+% for cell k, calculate correlation template from 1st 50 trials
 corrTemplate = mean(singleCellallTrialsFR(1:trials_corrTemplate,:));
 %     plot(corrTemplate)
 numTrial = size(singleCellallTrialsFR,1);
