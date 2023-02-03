@@ -9,7 +9,7 @@ scaling  = sampleRate * secInMin / 50; %divide by 50 now that i'm downsampling i
 figure(); clf;
 hold on;
 
-metadataCategory = 2; 
+metadataCategory = 2; %plot by animal
 seshes = unique(cellfun(@num2str,cells.metadata(:,metadataCategory),'uni',0));
 for i = 1:numel(seshes)
     
@@ -29,13 +29,13 @@ for i = 1:numel(seshes)
     data = smoothdata(nanmean(normY,1),'gaussian',100);
     plot(x,data,'-k','LineWidth',1); hold on;
     
-    postKetData = data(x>0);
-    [maxValue,maxIdx] = max(postKetData);
-    [minValue,minIdx] = min(postKetData);
-    plot(x(maxIdx:minIdx)+find(x==0),data(maxIdx:minIdx),'-b','LineWidth',1)
+%     postKetData = data(x>0);
+    [maxValue,maxIdx] = max(data);
+    [minValue,minIdx] = min(data);
+%     plot(x(maxIdx:minIdx)+find(x==0),data(maxIdx:minIdx),'-b','LineWidth',1)
     
-    ketLengthTime(i) = x(minIdx+find(x==0));
-    ketPeakTime(i) = x(maxIdx+find(x==0));
+    ketLengthTime(i) = x(minIdx);
+    ketPeakTime(i) = x(maxIdx);
 end
 
 

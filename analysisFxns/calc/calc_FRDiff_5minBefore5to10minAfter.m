@@ -1,4 +1,4 @@
-function [cntrlDiff,ketDiff] = calc_FRDiff_5minBefore5minAfter(cells)
+function [cntrlDiff,ketDiff] = calc_FRDiff_5minBefore5to10minAfter(cells)
     sampleRate = 50; %hz
     secInMin = 60; 
     scaling  = sampleRate * secInMin; 
@@ -9,8 +9,8 @@ function [cntrlDiff,ketDiff] = calc_FRDiff_5minBefore5minAfter(cells)
     cntrlBefore = cntrl(:,1:scaling*5);
     ketBefore = ket(:,1:scaling*5);
     
-    cntrlAfter = cntrl(:,scaling * 5+1:scaling * 10);
-    ketAfter = ket(:,scaling * 5+1:scaling * 10);
+    cntrlAfter = cntrl(:,scaling * 10+1:scaling * 15);
+    ketAfter = ket(:,scaling * 10+1:scaling * 15);
     
     cntrlDiff = mean((cntrlAfter-cntrlBefore),2);
     ketDiff = mean((ketAfter-ketBefore),2);
