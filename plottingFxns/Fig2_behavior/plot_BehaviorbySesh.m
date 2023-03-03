@@ -46,7 +46,7 @@ customColorMap = [ 0.5 0.5 0.5 %grey
     0 0.8 0.2]; %green
 
 clear g;
-g=gramm('x',x,'y',y,'color',color);
+g=gramm('x',x,'y',y,'color',x);
 g.stat_violin('fill', 'transparent');
 % g.stat_boxplot('notch','true')
 % g.stat_summary('geom',{'edge_bar','black_errorbar'},'type','ci','setylim','true');
@@ -55,11 +55,14 @@ g.set_color_options('chroma',0,'map',customColorMap);
 g.set_names('x','','y', 'Lick Accuracy');
 g.set_order_options('x',0);
 g.draw();
-
+%%
 figure(3)
 [p,t,stats] = anova1(y,x,'off');
 [results,~] = multcompare(stats,'CType','bonferroni');
 
-
+%% Calculate SEM
+trialRange = 101:150;
+MeanLickAccuracy = mean(y(trialRange))
+SEM = std(y(trialRange))/sqrt(length(y(trialRange)))
 
 

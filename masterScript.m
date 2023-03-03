@@ -11,8 +11,8 @@ filter = 'mec';
 % lick data for 3 unity sessions. NEED TO UPDATE WITH NEW SYNC DRIFT
 % CORRECT
 
-% runMultiPostProcessing
-%%
+% runMultiPostProcessing % uncomment to run
+%% Run analysis functions; only run when generating new data files
 % combinedSessionsPath = '../fkm_analysis/combinedSesh/*.mat';
 % saveDir = '../fkm_analysis/combinedSesh/fr_data_matrices_noSmoothing';
 % 
@@ -20,7 +20,7 @@ filter = 'mec';
 
 %% Generate spatial indx to figure out what cells exist to pool together in the next step
 % Not needed if a spatial index has already be created
-spatialIndx = generateSpatialIndx(filter);
+% spatialIndx = generateSpatialIndx(filter); % uncomment to run
 
 %% Pool All the Cells from calculated metadata files from sessions identified in spreadsheet into one big struct
 tic
@@ -38,6 +38,7 @@ dchFilePath = '../fkm_analysis/dch.mat';
 load(dchFilePath);
 allCells = add_Dch_to_allCells(allCells,dch);
 
+%% Add filtering flags 
 % Add a stability flag to all the cells
 stabilityTable = findStableCells(allCells); % {'totalStability', 'baselineStability', 'acuteDrugStability', 'endingStability', 'gainStability'}
 stabilityThreshold = 0.2;

@@ -37,13 +37,13 @@ for i = 1:numCells
     if ~isempty(decoherenceTrialIdx)
         try 
             dchIndxLength = numel(decoherenceTrialIdx);
-    %         controlTrials = 101-dchIndxLength:100;
-            controlTrials = 1:dchIndxLength;
-            if controlTrials(1) < 1
-                controlTrials = 1:dchIndxLength;
-            end
-            control_spatialFR = singleCellSpatialFR(controlTrials);
-            dch_spatialFR = singleCellSpatialFR(decoherenceTrialIdx);
+            controlTrials = 101-dchIndxLength:100;
+%             controlTrials = 1:dchIndxLength;
+%             if controlTrials(1) < 1
+%                 controlTrials = 1:dchIndxLength;
+%             end
+%             control_spatialFR = singleCellSpatialFR(controlTrials);
+%             dch_spatialFR = singleCellSpatialFR(decoherenceTrialIdx);
                    
     
             %% Calculate Spatial Information for dch and cntrl
@@ -60,8 +60,8 @@ for i = 1:numCells
             end
 
             
-            I_spike_cntrl = mean(trialBlockSpatialInformation(controlTrials,1));
-            I_spike_dch = mean(trialBlockSpatialInformation(decoherenceTrialIdx,1));
+            I_spike_cntrl = nanmean(trialBlockSpatialInformation(controlTrials,1));
+            I_spike_dch = nanmean(trialBlockSpatialInformation(decoherenceTrialIdx,1));
             %% Save values to global variable
             all_Ispike_cntrl(i) = I_spike_cntrl;
             all_Ispike_dch(i) = I_spike_dch;
@@ -86,10 +86,10 @@ data = vertcat(all_Ispike_cntrl,all_Ispike_dch);
 nanIndx = isnan(data);
 data = data(~nanIndx);
 
-% Get Mice Name Data
-metadata = cells.metadata(:,2);
-metadata = vertcat(metadata,metadata);
-metadata = metadata(~nanIndx);
+% % Get Metadata Data
+% metadata = cells.metadata(:,2);
+% metadata = vertcat(metadata,metadata);
+% metadata = metadata(~nanIndx);
 
 color = vertcat(...
     repmat({'Control'}, numCells),...
@@ -108,7 +108,7 @@ g.stat_violin('normalization','width')
 % g.stat_summary();
 % g.stat_bin('geom','stacked_bar')
 g.set_title('Spatial Information Score Control vs Decoherence Period');
-g.set_names('x','','y', 'Hz');
+g.set_names('x','','y', 'SI Score');
 customColorMap = [ % 0.5 0.5 0.5 %grey
     0.8 0.2 0.8 %magenta
     0 0.8 0.2]; %green

@@ -1,4 +1,5 @@
  function plotDecoherencePlots(cells)
+ %USED THIS FOR FIG 4
 
 addpath(genpath(pwd))
 pool_decoherence_sessions = poolDecoherenceSessions(cells);
@@ -76,12 +77,14 @@ title('Decoherence Period Length (trials)');
 %% Plot length of decoherence period
 dchTimeMin = cell2mat({pool_decoherence_sessions.decoherenceTime}')./60;
 figure();
-histogram(dchTimeMin,10,'FaceColor','black')
+histogram(dchTimeMin,5,'FaceColor','black')
 title('Decoherence Period Length (min)');
 goodFigPrefs
 xlabel('Min')
 ylabel('Number of Sessions')
 
+meanDchLength = mean(dchTimeMin)
+SEM_dch = std(dchTimeMin)/sqrt(length(dchTimeMin))
 %% Plot start Delay of decoherence period
 dchStartDelay = cell2mat({pool_decoherence_sessions.decoherenceStartDelay}')./60;
 figure();
