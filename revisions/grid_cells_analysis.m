@@ -1,29 +1,34 @@
+addpath(genpath("C:\Users\Niflheim\Documents\GitHub\Giocomo\JohnKeiNPAnalysis"))
+addpath(genpath('//oak-smb-giocomo.stanford.edu/groups/giocomo/export/data/Users/KMasuda/Neuropixels/plottingFxns'))
+addpath(genpath("C:/Users/Niflheim/Documents/MATLAB/gramm"))
+
 %% Repeating analyses with grid cells
 %% Filter & save grid cells
+% Run masterScript first, then...
 % Filter for WT mec cells during ketamine sessions
 seshIndx = ismember(allCells.metadata(:,8),'ketamine');
 ketamineCells = filterAllCellsStruct(allCells,seshIndx);
 seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
-wt_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
-fprintf('done filtering for WT-ket cells\n');
+wt_ket_cells = filterAllCellsStruct(ketamineCells,seshIndx);
 
-% filter for WT mec grid cells
-seshIndx = ~wt_ket_Cells.interneuronFlag;
-wt_ket_Cells_noInterneurons = filterAllCellsStruct(wt_ket_Cells,seshIndx);
-wt_ket_Cells_noInterneurons_onlyStable = filterAllCellsStruct(wt_ket_Cells_noInterneurons,wt_ket_Cells_noInterneurons.stabilityFlag);
-seshIndx = logical(wt_ket_Cells_noInterneurons_onlyStable.gainModulationValues(:,4));
-wt_ket_Cells_stableGainChange = filterAllCellsStruct(wt_ket_Cells_noInterneurons_onlyStable,seshIndx);
-fprintf('done filtering for WT-ket cells stable only gain change\n');
+% Filter for excitatory (<15Hz), gain change neurons
+seshIndx = ~wt_ket_cells.interneuronFlag;
+wt_ket_cells_noInterneurons = filterAllCellsStruct(wt_ket_cells,seshIndx);
+seshIndx = logical(wt_ket_cells_noInterneurons.gainModulationValues(:,4));
+wt_ket_cells_stableGainChange = filterAllCellsStruct(wt_ket_cells_noInterneurons,seshIndx);
 
-%% Additional spatial stability filter
-stability = zeros(length(wt_ket_Cells_stableGainChange.metadata),1);
-for c = 1:length(wt_ket_Cells_stableGainChange.metadata)
-    baseline_stability = wt_ket_Cells_stableGainChange.stabilityScoreCurve(c,1:50);
+%% Additional spatial stability & spatial information filters
+stability = zeros(length(wt_ket_cells_stableGainChange.metadata),1);
+for c = 1:length(wt_ket_cells_stableGainChange.metadata)
+    baseline_stability = wt_ket_cells_stableGainChange.stabilityScoreCurve(c,1:50);
     baseline_stability(~isfinite(baseline_stability)) = 0;
     stability(c) = mean(baseline_stability);
 end
 seshIndx = stability>0.2;
-grid_cells = filterAllCellsStruct(wt_ket_Cells_stableGainChange, seshIndx);
+grid_cells = filterAllCellsStruct(wt_ket_cells_stableGainChange, seshIndx);
+baseline_SI = mean(grid_cells.bitsPerSecCurve(:,1:50),2);
+seshIndx = baseline_SI>3;
+grid_cells = filterAllCellsStruct(grid_cells,seshIndx);
 save('\\oak-smb-giocomo.stanford.edu\groups\giocomo\fkmasuda\fkm_analysis\EAJ_revisions\grid_cells.mat', 'grid_cells', '-v7.3')
 
 %% Plot
@@ -31,7 +36,8 @@ save('\\oak-smb-giocomo.stanford.edu\groups\giocomo\fkmasuda\fkm_analysis\EAJ_re
 plot_peakinessCurves(grid_cells)
 % 3M
 plot_timeWarpedStabilityScoreCurves(grid_cells)
-% FIND 5C
+% 5C
+plot_AttractorDynamicsbySession_figure(grid_cells)
 
 %% Grid Scale: shuffle method
 smoothSigma = 2;
