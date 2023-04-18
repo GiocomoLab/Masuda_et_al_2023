@@ -1,33 +1,4 @@
 %% Synaptic transmission probability
-%% Prep for CellExplorer
-% Filter for WT mec cells during ketamine sessions
-% Before this, run masterScript to generate allCells
-seshIndx = ismember(allCells.metadata(:,8),'ketamine');
-ketamineCells = filterAllCellsStruct(allCells,seshIndx);
-seshIndx = ismember(ketamineCells.metadata(:,4),'WT');
-wt_ket_Cells = filterAllCellsStruct(ketamineCells,seshIndx);
-fprintf('done filtering for WT-ket cells\n');
-
-% Session list & injection times
-wt_ket_sessions = cell(30,4);
-session = '';
-s = 1;
-sess_idx = 0;
-while s<=length(wt_ket_Cells.metadata(:,1))
-    while strcmp(session, wt_ket_Cells.metadata(s,1))
-        s = s+1;
-    end
-    session = wt_ket_Cells.metadata(s,1);
-    sess_idx = sess_idx+1;
-    substr = regexp(wt_ket_Cells.metadata(s,1),'_','split');
-    wt_ket_sessions{sess_idx,1} = substr{1}{1};
-    substr = regexp(wt_ket_Cells.metadata(s,1),'^.*_\d{6}','match');
-    wt_ket_sessions{sess_idx,2} = char(substr{1});
-    wt_ket_sessions{sess_idx,3} = wt_ket_Cells.posT(s).post(find(wt_ket_Cells.trial(s).trial==51, 1, 'first'));
-    wt_ket_sessions{sess_idx,4} = wt_ket_Cells.posT(s).post(find(wt_ket_Cells.trial(s).trial==101, 1, 'first'));
-end
-save('\\oak-smb-giocomo.stanford.edu\groups\giocomo\fkmasuda\fkm_analysis\EAJ_revisions\wt_ket_sessions.mat', 'wt_ket_sessions')
-
 %% Generate using CellExplorer (takes ~20mins per session)
 % requires EAJ fork of CellExplorer: https://github.com/emilyasterjones/CellExplorer
 run_CellExplorer_EAJ
@@ -116,37 +87,37 @@ for s = 1:length(wt_ket_sessions)
     peri_ket_fromI = [peri_ket_fromI; fromI_trans_prob(ket_5_before:ket_10_after,:)'];
 
     delta_ctrl_EE = [delta_ctrl_EE; [nanmean(EE_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        EE_trans_prob(ctrl_5_before:ctrl_inj,:))./nanmean(EE_trans_prob(1:base_end,:))]'];
+        nanmean(EE_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(EE_trans_prob(1:base_end,:))]'];
     delta_ket_EE = [delta_ket_EE; [nanmean(EE_trans_prob(ket_inj:ket_5_after,:)-...
-        EE_trans_prob(ket_5_before:ket_inj,:))./nanmean(EE_trans_prob(1:base_end,:))]'];
+        nanmean(EE_trans_prob(ket_5_before:ket_inj,:)))./nanmean(EE_trans_prob(1:base_end,:))]'];
     delta_ctrl_EI = [delta_ctrl_EI; [nanmean(EI_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        EI_trans_prob(ctrl_5_before:ctrl_inj,:))./nanmean(EI_trans_prob(1:base_end,:))]'];
+        nanmean(EI_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(EI_trans_prob(1:base_end,:))]'];
     delta_ket_EI = [delta_ket_EI; [nanmean(EI_trans_prob(ket_inj:ket_5_after,:)-...
-        EI_trans_prob(ket_5_before:ket_inj,:))./nanmean(EI_trans_prob(1:base_end,:))]'];
+        nanmean(EI_trans_prob(ket_5_before:ket_inj,:)))./nanmean(EI_trans_prob(1:base_end,:))]'];
     delta_ctrl_EU = [delta_ctrl_EU; [nanmean(EU_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        EU_trans_prob(ctrl_5_before:ctrl_inj,:))./nanmean(EU_trans_prob(1:base_end,:))]'];
+        nanmean(EU_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(EU_trans_prob(1:base_end,:))]'];
     delta_ket_EU = [delta_ket_EU; [nanmean(EU_trans_prob(ket_inj:ket_5_after,:)-...
-        EU_trans_prob(ket_5_before:ket_inj,:))./nanmean(EU_trans_prob(1:base_end,:))]'];
+        nanmean(EU_trans_prob(ket_5_before:ket_inj,:)))./nanmean(EU_trans_prob(1:base_end,:))]'];
     delta_ctrl_IE = [delta_ctrl_IE; [nanmean(IE_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        IE_trans_prob(ctrl_5_before:ctrl_inj,:))./nanmean(IE_trans_prob(1:base_end,:))]'];
+        nanmean(IE_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(IE_trans_prob(1:base_end,:))]'];
     delta_ket_IE = [delta_ket_IE; [nanmean(IE_trans_prob(ket_inj:ket_5_after,:)-...
-        IE_trans_prob(ket_5_before:ket_inj,:))./nanmean(IE_trans_prob(1:base_end,:))]'];
+        nanmean(IE_trans_prob(ket_5_before:ket_inj,:)))./nanmean(IE_trans_prob(1:base_end,:))]'];
     delta_ctrl_II = [delta_ctrl_II; [nanmean(II_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        II_trans_prob(ctrl_5_before:ctrl_inj,:))./nanmean(II_trans_prob(1:base_end,:))]'];
+        nanmean(II_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(II_trans_prob(1:base_end,:))]'];
     delta_ket_II = [delta_ket_II; [nanmean(II_trans_prob(ket_inj:ket_5_after,:)-...
-        II_trans_prob(ket_5_before:ket_inj,:))./nanmean(II_trans_prob(1:base_end,:))]'];
+        nanmean(II_trans_prob(ket_5_before:ket_inj,:)))./nanmean(II_trans_prob(1:base_end,:))]'];
     delta_ctrl_IU = [delta_ctrl_IU; [nanmean(IU_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        IU_trans_prob(ctrl_5_before:ctrl_inj,:))./nanmean(IU_trans_prob(1:base_end,:))]'];
+        nanmean(IU_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(IU_trans_prob(1:base_end,:))]'];
     delta_ket_IU = [delta_ket_IU; [nanmean(IU_trans_prob(ket_inj:ket_5_after,:)-...
-        IU_trans_prob(ket_5_before:ket_inj,:))./nanmean(IU_trans_prob(1:base_end,:))]'];
+        nanmean(IU_trans_prob(ket_5_before:ket_inj,:)))./nanmean(IU_trans_prob(1:base_end,:))]'];
     delta_ctrl_fromE = [delta_ctrl_fromE; [nanmean(fromE_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        fromE_trans_prob(ctrl_5_before:ctrl_inj,:))./nanmean(fromE_trans_prob(1:base_end,:))]'];
+        nanmean(fromE_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(fromE_trans_prob(1:base_end,:))]'];
     delta_ket_fromE = [delta_ket_fromE; [nanmean(fromE_trans_prob(ket_inj:ket_5_after,:)-...
-        fromE_trans_prob(ket_5_before:ket_inj,:))./nanmean(fromE_trans_prob(1:base_end,:))]'];
+        nanmean(fromE_trans_prob(ket_5_before:ket_inj,:)))./nanmean(fromE_trans_prob(1:base_end,:))]'];
     delta_ctrl_fromI = [delta_ctrl_fromI; [nanmean(fromI_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        fromI_trans_prob(ctrl_5_before:ctrl_inj,:))./nanmean(fromI_trans_prob(1:base_end,:))]'];
+        nanmean(fromI_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(fromI_trans_prob(1:base_end,:))]'];
     delta_ket_fromI = [delta_ket_fromI; [nanmean(fromI_trans_prob(ket_inj:ket_5_after,:)-...
-        fromI_trans_prob(ket_5_before:ket_inj,:))./nanmean(fromI_trans_prob(1:base_end,:))]'];
+        nanmean(fromI_trans_prob(ket_5_before:ket_inj,:)))./nanmean(fromI_trans_prob(1:base_end,:))]'];
 end
 
 save('\\oak-smb-giocomo.stanford.edu\groups\giocomo\fkmasuda\fkm_analysis\EAJ_revisions\transmission_probabilities.mat')
