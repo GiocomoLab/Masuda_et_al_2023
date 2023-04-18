@@ -3,14 +3,11 @@ function plotBinnedDataOverTime(x, ctrl, ket, varargin)
 figure; clf; hold on;
 if nargin>3
     base = varargin{2};
-    %base(base>20) = NaN;
     data_SEM = nanstd(base,1)./sqrt(size(base,1));
     shadedErrorBar(x,nanmean(base,1),data_SEM,'lineprops','-k');
 end
-%ctrl(ctrl>20) = NaN;
 data_SEM = nanstd(ctrl,1)./sqrt(size(ctrl,1));
 shadedErrorBar(x,nanmean(ctrl,1),data_SEM,'lineprops','-m');
-%ket(ket>20) = NaN;
 data_SEM = nanstd(ket,1)./sqrt(size(ket,1));
 shadedErrorBar(x,nanmean(ket,1),data_SEM,'lineprops','-g');
 vline(0,'k');
@@ -22,10 +19,10 @@ vline(0,'k');
 % x = 1:30;
 % for a = 1:size(ket,1)
 %     if nargin>3
-%         base_smoothed(a,:) = nanmean(reshape(base(a,1:rescale*fix(length(base)/rescale)),rescale,[]));%conv(base(a,:),gauss_filter,'same');
+%         base_smoothed(a,:) = conv(base(a,:),gauss_filter,'same');
 %     end
-%     ctrl_smoothed(a,:) = nanmean(reshape(ctrl(a,1:rescale*fix(length(ctrl)/rescale)),rescale,[]));%conv(ctrl(a,:),gauss_filter,'same');
-%     ket_smoothed(a,:) = nanmean(reshape(ket(a,1:rescale*fix(length(ket)/rescale)),rescale,[]));%conv(ket(a,:),gauss_filter,'same');
+%     ctrl_smoothed(a,:) = conv(ctrl(a,:),gauss_filter,'same');
+%     ket_smoothed(a,:) = conv(ket(a,:),gauss_filter,'same');
 % end
 % 
 % figure; clf; hold on;

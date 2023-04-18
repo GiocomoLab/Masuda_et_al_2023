@@ -57,15 +57,16 @@ for s = 1:length(wt_ket_sessions)
 
     % find 20s bins closest to injection times
     bins = cell_metrics.putativeConnections.bins;
-    [~, base_end] = min(abs(bins-wt_ket_sessions{s,3}));
-    [~, ctrl_5_before] = min(abs(bins-(wt_ket_sessions{s,3}-5*60)));
-    [~, ctrl_inj] = min(abs(bins-wt_ket_sessions{s,3}));
-    [~, ctrl_5_after] = min(abs(bins-(wt_ket_sessions{s,3}+5*60)));
-    [~, ctrl_10_after] = min(abs(bins-(wt_ket_sessions{s,3}+10*60)));
-    [~, ket_5_before] = min(abs(bins-(wt_ket_sessions{s,4}-5*60)));
-    [~, ket_inj] = min(abs(bins-wt_ket_sessions{s,4}));
-    [~, ket_5_after] = min(abs(bins-(wt_ket_sessions{s,4}+5*60)));
-    [~, ket_10_after] = min(abs(bins-(wt_ket_sessions{s,4}+10*60)));
+    [~, base_start] = min(abs(bins-wt_ket_sessions{s,5}));
+    [~, base_end] = min(abs(bins-wt_ket_sessions{s,6}));
+    [~, ctrl_5_before] = min(abs(bins-(wt_ket_sessions{s,7}-5*60)));
+    [~, ctrl_inj] = min(abs(bins-wt_ket_sessions{s,7}));
+    [~, ctrl_5_after] = min(abs(bins-(wt_ket_sessions{s,7}+5*60)));
+    [~, ctrl_10_after] = min(abs(bins-(wt_ket_sessions{s,7}+10*60)));
+    [~, ket_5_before] = min(abs(bins-(wt_ket_sessions{s,9}-5*60)));
+    [~, ket_inj] = min(abs(bins-wt_ket_sessions{s,9}));
+    [~, ket_5_after] = min(abs(bins-(wt_ket_sessions{s,9}+5*60)));
+    [~, ket_10_after] = min(abs(bins-(wt_ket_sessions{s,9}+10*60)));
 
     % get trans prob subsetted by type and time
     peri_ctrl_EE = [peri_ctrl_EE; EE_trans_prob(ctrl_5_before:ctrl_10_after,:)'];
@@ -87,37 +88,37 @@ for s = 1:length(wt_ket_sessions)
     peri_ket_fromI = [peri_ket_fromI; fromI_trans_prob(ket_5_before:ket_10_after,:)'];
 
     delta_ctrl_EE = [delta_ctrl_EE; [nanmean(EE_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        nanmean(EE_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(EE_trans_prob(1:base_end,:))]'];
+        nanmean(EE_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(EE_trans_prob(base_start:base_end,:))]'];
     delta_ket_EE = [delta_ket_EE; [nanmean(EE_trans_prob(ket_inj:ket_5_after,:)-...
-        nanmean(EE_trans_prob(ket_5_before:ket_inj,:)))./nanmean(EE_trans_prob(1:base_end,:))]'];
+        nanmean(EE_trans_prob(ket_5_before:ket_inj,:)))./nanmean(EE_trans_prob(base_start:base_end,:))]'];
     delta_ctrl_EI = [delta_ctrl_EI; [nanmean(EI_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        nanmean(EI_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(EI_trans_prob(1:base_end,:))]'];
+        nanmean(EI_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(EI_trans_prob(base_start:base_end,:))]'];
     delta_ket_EI = [delta_ket_EI; [nanmean(EI_trans_prob(ket_inj:ket_5_after,:)-...
-        nanmean(EI_trans_prob(ket_5_before:ket_inj,:)))./nanmean(EI_trans_prob(1:base_end,:))]'];
+        nanmean(EI_trans_prob(ket_5_before:ket_inj,:)))./nanmean(EI_trans_prob(base_start:base_end,:))]'];
     delta_ctrl_EU = [delta_ctrl_EU; [nanmean(EU_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        nanmean(EU_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(EU_trans_prob(1:base_end,:))]'];
+        nanmean(EU_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(EU_trans_prob(base_start:base_end,:))]'];
     delta_ket_EU = [delta_ket_EU; [nanmean(EU_trans_prob(ket_inj:ket_5_after,:)-...
-        nanmean(EU_trans_prob(ket_5_before:ket_inj,:)))./nanmean(EU_trans_prob(1:base_end,:))]'];
+        nanmean(EU_trans_prob(ket_5_before:ket_inj,:)))./nanmean(EU_trans_prob(base_start:base_end,:))]'];
     delta_ctrl_IE = [delta_ctrl_IE; [nanmean(IE_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        nanmean(IE_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(IE_trans_prob(1:base_end,:))]'];
+        nanmean(IE_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(IE_trans_prob(base_start:base_end,:))]'];
     delta_ket_IE = [delta_ket_IE; [nanmean(IE_trans_prob(ket_inj:ket_5_after,:)-...
-        nanmean(IE_trans_prob(ket_5_before:ket_inj,:)))./nanmean(IE_trans_prob(1:base_end,:))]'];
+        nanmean(IE_trans_prob(ket_5_before:ket_inj,:)))./nanmean(IE_trans_prob(base_start:base_end,:))]'];
     delta_ctrl_II = [delta_ctrl_II; [nanmean(II_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        nanmean(II_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(II_trans_prob(1:base_end,:))]'];
+        nanmean(II_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(II_trans_prob(base_start:base_end,:))]'];
     delta_ket_II = [delta_ket_II; [nanmean(II_trans_prob(ket_inj:ket_5_after,:)-...
-        nanmean(II_trans_prob(ket_5_before:ket_inj,:)))./nanmean(II_trans_prob(1:base_end,:))]'];
+        nanmean(II_trans_prob(ket_5_before:ket_inj,:)))./nanmean(II_trans_prob(base_start:base_end,:))]'];
     delta_ctrl_IU = [delta_ctrl_IU; [nanmean(IU_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        nanmean(IU_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(IU_trans_prob(1:base_end,:))]'];
+        nanmean(IU_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(IU_trans_prob(base_start:base_end,:))]'];
     delta_ket_IU = [delta_ket_IU; [nanmean(IU_trans_prob(ket_inj:ket_5_after,:)-...
-        nanmean(IU_trans_prob(ket_5_before:ket_inj,:)))./nanmean(IU_trans_prob(1:base_end,:))]'];
+        nanmean(IU_trans_prob(ket_5_before:ket_inj,:)))./nanmean(IU_trans_prob(base_start:base_end,:))]'];
     delta_ctrl_fromE = [delta_ctrl_fromE; [nanmean(fromE_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        nanmean(fromE_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(fromE_trans_prob(1:base_end,:))]'];
+        nanmean(fromE_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(fromE_trans_prob(base_start:base_end,:))]'];
     delta_ket_fromE = [delta_ket_fromE; [nanmean(fromE_trans_prob(ket_inj:ket_5_after,:)-...
-        nanmean(fromE_trans_prob(ket_5_before:ket_inj,:)))./nanmean(fromE_trans_prob(1:base_end,:))]'];
+        nanmean(fromE_trans_prob(ket_5_before:ket_inj,:)))./nanmean(fromE_trans_prob(base_start:base_end,:))]'];
     delta_ctrl_fromI = [delta_ctrl_fromI; [nanmean(fromI_trans_prob(ctrl_inj:ctrl_5_after,:)-...
-        nanmean(fromI_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(fromI_trans_prob(1:base_end,:))]'];
+        nanmean(fromI_trans_prob(ctrl_5_before:ctrl_inj,:)))./nanmean(fromI_trans_prob(base_start:base_end,:))]'];
     delta_ket_fromI = [delta_ket_fromI; [nanmean(fromI_trans_prob(ket_inj:ket_5_after,:)-...
-        nanmean(fromI_trans_prob(ket_5_before:ket_inj,:)))./nanmean(fromI_trans_prob(1:base_end,:))]'];
+        nanmean(fromI_trans_prob(ket_5_before:ket_inj,:)))./nanmean(fromI_trans_prob(base_start:base_end,:))]'];
 end
 
 save('\\oak-smb-giocomo.stanford.edu\groups\giocomo\fkmasuda\fkm_analysis\EAJ_revisions\transmission_probabilities.mat')
@@ -170,15 +171,15 @@ for s = 1:length(wt_ket_sessions)
 
     % find 20s bins closest to injection times
     bins = cell_metrics.putativeConnections.bins;
-    [~, base_end] = min(abs(bins-wt_ket_sessions{s,3}));
-    [~, ctrl_5_before] = min(abs(bins-(wt_ket_sessions{s,3}-5*60)));
-    [~, ctrl_inj] = min(abs(bins-wt_ket_sessions{s,3}));
-    [~, ctrl_5_after] = min(abs(bins-(wt_ket_sessions{s,3}+5*60)));
-    [~, ctrl_10_after] = min(abs(bins-(wt_ket_sessions{s,3}+10*60)));
-    [~, ket_5_before] = min(abs(bins-(wt_ket_sessions{s,4}-5*60)));
-    [~, ket_inj] = min(abs(bins-wt_ket_sessions{s,4}));
-    [~, ket_5_after] = min(abs(bins-(wt_ket_sessions{s,4}+5*60)));
-    [~, ket_10_after] = min(abs(bins-(wt_ket_sessions{s,4}+10*60)));
+    [~, base_end] = min(abs(bins-wt_ket_sessions{s,7}));
+    [~, ctrl_5_before] = min(abs(bins-(wt_ket_sessions{s,7}-5*60)));
+    [~, ctrl_inj] = min(abs(bins-wt_ket_sessions{s,7}));
+    [~, ctrl_5_after] = min(abs(bins-(wt_ket_sessions{s,7}+5*60)));
+    [~, ctrl_10_after] = min(abs(bins-(wt_ket_sessions{s,7}+10*60)));
+    [~, ket_5_before] = min(abs(bins-(wt_ket_sessions{s,9}-5*60)));
+    [~, ket_inj] = min(abs(bins-wt_ket_sessions{s,9}));
+    [~, ket_5_after] = min(abs(bins-(wt_ket_sessions{s,9}+5*60)));
+    [~, ket_10_after] = min(abs(bins-(wt_ket_sessions{s,9}+10*60)));
 
     delta_ctrl_fromE1 = [delta_ctrl_fromE1; [nanmean(fromE_trans_prob(ctrl_inj:ctrl_5_after,:)-...
         fromE_trans_prob(ctrl_5_before:ctrl_inj,:))]'];
