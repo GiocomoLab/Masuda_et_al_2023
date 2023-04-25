@@ -1,45 +1,18 @@
-# JohnKeiNPAnalysis
-Neuropixel Analysis code specific to Kei and John
+# Masuda et al, 2023
+Masuda, F.K., Sun, Y., Aery Jones, E.A., Giocomo, L.M. (2023, February). [Ketamine evoked disruption of entorhinal and hippocampal spatial maps](https://www.biorxiv.org/content/10.1101/2023.02.05.527227v1). bioRxiv doi:10.1101/2023.02.05.527227.
 
-## File Structure
-calcSpeed.m = universalFXN
-drawSpeed.m = universalFXN **Change OAK path**
+### System Requirements
+* This code has been tested in MATLAB 2021b on Windows 10 and in MATLAB ??? on ??? 
+* MATLAB codes requires the [gramm package](https://www.mathworks.com/matlabcentral/fileexchange/54465-gramm-complete-data-visualization-toolbox-ggplot2-r-like).
 
-calcFRmapCorrMatrixAllCells.m 
-- calcSmoothedFR_SpatialBin.m
+### Installation Guide
+Estimated install time: 1 hour if MATLAB needs to be installed, 5 minutes otherwise.
+1. Install [MATLAB](https://www.mathworks.com/help/install/install-products.html).
+2. Clone this repository.
+3. In MATLAB, add this repository and all its subfolders to your path:
+`addpath(genpath('path\to\Masuda_et_al_2023'))`
 
-
-runMultiAnalysis.m **comment this**
-
-* runMultiPostProcessing.m **comment this + FXN + FLAG FOR STITCH + SAVE MI VECTORS**
-    - stitchSynchedNPdata.m
-	- concatenateNPMatFiles.m
-			- concatenateSpStructs.m
-	- singleSessionRasterplots.m ** add save metadata (depths, waveform, cells to plot)
-	- combineRASTERS.m
-	- drawLicksSingleSessions.m = universalFXN **Change OAK path**
-	- getMIAllCells.m = unfold into parent fxn
-		- getMI.m
-		- calcSmoothedFR_Time.m 
-
-
-
-gauss_smoothing.m =  **delete from master**
-
-plotFiringRate.m **need to transform into a plotAvgFR for all sessions using calcSmoothedFR_Time.m**
-
-singleSessionRasterplotsNaNspikes.m = DELETE 
-
-drawLicksMultiSessions.m = DELETE
-
-baselineCntrlKetamine_rasterPlots.m = indivdual script 
-
-dosageRasters.m = individual script
-
-scratch.m = individual script
-
-scratch_for_fields.m = individual script
-
-scratch_for_repeating.m = individual script
-
-singleSessionRasterplotsSelectTrials.m = individual script
+### Instructions
+1. Download preprocessed data from Figshare(link TBD).
+2. Run `masterScript.m` to combined data sessions into one struct. (Expected run time: 4 hours)
+3. Recreate figures from paper: generate plots from prepreprocessed data using `plotAllCells.m` and scripts in _plottingFxns_ and _revisions_ directories. (Expected run time: a few minutes per script)
