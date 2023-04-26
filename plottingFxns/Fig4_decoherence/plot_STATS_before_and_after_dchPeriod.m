@@ -2,7 +2,7 @@ function plot_STATS_before_and_after_dchPeriod(cells)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plot Stats comparing Firing Rate over during decoherence period and during equivalent length of time before dch period
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
+%addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 % dsfactor = 100;
 % 
 % % initialize variables
@@ -69,6 +69,40 @@ customColorMap = [ % 0.5 0.5 0.5 %grey
 g.set_color_options('map',customColorMap);
 g.draw()
 
+%% plot all values over sessions
+before_sum = 0;
+during_sum = 0;
+counter = 0;
+sess_idx = 1;
+curr_sess = cells.metadata{1,1};
+for c = 1:length(cells.metadata)
+	if ~strcmp(cells.metadata{c,1},curr_sess)
+		before_diff(sess_idx) = before_sum/counter;
+		during_diff(sess_idx) = during_sum/counter;
+		sess_idx = sess_idx + 1;
+		curr_sess = cells.metadata{c,1};
+		before_sum = 0;
+		during_sum = 0;
+		counter = 0;
+	end
+	before_sum = before_sum + before_dch_avg_cellFR(c);
+	during_sum = during_sum + dch_avg_cellFR(c);
+	counter = counter + 1;
+end
+before_diff(sess_idx+1) = before_sum/counter;
+during_diff(sess_idx+1) = during_sum/counter;
+
+figure; clf; clear g;
+y = vertcat(before_diff',during_diff');
+x = vertcat(...
+    repmat({'Control'}, size(before_diff')),...
+    repmat({'Ketamine'}, size(during_diff'))...
+    );
+g=gramm('x',x,'y',y,'color',x);
+g.stat_violin('normalization','width','dodge',0,'fill','edge');
+g.stat_boxplot('width',0.15);
+g.draw;
+
 %%
 clear g;
 figure();
@@ -108,4 +142,5 @@ customColorMap = [ 0.5 0.5 0.5 %grey
     0 0.8 0.2]; %green
 g.set_color_options('map',customColorMap);
 g.draw();
+disp('done')
 
