@@ -2,7 +2,7 @@
 Masuda, F.K., Sun, Y., Aery Jones, E.A., Giocomo, L.M. (2023, February). [Ketamine evoked disruption of entorhinal and hippocampal spatial maps](https://www.biorxiv.org/content/10.1101/2023.02.05.527227v1). bioRxiv doi:10.1101/2023.02.05.527227.
 
 ### System Requirements
-* This code has been tested in MATLAB 2021b on Windows 10 and in MATLAB ??? on ??? 
+* This code has been tested in MATLAB 2021b on Windows 10 and in MATLAB 2022b on Mac OS 13.3
 * MATLAB codes requires the [gramm package](https://www.mathworks.com/matlabcentral/fileexchange/54465-gramm-complete-data-visualization-toolbox-ggplot2-r-like).
 
 ### Installation Guide
