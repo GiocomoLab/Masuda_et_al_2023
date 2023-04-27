@@ -13,7 +13,7 @@ Estimated install time: 1 hour if MATLAB needs to be installed, 5 minutes otherw
 `addpath(genpath('path\to\Masuda_et_al_2023'))`
 
 ### Instructions
-1. Download preprocessed data from Figshare(link TBD).
+1. Download preprocessed data from [Figshare](https://doi.org/10.6084/m9.figshare.22696309).
 2. Run `masterScript.m` to combined data sessions into one struct. (Expected run time: 4 hours)
 3. Generate plots from prepreprocessed MEC electrophysiology data using `plotAllCells.m` and scripts in _plottingFxns_ and _revisions_ directories. (Expected run time: a few minutes per script)
 4. Generate plots from preprocessed hippocampal miniscope data using scripts in _miniscope_ (adapted from [the Sun et al, 2022 repository](https://github.com/yanjuns/Sun_Giocomo_2022_NComms))
