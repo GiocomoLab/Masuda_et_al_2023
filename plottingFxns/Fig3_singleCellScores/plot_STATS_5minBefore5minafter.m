@@ -2,7 +2,6 @@ function plot_STATS_5minBefore5minafter(cells)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-addpath(genpath('/Users/KeiMasuda/Documents/MATLAB/Add-Ons/Functions/gramm (complete data visualization toolbox, ggplot2_R-like)/code'));
 sampleRate = 50; %hz
 secInMin = 60; 
 scaling  = sampleRate * secInMin; 
@@ -41,7 +40,7 @@ fprintf(num2str(p))
 % ket_sem = std( ketDiff ) / sqrt( numel(ketDiff) );
 % cntrl_sem = std( cntrlDiff ) / sqrt( numel(cntrlDiff) );
 %%
-close all; clear g;
+clear g;
 figure(); hold on;
 y = vertcat(cntrlDiff,ketDiff);
 
@@ -60,5 +59,40 @@ set(gca,'FontName','Helvetica');
 ylabel('Hz')
 set(findobj(gca,'type','line'),'linew',2)
 title(sprintf('P-value: %0.9f',p))
+
+%% plot all values over sessions
+ctrl_sum = 0;
+ket_sum = 0;
+counter = 0;
+sess_idx = 1;
+curr_sess = cells.metadata{1,1};
+for c = 1:length(cells.metadata)
+	if ~strcmp(cells.metadata{c,1},curr_sess)
+		ctrl_diff(sess_idx) = ctrl_sum/counter;
+		ket_diff(sess_idx) = ket_sum/counter;
+		sess_idx = sess_idx + 1;
+		curr_sess = cells.metadata{c,1};
+		ctrl_sum = 0;
+		ket_sum = 0;
+		counter = 0;
+	end
+	ctrl_sum = ctrl_sum + cntrlDiff(c);
+	ket_sum = ket_sum + ketDiff(c);
+	counter = counter + 1;
+end
+ctrl_diff(sess_idx+1) = ctrl_sum/counter;
+ket_diff(sess_idx+1) = ket_sum/counter;
+
+figure; clf; clear g;
+y = vertcat(ctrl_diff',ket_diff');
+x = vertcat(...
+    repmat({'Control'}, size(ctrl_diff')),...
+    repmat({'Ketamine'}, size(ket_diff'))...
+    );
+g=gramm('x',x,'y',y,'color',x);
+g.stat_violin('normalization','width','dodge',0,'fill','edge');
+g.stat_boxplot('width',0.15);
+g.draw;
+ylim([-1 2])
 end
 

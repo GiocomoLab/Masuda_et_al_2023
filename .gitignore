@@ -4,7 +4,6 @@
 *.mat
 *.jpg
 *.png
-*.ipynb
 *.json
 $*
 *.properties
