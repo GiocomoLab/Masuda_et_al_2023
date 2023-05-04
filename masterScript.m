@@ -1,4 +1,4 @@
-% Master Script for Ketamine Paper
+ % Master Script for Ketamine Paper
 % Francis Kei Masuda 2020
 % Requires JohnKeiNPAnalysis to be on the same directory level as fkm_analysis
 

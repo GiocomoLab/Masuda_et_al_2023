@@ -334,159 +334,159 @@ findAttractorDynamicsbySession(wt_ket_Cells_noInterneurons,true,"ket_noInterneur
 findAttractorDynamicsbySession(wt_ket_Cells_stableGainChange,true,"wt_cell_gainchange_only_stableOnly")
 findAttractorDynamicsbySession(wt_ket_onlyStable,true,"wt_cell_stableOnly")
 findAttractorDynamicsbySession(wt_ket_Cells_onlyInterneurons,true,"wt_cell_ket_interneuronOnly")
-
-findAttractorDynamicsbySession(hcn1ko,true,"hcn1ko_ket_Cells_onlyStable")
-findAttractorDynamicsbySession(wt_mk801_Cells,true,"wt_mk801_Cells")
-findAttractorDynamicsbySession(hcn1ko_mk801_Cells,true,"hcn1ko_mk801_Cells")
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% FIGURE HCN1ko
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Plot Firing Rate over Time 5 min before injection and 10 min after injection
-plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells)
-
-%% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
-plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells)
-
-%% Plot Peakiness Curves over Trials
-plot_peakinessCurves(hcn1ko_ket_Cells_onlyStable)
-
-%% Plot Time Warped Stability Score Curves
-plot_timeWarpedStabilityScoreCurves(hcn1ko_ket_Cells)
-
-%% Plot Time Warped Stability Score Curves with only Stable Cells
-plot_timeWarpedStabilityScoreCurves(hcn1ko_ket_Cells_onlyStable)
-
-%% Plot Correlation Score Curves
-plot_correlationScoreCurves(wt_ket_Cells_onlyStable,'WT')
-plot_correlationScoreCurves(hcn1ko_ket_Cells_onlyStable,'HCN1ko')
-plot_correlationScoreCurveComparison(wt_ket_Cells_onlyStable,hcn1ko_ket_Cells_onlyStable);
-% plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
-%% Plot Timewarped Correlation Score Curves
-plot_timeWarpedCorrelationScoreCurves(wt_ket_Cells_onlyStable);
-plot_timeWarpedCorrelationScoreCurves(hcn1ko_ket_Cells_onlyStable);
-
-%% Plot Nice Single Cell Figure
-plot_niceSingleCellFig(hcn1ko_ket_Cells,[]);
-%% Plot Firing Rate over Time 5 min before injection and 10 min after injection
-plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells);
-%% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
-% plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells)
-
-%% Plot Firing Rate over Time 5min before and 60 min after injection
-plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells,'Ketamine-induced Avg FR Change on HCN1ko');
- plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells_onlyInterneurons,'Ketamine-induced Avg FR Change - interneurons HCN1ko');
-  plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells_gainChange,'Ketamine-induced Avg FR Change - Grid Cells HCN1ko');
-%% Plot Firing Rate over Trials by Mouse
-plot_avgFRbyMouse(hcn1ko_ket_Cells);
-%% Plot Firing Rate over Time 5min before and 60 min after injection by mouse
-plot_neg5to60minAfterKetamineInjx_byMouse(hcn1ko_ket_Cells)
-%% Plot dch plot
-plotDecoherencePlots(hcn1ko_ket_Cells);
-
-%% 
-plot_dch_autocorrelationScore_cells1_VS_cells2(wt_ket_Cells,hcn1ko_ket_Cells, 'WT Ketamine','HCN1ko Ketamine')
-plot_dch_autocorrelationScore_cells1_VS_cells2(wt_ket_Cells,wt_mk801_Cells, 'WT Ketamine','MK801 Ketamine')
-plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_ket_Cells,wt_mk801_Cells, 'HCN1ko Ketamine','MK801 Ketamine')
-plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_mk801_Cells,wt_mk801_Cells, 'HCN1ko-MK801 Ketamine','MK801 Ketamine')
-
-%% Plot Correlation Score Curve Comparisions
-plot_correlationScoreCurveComparison(wt_ket_onlyStable,hcn1ko_ket_Cells_onlyStable)
-
-%% Plot Timewarped Correlation Score Curve Comparisions
-plot_correlationScoreCurveComparison(wt_ket_onlyStable,hcn1ko_ket_Cells_onlyStable)
-
-%% Plot Peakiness Curves over Trials
-plot_peakinessCurves(hcn1ko_ket_Cells_onlyStable)
-
-%% PLOT Histfit on Corr score
-plot_HistfitKetCorrEffectScore(hcn1ko_ket_Cells, 'KO')
-
-
-%% Plot Correlation Matrix
-plot_correlationMatrix(wt_ket_Cells, 'WT');
-plot_correlationMatrix(wt_ket_Cells_onlyInterneurons, 'WT');
-plot_correlationMatrix(wt_ket_Cells_noInterneurons, 'WT');
-plot_correlationMatrix(wt_ket_Cells_gainChange, 'WT');
-plot_correlationMatrix(wt_ket_Cells_noGainChange, 'WT');
-
-plot_correlationMatrix(hcn1ko_ket_Cells, 'KO');
-plot_correlationMatrix(hcn1ko_ket_Cells_onlyInterneurons, 'KO');
-plot_correlationMatrix(hcn1ko_ket_Cells_noInterneurons, 'KO');
-plot_correlationMatrix(hcn1ko_ket_Cells_gainChange, 'KO');
-plot_correlationMatrix(hcn1ko_ket_Cells_noGainChange, 'KO');
-
-
 % 
-% hcn1ko_ket_Cells_noGainChange
-
-plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells);
-plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_gainChange);
-plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_noGainChange);
-plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_onlyInterneurons);
-plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_noInterneurons);
-%% Plot Behavior by Sessions for KO ketamine animals
-plot_BehaviorbySesh(fltrCells,true);
-
-
-%% Plot FR comparisons of decoherence 
-plot_cells1_vs_cells2_dchPeriod_STATS(hcn1ko_ket_Cells_gainChange,'HCN1ko Grid cells',hcn1ko_ket_Cells_onlyInterneurons,'HCN1ko interneurons')
-plot_cells1_vs_cells2_dchPeriod_STATS(hcn1ko_ket_Cells_gainChange,'Gain Change',hcn1ko_ket_Cells_noGainChange,'No Gain Change')
-
-%% Comparing Interneurons FR time course 
-plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_onlyInterneurons)
-plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_noInterneurons)
-
-plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_gainChange)
-plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_noGainChange)
-%%
-plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_noInterneurons,'HCN1ko cells',hcn1ko_ket_Cells_onlyInterneurons,'interneurons')
-plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_gainChange,'Gain Change',hcn1ko_ket_Cells_onlyInterneurons,'interneurons')
-plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_gainChange,'Gain Change',hcn1ko_ket_Cells_noGainChange,'No Gain Change')
-%%
-plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_onlyInterneurons)
-plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_noInterneurons)
-
-plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_gainChange)
-plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_noGainChange)
-
-%%
-plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(wt_ket_Cells_gainChange,'WT Grid cells',hcn1ko_ket_Cells_gainChange,'HCN1ko Grid Cells')
-plot_cells1_vs_cells2_dchPeriod_STATS(wt_ket_Cells_gainChange,'WT Grid cells',hcn1ko_ket_Cells_gainChange,'HCN1ko Grid Cells')
-plot_cells1_vs_cells2_dchPeriod_STATS(wt_ket_Cells_onlyInterneurons,'WT Interneurons',hcn1ko_ket_Cells_onlyInterneurons,'HCN1ko Interneurons')
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Plot MK801 WT Cells
-
-%% Plot Raster Grid
-plotRasterGrid(fltrCells,100)
-% Plot Fr Grid
-plotFRGrid(fltrCells,100)
-
-%% Plot Nice Single Cell Figure
-plot_niceSingleCellFig(fltrCells);
-
-%% Plot Firing Rate over Time 5min before and 60 min after injection
-plot_FRneg5to60minAfterKetamineInjx(fltrCells);
-
-%% Plot Firing Rate over Trials by Mouse
-plot_avgFRbyMouse(fltrCells)
-
-%% Plot Correlation Score Curves
-plot_correlationScoreCurves(fltrCells,'WT')
-% plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
-
-%% Plot Correlation Score Curve Comparisions
-plot_correlationScoreCurveComparison(fltrCells, ko_fltrCells)
-
-
-%% Plot Peakiness Curves over Trials
-plot_peakinessCurves(fltrCells)
-
-%% PLOT Histfit on Corr score
-plot_HistfitKetCorrEffectScore(fltrCells, 'WT-MK801')
-
-
-%% Plot Correlation Matrix
-plot_correlationMatrix(fltrCells, 'MK801');
+% findAttractorDynamicsbySession(hcn1ko,true,"hcn1ko_ket_Cells_onlyStable")
+% findAttractorDynamicsbySession(wt_mk801_Cells,true,"wt_mk801_Cells")
+% findAttractorDynamicsbySession(hcn1ko_mk801_Cells,true,"hcn1ko_mk801_Cells")
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %% FIGURE HCN1ko
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
+% plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells)
+% 
+% %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
+% plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells)
+% 
+% %% Plot Peakiness Curves over Trials
+% plot_peakinessCurves(hcn1ko_ket_Cells_onlyStable)
+% 
+% %% Plot Time Warped Stability Score Curves
+% plot_timeWarpedStabilityScoreCurves(hcn1ko_ket_Cells)
+% 
+% %% Plot Time Warped Stability Score Curves with only Stable Cells
+% plot_timeWarpedStabilityScoreCurves(hcn1ko_ket_Cells_onlyStable)
+% 
+% %% Plot Correlation Score Curves
+% plot_correlationScoreCurves(wt_ket_Cells_onlyStable,'WT')
+% plot_correlationScoreCurves(hcn1ko_ket_Cells_onlyStable,'HCN1ko')
+% plot_correlationScoreCurveComparison(wt_ket_Cells_onlyStable,hcn1ko_ket_Cells_onlyStable);
+% % plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
+% %% Plot Timewarped Correlation Score Curves
+% plot_timeWarpedCorrelationScoreCurves(wt_ket_Cells_onlyStable);
+% plot_timeWarpedCorrelationScoreCurves(hcn1ko_ket_Cells_onlyStable);
+% 
+% %% Plot Nice Single Cell Figure
+% plot_niceSingleCellFig(hcn1ko_ket_Cells,[]);
+% %% Plot Firing Rate over Time 5 min before injection and 10 min after injection
+% plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells);
+% %% Plot Stats comparing Firing Rate over Time 5 min before injection and 5 min after injection
+% % plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells)
+% 
+% %% Plot Firing Rate over Time 5min before and 60 min after injection
+% plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells,'Ketamine-induced Avg FR Change on HCN1ko');
+%  plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells_onlyInterneurons,'Ketamine-induced Avg FR Change - interneurons HCN1ko');
+%   plot_FRneg5to60minAfterKetamineInjx(hcn1ko_ket_Cells_gainChange,'Ketamine-induced Avg FR Change - Grid Cells HCN1ko');
+% %% Plot Firing Rate over Trials by Mouse
+% plot_avgFRbyMouse(hcn1ko_ket_Cells);
+% %% Plot Firing Rate over Time 5min before and 60 min after injection by mouse
+% plot_neg5to60minAfterKetamineInjx_byMouse(hcn1ko_ket_Cells)
+% %% Plot dch plot
+% plotDecoherencePlots(hcn1ko_ket_Cells);
+% 
+% %% 
+% plot_dch_autocorrelationScore_cells1_VS_cells2(wt_ket_Cells,hcn1ko_ket_Cells, 'WT Ketamine','HCN1ko Ketamine')
+% plot_dch_autocorrelationScore_cells1_VS_cells2(wt_ket_Cells,wt_mk801_Cells, 'WT Ketamine','MK801 Ketamine')
+% plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_ket_Cells,wt_mk801_Cells, 'HCN1ko Ketamine','MK801 Ketamine')
+% plot_dch_autocorrelationScore_cells1_VS_cells2(hcn1ko_mk801_Cells,wt_mk801_Cells, 'HCN1ko-MK801 Ketamine','MK801 Ketamine')
+% 
+% %% Plot Correlation Score Curve Comparisions
+% plot_correlationScoreCurveComparison(wt_ket_onlyStable,hcn1ko_ket_Cells_onlyStable)
+% 
+% %% Plot Timewarped Correlation Score Curve Comparisions
+% plot_correlationScoreCurveComparison(wt_ket_onlyStable,hcn1ko_ket_Cells_onlyStable)
+% 
+% %% Plot Peakiness Curves over Trials
+% plot_peakinessCurves(hcn1ko_ket_Cells_onlyStable)
+% 
+% %% PLOT Histfit on Corr score
+% plot_HistfitKetCorrEffectScore(hcn1ko_ket_Cells, 'KO')
+% 
+% 
+% %% Plot Correlation Matrix
+% plot_correlationMatrix(wt_ket_Cells, 'WT');
+% plot_correlationMatrix(wt_ket_Cells_onlyInterneurons, 'WT');
+% plot_correlationMatrix(wt_ket_Cells_noInterneurons, 'WT');
+% plot_correlationMatrix(wt_ket_Cells_gainChange, 'WT');
+% plot_correlationMatrix(wt_ket_Cells_noGainChange, 'WT');
+% 
+% plot_correlationMatrix(hcn1ko_ket_Cells, 'KO');
+% plot_correlationMatrix(hcn1ko_ket_Cells_onlyInterneurons, 'KO');
+% plot_correlationMatrix(hcn1ko_ket_Cells_noInterneurons, 'KO');
+% plot_correlationMatrix(hcn1ko_ket_Cells_gainChange, 'KO');
+% plot_correlationMatrix(hcn1ko_ket_Cells_noGainChange, 'KO');
+% 
+% 
+% % 
+% % hcn1ko_ket_Cells_noGainChange
+% 
+% plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells);
+% plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_gainChange);
+% plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_noGainChange);
+% plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_onlyInterneurons);
+% plot_correlationMatrixBySessionThenAvg(hcn1ko_ket_Cells_noInterneurons);
+% %% Plot Behavior by Sessions for KO ketamine animals
+% plot_BehaviorbySesh(fltrCells,true);
+% 
+% 
+% %% Plot FR comparisons of decoherence 
+% plot_cells1_vs_cells2_dchPeriod_STATS(hcn1ko_ket_Cells_gainChange,'HCN1ko Grid cells',hcn1ko_ket_Cells_onlyInterneurons,'HCN1ko interneurons')
+% plot_cells1_vs_cells2_dchPeriod_STATS(hcn1ko_ket_Cells_gainChange,'Gain Change',hcn1ko_ket_Cells_noGainChange,'No Gain Change')
+% 
+% %% Comparing Interneurons FR time course 
+% plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_onlyInterneurons)
+% plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_noInterneurons)
+% 
+% plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_gainChange)
+% plot_FRoverTime5minBefore10minafter(hcn1ko_ket_Cells_noGainChange)
+% %%
+% plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_noInterneurons,'HCN1ko cells',hcn1ko_ket_Cells_onlyInterneurons,'interneurons')
+% plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_gainChange,'Gain Change',hcn1ko_ket_Cells_onlyInterneurons,'interneurons')
+% plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(hcn1ko_ket_Cells_gainChange,'Gain Change',hcn1ko_ket_Cells_noGainChange,'No Gain Change')
+% %%
+% plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_onlyInterneurons)
+% plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_noInterneurons)
+% 
+% plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_gainChange)
+% plot_STATS_5minBefore5minafter(hcn1ko_ket_Cells_noGainChange)
+% 
+% %%
+% plot_STATS_cells1_vs_cells2_frDiff_5minBefore5minafter(wt_ket_Cells_gainChange,'WT Grid cells',hcn1ko_ket_Cells_gainChange,'HCN1ko Grid Cells')
+% plot_cells1_vs_cells2_dchPeriod_STATS(wt_ket_Cells_gainChange,'WT Grid cells',hcn1ko_ket_Cells_gainChange,'HCN1ko Grid Cells')
+% plot_cells1_vs_cells2_dchPeriod_STATS(wt_ket_Cells_onlyInterneurons,'WT Interneurons',hcn1ko_ket_Cells_onlyInterneurons,'HCN1ko Interneurons')
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %% Plot MK801 WT Cells
+% 
+% %% Plot Raster Grid
+% plotRasterGrid(fltrCells,100)
+% % Plot Fr Grid
+% plotFRGrid(fltrCells,100)
+% 
+% %% Plot Nice Single Cell Figure
+% plot_niceSingleCellFig(fltrCells);
+% 
+% %% Plot Firing Rate over Time 5min before and 60 min after injection
+% plot_FRneg5to60minAfterKetamineInjx(fltrCells);
+% 
+% %% Plot Firing Rate over Trials by Mouse
+% plot_avgFRbyMouse(fltrCells)
+% 
+% %% Plot Correlation Score Curves
+% plot_correlationScoreCurves(fltrCells,'WT')
+% % plot_correlationScoreCurves(ketamineCells, KOcellsIndx,'KO')
+% 
+% %% Plot Correlation Score Curve Comparisions
+% plot_correlationScoreCurveComparison(fltrCells, ko_fltrCells)
+% 
+% 
+% %% Plot Peakiness Curves over Trials
+% plot_peakinessCurves(fltrCells)
+% 
+% %% PLOT Histfit on Corr score
+% plot_HistfitKetCorrEffectScore(fltrCells, 'WT-MK801')
+% 
+% 
+% %% Plot Correlation Matrix
+% plot_correlationMatrix(fltrCells, 'MK801');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% MISC
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
