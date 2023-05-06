@@ -1,4 +1,8 @@
-# Masuda et al, 2023
+# Masuda et al, 2023 
+
+[![DOI](https://www.zenodo.org/badge/DOI/10.5281/zenodo.7903214.svg)](https://doi.org/10.5281/zenodo.7903214)
+
+
 Masuda, F.K., Sun, Y., Aery Jones, E.A., Giocomo, L.M. (2023, February). [Ketamine evoked disruption of entorhinal and hippocampal spatial maps](https://www.biorxiv.org/content/10.1101/2023.02.05.527227v1). bioRxiv doi:10.1101/2023.02.05.527227.
 
 ### System Requirements
