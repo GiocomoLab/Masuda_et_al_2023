@@ -215,6 +215,7 @@ plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells_stableGainChange,'Ketamine-indu
 plot_FRneg5to60minAfterKetamineInjx(wt_ket_Cells_onlyInterneurons,'Ketamine-induced Avg FR - Interneurons');
 
 %% Plot Firing Rate over Time 5min before and 60 min after injection by mouse
+plot_neg5to60minAfterKetamineInjx_byMouse(wt_ket_Cells)
 plot_neg5to60minAfterKetamineInjx_byMouse(wt_ket_Cells_stableGainChange)
 plot_neg5to60minAfterKetamineInjx_byMouse(wt_ket_Cells_onlyInterneurons)
 %% Plot Firing Rate over Trials by Mouse

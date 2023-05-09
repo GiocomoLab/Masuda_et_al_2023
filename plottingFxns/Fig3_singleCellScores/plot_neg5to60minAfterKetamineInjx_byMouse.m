@@ -27,6 +27,7 @@ for i = 1:numel(seshes)
     normY = y-baselineFR;
     
     data = smoothdata(nanmean(normY,1),'gaussian',100);
+%     excelsourcedata(i,:) = data;
     plot(x,data,'-k','LineWidth',1); hold on;
     
 %     postKetData = data(x>0);
@@ -71,6 +72,10 @@ ylabel('Change FR (Hz)')
 xlim([-5 60])
 vline(0,'-g')
 
-
+%% Get mean max peak time
+[MaxFRValue,timeIndex] = max(excelsourcedata,[],2);
+timeIndex = x(timeIndex);
+meanPeaksPerMouse= mean(timeIndex);
+semPeaksPerMouse = nanstd(timeIndex)./sqrt(size(timeIndex,2));
 end
 
